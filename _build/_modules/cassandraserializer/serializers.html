@@ -1,0 +1,358 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cassandraserializer.serializers &mdash; Cassandra CQLManager 0.1.0.b.2 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0.b.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Cassandra CQLManager 0.1.0.b.2 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Cassandra CQLManager 0.1.0.b.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for cassandraserializer.serializers</h1><div class="highlight"><pre>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;Tim Martin&#39;</span>
+<span class="kn">from</span> <span class="nn">cqlengine.query</span> <span class="kn">import</span> <span class="n">DoesNotExist</span>
+<span class="kn">from</span> <span class="nn">webargs</span> <span class="kn">import</span> <span class="n">Arg</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">decimal</span> <span class="kn">import</span> <span class="n">Decimal</span>
+
+
+<span class="k">def</span> <span class="nf">convert_to_datetime</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For webargs so that it can correctly parse incoming datetime objects</span>
+
+<span class="sd">    :param d: A datetime string formatted as %Y-%m-%d %H:%M:%S.%f</span>
+<span class="sd">    :type d: str</span>
+<span class="sd">    :return: The datetime object</span>
+<span class="sd">    :rtype: datetime</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">==</span> <span class="n">datetime</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">d</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s">&#39;%Y-%m-</span><span class="si">%d</span><span class="s"> %H:%M:%S.</span><span class="si">%f</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="c"># remove the resolution that cassandra can&#39;t handle</span>
+    <span class="n">td</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">microseconds</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">microsecond</span> <span class="o">%</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">d</span> <span class="o">-</span> <span class="n">td</span>
+
+
+<span class="k">def</span> <span class="nf">convert_to_boolean</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a string of either &quot;True&quot; or &quot;False&quot; case-insensitive into a boolean</span>
+
+<span class="sd">    :param val: The true or false string</span>
+<span class="sd">    :type val: str</span>
+<span class="sd">    :return: The mapped boolean</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">==</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">val</span>
+    <span class="k">elif</span> <span class="n">val</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">val</span>
+    <span class="k">elif</span> <span class="n">val</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;false&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    <span class="k">elif</span> <span class="n">val</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;true&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;A boolean value accepted as a string must be either &quot;true&quot; or &quot;false&quot;&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Serializer"><a class="viewcode-back" href="../../index.html#cassandraserializer.serializers.Serializer">[docs]</a><span class="k">class</span> <span class="nc">CQLManager</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Works with serializing the models as json and deserializing them to cqlengine models</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">arg_parser</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="c"># TODO use sphinx to upload docstrings</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">viewset</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">paginate_by</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">order_by</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ignore_pks_on_update</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a serializer</span>
+
+<span class="sd">        :param model: The model this serializer works with</span>
+<span class="sd">        :type model: cqlengine.models.Model</span>
+<span class="sd">        :param fields: A list of field names to serialize</span>
+<span class="sd">        :type fields: list</span>
+<span class="sd">        :param viewset: This is for retrieving the queryset</span>
+<span class="sd">        :type viewset: cassandra_rest.viewsets.BaseViewSet</span>
+<span class="sd">        :param paginate_by: not implemented, TODO</span>
+<span class="sd">        :type paginate_by: int</span>
+<span class="sd">        :param order_by: The default order in which the models are returned</span>
+<span class="sd">        :type order_by: str</span>
+<span class="sd">        :return: Nothing</span>
+<span class="sd">        :rtype: NoneType</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">paginate_by</span> <span class="o">=</span> <span class="n">paginate_by</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order_by</span> <span class="o">=</span> <span class="n">order_by</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="n">fields</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_args</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viewset</span> <span class="o">=</span> <span class="n">viewset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ignore_pks_on_update</span> <span class="o">=</span> <span class="n">ignore_pks_on_update</span>
+
+    <span class="k">def</span> <span class="nf">queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to ensure the serializer works even when there is no viewset</span>
+
+<span class="sd">        :return: the list of models to use</span>
+<span class="sd">        :rtype: cqlengine.models.QuerySet</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewset</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewset</span><span class="o">.</span><span class="n">queryset</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_initialize_args</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets up the webargs parser so that it can read and effectively type incoming request variables</span>
+
+<span class="sd">        :return: Nothing</span>
+<span class="sd">        :rtype: NoneType</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arg_parser</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c"># only allow the specified fields</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_columns</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">db_type</span>
+            <span class="n">multiple</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">use</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="c"># Get the correct type to cast the incoming argument to</span>
+            <span class="k">if</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;text&#39;</span><span class="p">,</span> <span class="s">&#39;ascii&#39;</span><span class="p">,</span> <span class="s">&#39;uuid&#39;</span><span class="p">,</span> <span class="s">&#39;timeuuid&#39;</span><span class="p">]:</span>
+                <span class="n">arg_type</span> <span class="o">=</span> <span class="nb">str</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;int&#39;</span><span class="p">,</span> <span class="s">&#39;varint&#39;</span><span class="p">]:</span>
+                <span class="n">arg_type</span> <span class="o">=</span> <span class="nb">int</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s">&#39;bigint&#39;</span><span class="p">:</span>
+                <span class="n">arg_type</span> <span class="o">=</span> <span class="nb">long</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s">&#39;timestamp&#39;</span><span class="p">:</span>
+                <span class="n">arg_type</span> <span class="o">=</span> <span class="n">convert_to_datetime</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s">&#39;boolean&#39;</span><span class="p">:</span>
+                <span class="n">arg_type</span> <span class="o">=</span> <span class="nb">bool</span>
+                <span class="n">use</span> <span class="o">=</span> <span class="n">convert_to_boolean</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s">&#39;double&#39;</span><span class="p">:</span>
+                <span class="n">arg_type</span> <span class="o">=</span> <span class="nb">float</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s">&#39;decimal&#39;</span><span class="p">:</span>
+                <span class="n">arg_type</span> <span class="o">=</span> <span class="n">Decimal</span>
+            <span class="k">elif</span> <span class="s">&#39;set&lt;&#39;</span> <span class="ow">in</span> <span class="n">t</span><span class="p">:</span>
+                <span class="n">arg_type</span> <span class="o">=</span> <span class="nb">set</span>
+                <span class="n">multiple</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">elif</span> <span class="s">&#39;list&lt;&#39;</span> <span class="ow">in</span> <span class="n">t</span><span class="p">:</span>
+                <span class="n">arg_type</span> <span class="o">=</span> <span class="nb">list</span>
+                <span class="n">multiple</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">elif</span> <span class="s">&#39;map&lt;&#39;</span> <span class="ow">in</span> <span class="n">t</span><span class="p">:</span>
+                <span class="n">arg_type</span> <span class="o">=</span> <span class="nb">dict</span>
+                <span class="n">multiple</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s">&#39;blob&#39;</span><span class="p">:</span>
+                <span class="n">arg_type</span> <span class="o">=</span> <span class="nb">bytes</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Unexpected column type: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">arg_parser</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Arg</span><span class="p">(</span><span class="n">arg_type</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="n">multiple</span><span class="p">,</span> <span class="n">use</span><span class="o">=</span><span class="n">use</span><span class="p">,</span> <span class="n">allow_missing</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Serializer.create"><a class="viewcode-back" href="../../index.html#cassandraserializer.serializers.Serializer.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">values</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates an object using the specified values in the dict</span>
+
+<span class="sd">        :param values: A dictionary with the attribute names as keys and the attribute values as values</span>
+<span class="sd">        :type values: dict</span>
+<span class="sd">        :return: Cassandra model object</span>
+<span class="sd">        :rtype: cqlengine.Model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_multidict_to_dict</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_model</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="mi">201</span>
+</div>
+<div class="viewcode-block" id="Serializer.retrieve"><a class="viewcode-back" href="../../index.html#cassandraserializer.serializers.Serializer.retrieve">[docs]</a>    <span class="k">def</span> <span class="nf">retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lookup_keys</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves an existing object using the lookupkeys</span>
+
+<span class="sd">        :param lookup_keys: A dictionary with the attribute names as keys and the attribute values as values</span>
+<span class="sd">        :type lookup_keys: dict</span>
+<span class="sd">        :return: The specified model using the lookup keys</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_model</span><span class="p">(</span><span class="n">lookup_keys</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="p">,</span> <span class="mi">404</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_model</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="mi">200</span>
+</div>
+<div class="viewcode-block" id="Serializer.retrieve_list"><a class="viewcode-back" href="../../index.html#cassandraserializer.serializers.Serializer.retrieve_list">[docs]</a>    <span class="k">def</span> <span class="nf">retrieve_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">filters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves a list of all models that match the specified filters</span>
+
+<span class="sd">        :param filters:</span>
+<span class="sd">        :type filters:</span>
+<span class="sd">        :return: a list of</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queryset</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">filters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">filters</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="n">models</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order_by</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">models</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">order_by</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+            <span class="n">obj_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">serialize_model</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s">&#39;objects&#39;</span><span class="p">:</span> <span class="n">obj_list</span><span class="p">},</span> <span class="mi">200</span>
+</div>
+<div class="viewcode-block" id="Serializer.update"><a class="viewcode-back" href="../../index.html#cassandraserializer.serializers.Serializer.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lookup_keys</span><span class="p">,</span> <span class="o">**</span><span class="n">updates</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the model specified by the lookup_key with the specified updates</span>
+
+<span class="sd">        :param lookup_keys:</span>
+<span class="sd">        :type lookup_keys: dict</span>
+<span class="sd">        :param updates:</span>
+<span class="sd">        :type updates: dict</span>
+<span class="sd">        :return:</span>
+<span class="sd">        :rtype: cqlengine.Model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_model</span><span class="p">(</span><span class="n">lookup_keys</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span><span class="p">,</span> <span class="mi">404</span>
+        <span class="n">updates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_multidict_to_dict</span><span class="p">(</span><span class="n">updates</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">updates</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_get_column</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_pks_on_update</span> <span class="ow">is</span> <span class="bp">True</span> <span class="ow">and</span> <span class="n">col</span><span class="o">.</span><span class="n">is_primary_key</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_model</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="mi">200</span>
+</div>
+<div class="viewcode-block" id="Serializer.delete"><a class="viewcode-back" href="../../index.html#cassandraserializer.serializers.Serializer.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lookup_keys</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes the model specified by the lookup_keys</span>
+
+<span class="sd">        :param lookup_keys: A dictionary of fields and values on model to filter by</span>
+<span class="sd">        :type lookup_keys: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_model</span><span class="p">(</span><span class="n">lookup_keys</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="p">,</span> <span class="mi">404</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">None</span><span class="p">,</span> <span class="mi">204</span>
+</div>
+    <span class="k">def</span> <span class="nf">_convert_multidict_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts werkzeurg multidict which contains lists to a standard dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># TODO: Fix legitimate cases of lists</span>
+        <span class="n">toreturn</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_columns</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">db_type</span> <span class="o">!=</span> <span class="s">&#39;list&#39;</span><span class="p">:</span>
+                <span class="n">toreturn</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">toreturn</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">toreturn</span>
+
+    <span class="k">def</span> <span class="nf">_get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lookup_keys</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the model specified by the lookupkeys</span>
+
+<span class="sd">        :param lookup_keys: A dictionary of fields and values on the model to filter by</span>
+<span class="sd">        :type lookup_keys: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queryset</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">lookup_keys</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">obj</span>
+        <span class="k">except</span> <span class="n">DoesNotExist</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">serialize_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Takes a cqlengine.Model and jsonifies it.</span>
+
+<span class="sd">        :param obj: The model instance to jsonify</span>
+<span class="sd">        :type obj: cqlengine.Model</span>
+<span class="sd">        :return: json dictionary</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">json_obj</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
+            <span class="n">to_add</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">to_add</span><span class="p">)</span> <span class="o">==</span> <span class="n">Decimal</span><span class="p">:</span>
+                <span class="n">to_add</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">to_add</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">to_add</span><span class="p">)</span> <span class="o">==</span> <span class="n">datetime</span><span class="p">:</span>
+                <span class="n">to_add</span> <span class="o">=</span> <span class="n">to_add</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&#39;%Y-%m-</span><span class="si">%d</span><span class="s"> %H:%M:%S.</span><span class="si">%f</span><span class="s">&#39;</span><span class="p">)</span>
+            <span class="n">json_obj</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_add</span>
+        <span class="k">return</span> <span class="n">json_obj</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Cassandra CQLManager 0.1.0.b.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Tim Martin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

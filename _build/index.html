@@ -1,0 +1,272 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Welcome to Cassandra CQLManager’s documentation! &mdash; Cassandra CQLManager 0.1.0.b.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0.b.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Cassandra CQLManager 0.1.0.b.2 documentation" href="#" />
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="#">Cassandra CQLManager 0.1.0.b.2 documentation</a> &raquo;</li>
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="welcome-to-cassandra-serializer-s-documentation">
+<h1>Welcome to Cassandra CQLManager&#8217;s documentation!<a class="headerlink" href="#welcome-to-cassandra-serializer-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Contents:</p>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<div class="section" id="rest-service">
+<h2>1. Rest Service<a class="headerlink" href="#rest-service" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-cassandra_rest.restmixins">
+<span id="mixins"></span><h3>1.1 Mixins<a class="headerlink" href="#module-cassandra_rest.restmixins" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="cassandra_rest.restmixins.parse_url_kwargs">
+<tt class="descclassname">cassandra_rest.restmixins.</tt><tt class="descname">parse_url_kwargs</tt><big>(</big><em>request</em>, <em>name</em>, <em>arg</em><big>)</big><a class="reference internal" href="_modules/cassandra_rest/restmixins.html#parse_url_kwargs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cassandra_rest.restmixins.parse_url_kwargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This allows webargs to find the keyword args contained in the url
+(e.g. It would grab the kwarg model_id from the url route /somemodel/&lt;model_id&gt;)</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cassandra_rest.viewsets">
+<span id="viewsets"></span><h3>1.2 Viewsets<a class="headerlink" href="#module-cassandra_rest.viewsets" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="cassandra_rest.viewsets.CRUD">
+<em class="property">class </em><tt class="descclassname">cassandra_rest.viewsets.</tt><tt class="descname">CRUD</tt><big>(</big><em>model</em>, <em>fields</em>, <em>preprocessors=None</em>, <em>postprocessors=None</em>, <em>pks=None</em>, <em>ignore_pks_on_update=True</em><big>)</big><a class="reference internal" href="_modules/cassandra_rest/viewsets.html#CRUD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cassandra_rest.viewsets.CRUD" title="Permalink to this definition">¶</a></dt>
+<dd><p>A standard create, retrieve, update and delete api class based viewset</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cassandra_rest.viewsets.register_viewset">
+<tt class="descclassname">cassandra_rest.viewsets.</tt><tt class="descname">register_viewset</tt><big>(</big><em>app</em>, <em>viewset</em>, <em>model</em>, <em>fields=None</em>, <em>pks=None</em>, <em>endpoint=None</em>, <em>url=None</em>, <em>preprocessors=None</em>, <em>postprocessors=None</em>, <em>ignore_pks_on_update=True</em><big>)</big><a class="reference internal" href="_modules/cassandra_rest/viewsets.html#register_viewset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cassandra_rest.viewsets.register_viewset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets up the viewset to respond to url endpoints for the specified model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>app</strong> (<em>flask.Flask</em>) &#8211; The flask app to use</li>
+<li><strong>viewset</strong> (<em>flask.views.View</em>) &#8211; The cassandra_rest viewset to use</li>
+<li><strong>model</strong> (<em>cqlengine.models.Model</em>) &#8211; The cqlengine model to use</li>
+<li><strong>fields</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; The fields on the model to use.  By default it will grab all of the fields on the specified model</li>
+<li><strong>pks</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; The primary keys on which the API will respond to GET, PUT, and DELETE operations. The url for these operations will be &lt;url&gt;/&lt;pk1&gt;/&lt;pk2&gt;/.../&lt;pkn&gt;</li>
+<li><strong>endpoint</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The name of the endpoint.  Defaults to &lt;model&gt;_api</li>
+<li><strong>url</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The base url on which the api for this model responds</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-cassandraserializer.serializers">
+<span id="serializer"></span><h2>2. CQLManager<a class="headerlink" href="#module-cassandraserializer.serializers" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="cassandraserializer.serializers.Serializer">
+<em class="property">class </em><tt class="descclassname">cassandraserializer.serializers.</tt><tt class="descname">CQLManager</tt><big>(</big><em>model</em>, <em>fields</em>, <em>viewset=None</em>, <em>paginate_by=100</em>, <em>order_by=None</em>, <em>ignore_pks_on_update=True</em><big>)</big><a class="reference internal" href="_modules/cassandraserializer/serializers.html#Serializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cassandraserializer.serializers.Serializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Works with serializing the models as json and deserializing them to cqlengine models</p>
+<dl class="method">
+<dt id="cassandraserializer.serializers.Serializer.create">
+<tt class="descname">create</tt><big>(</big><em>**values</em><big>)</big><a class="reference internal" href="_modules/cassandraserializer/serializers.html#Serializer.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cassandraserializer.serializers.Serializer.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an object using the specified values in the dict</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>values</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; A dictionary with the attribute names as keys and the attribute values as values</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Cassandra model object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">cqlengine.Model</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cassandraserializer.serializers.Serializer.delete">
+<tt class="descname">delete</tt><big>(</big><em>lookup_keys</em><big>)</big><a class="reference internal" href="_modules/cassandraserializer/serializers.html#Serializer.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cassandraserializer.serializers.Serializer.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes the model specified by the lookup_keys</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>lookup_keys</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; A dictionary of fields and values on model to filter by</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cassandraserializer.serializers.Serializer.retrieve">
+<tt class="descname">retrieve</tt><big>(</big><em>lookup_keys</em><big>)</big><a class="reference internal" href="_modules/cassandraserializer/serializers.html#Serializer.retrieve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cassandraserializer.serializers.Serializer.retrieve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves an existing object using the lookupkeys</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>lookup_keys</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; A dictionary with the attribute names as keys and the attribute values as values</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The specified model using the lookup keys</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cassandraserializer.serializers.Serializer.retrieve_list">
+<tt class="descname">retrieve_list</tt><big>(</big><em>**filters</em><big>)</big><a class="reference internal" href="_modules/cassandraserializer/serializers.html#Serializer.retrieve_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cassandraserializer.serializers.Serializer.retrieve_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a list of all models that match the specified filters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filters</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a list of</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cassandraserializer.serializers.Serializer.update">
+<tt class="descname">update</tt><big>(</big><em>lookup_keys</em>, <em>**updates</em><big>)</big><a class="reference internal" href="_modules/cassandraserializer/serializers.html#Serializer.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cassandraserializer.serializers.Serializer.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the model specified by the lookup_key with the specified updates</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lookup_keys</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; </li>
+<li><strong>updates</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">cqlengine.Model</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
+<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to Cassandra CQLManager&#8217;s documentation!</a><ul>
+<li><a class="reference internal" href="#rest-service">1. Rest Service</a><ul>
+<li><a class="reference internal" href="#module-cassandra_rest.restmixins">1.1 Mixins</a></li>
+<li><a class="reference internal" href="#module-cassandra_rest.viewsets">1.2 Viewsets</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-cassandraserializer.serializers">2. CQLManager</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="#">Cassandra CQLManager 0.1.0.b.2 documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Tim Martin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

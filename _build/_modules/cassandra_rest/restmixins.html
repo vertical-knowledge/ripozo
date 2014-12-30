@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cassandra_rest.restmixins &mdash; Cassandra CQLManager 0.1.0.b.2 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0.b.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Cassandra CQLManager 0.1.0.b.2 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Cassandra CQLManager 0.1.0.b.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for cassandra_rest.restmixins</h1><div class="highlight"><pre>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&#39;Tim Martin&#39;</span>
+<span class="kn">from</span> <span class="nn">cassandraserializer.serializers</span> <span class="kn">import</span> <span class="n">CQLManager</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">request</span>
+<span class="kn">from</span> <span class="nn">decorators</span> <span class="kn">import</span> <span class="n">api_method</span>
+<span class="kn">from</span> <span class="nn">webargs.flaskparser</span> <span class="kn">import</span> <span class="n">FlaskParser</span>
+<span class="kn">from</span> <span class="nn">flask.views</span> <span class="kn">import</span> <span class="n">MethodView</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">FlaskParser</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">APIBase</span><span class="p">(</span><span class="n">MethodView</span><span class="p">):</span>
+    <span class="n">serializer</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">preprocessors</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">postprocessors</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">pks</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">preprocessors</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">postprocessors</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">pks</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ignore_pks_on_update</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="n">fields</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preprocessors</span> <span class="o">=</span> <span class="n">preprocessors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">postprocessors</span> <span class="o">=</span> <span class="n">postprocessors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pks</span> <span class="o">=</span> <span class="n">pks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ignore_pks_on_update</span> <span class="o">=</span> <span class="n">ignore_pks_on_update</span>
+
+    <span class="k">def</span> <span class="nf">queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_get_manager</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">serializer</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">serializer</span> <span class="o">=</span> <span class="n">CQLManager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">,</span> <span class="n">viewset</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                                         <span class="n">ignore_pks_on_update</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ignore_pks_on_update</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serializer</span>
+
+
+<span class="k">class</span> <span class="nc">Create</span><span class="p">(</span><span class="n">APIBase</span><span class="p">):</span>
+    <span class="nd">@api_method</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_manager</span><span class="p">()</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">arg_parser</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;form&#39;</span><span class="p">,</span> <span class="s">&#39;json&#39;</span><span class="p">,</span> <span class="s">&#39;url_params&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">serializer</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">RetrieveList</span><span class="p">(</span><span class="n">APIBase</span><span class="p">):</span>
+    <span class="nd">@api_method</span>
+    <span class="k">def</span> <span class="nf">retrieve_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">filters</span><span class="p">):</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_manager</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">serializer</span><span class="o">.</span><span class="n">retrieve_list</span><span class="p">(</span><span class="o">**</span><span class="n">filters</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">RetrieveSingle</span><span class="p">(</span><span class="n">APIBase</span><span class="p">):</span>
+    <span class="nd">@api_method</span>
+    <span class="k">def</span> <span class="nf">retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">primary_keys</span><span class="p">):</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_manager</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">serializer</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">primary_keys</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Update</span><span class="p">(</span><span class="n">APIBase</span><span class="p">):</span>
+    <span class="nd">@api_method</span>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">primary_keys</span><span class="p">):</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_manager</span><span class="p">()</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">arg_parser</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;form&#39;</span><span class="p">,</span> <span class="s">&#39;json&#39;</span><span class="p">,</span> <span class="s">&#39;url_params&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">serializer</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">primary_keys</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Delete</span><span class="p">(</span><span class="n">APIBase</span><span class="p">):</span>
+    <span class="nd">@api_method</span>
+    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">primary_keys</span><span class="p">):</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_manager</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">serializer</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">primary_keys</span><span class="p">)</span>
+
+
+<span class="nd">@parser.target_handler</span><span class="p">(</span><span class="s">&#39;url_params&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="parse_url_kwargs"><a class="viewcode-back" href="../../index.html#cassandra_rest.restmixins.parse_url_kwargs">[docs]</a><span class="k">def</span> <span class="nf">parse_url_kwargs</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This allows webargs to find the keyword args contained in the url</span>
+<span class="sd">    (e.g. It would grab the kwarg model_id from the url route /somemodel/&lt;model_id&gt;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">request</span><span class="o">.</span><span class="n">view_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Cassandra CQLManager 0.1.0.b.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Tim Martin.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
