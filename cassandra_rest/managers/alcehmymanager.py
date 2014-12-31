@@ -6,6 +6,9 @@ class AlchemyManager(BaseManager):
     db = None  # the database object needs to be given to the class
     pagination_pk_query_arg = 'page'
 
+    def get_field_type(self, name):
+        raise NotImplementedError
+
     def create(self, values, *args, **kwargs):
         model = self.model()
         for name, value in values.iteritems():
@@ -39,7 +42,7 @@ class AlchemyManager(BaseManager):
                                               self.pagination_count_query_arg, pagination_count)
         return model_list, {self.pagination_pk_query_arg: next_page,
                             self.pagination_count_query_arg: pagination_count,
-                            'next': query_args}
+                            self.pagination_next: query_args}
 
     def update(self, lookup_keys, updates, *args, **kwargs):
         model = self._get_model(lookup_keys)

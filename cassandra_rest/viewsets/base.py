@@ -33,9 +33,9 @@ class APIBase(View):
     def model(cls):
         return cls.manager.model
 
-    @classproperty
-    def model_name(cls):
-        return convert_to_underscore(cls.manager.model_name)
+    @property
+    def model_name(self):
+        return convert_to_underscore(self._get_manager().model_name)
 
     def _get_manager(self):
         return self.manager()

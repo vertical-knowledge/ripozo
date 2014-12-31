@@ -1,6 +1,5 @@
 __author__ = 'Tim Martin'
 from cassandra_rest.managers.base import BaseManager, NotFoundException
-from cassandra_rest.utilities import classproperty
 from cqlengine.query import DoesNotExist
 import logging
 
@@ -22,10 +21,14 @@ class CQLManager(BaseManager):
             raise ValueError('The model class attribute must be set: {0}'.format(self.__class__.__name__))
         if not self.fields or not isinstance(self.fields, (list, tuple,)):
             raise ValueError('the fields class attribute must be a list or tuple: '.format(self.__class__.__name__))
-        self._initialize_args()
+        self.initialize_args()
         super(CQLManager, self).__init__()
 
-    @classproperty
+    def get_field_type(self, name):
+        col = self.model._columns[name]
+        return col.db_type
+
+    @property
     def model_name(self):
         return self.model.__name__
 
@@ -106,11 +109,13 @@ class CQLManager(BaseManager):
             obj_list.append(self.serialize_model(obj))
         if not pagination_count or not last_model:
             return obj_list, {self.pagination_pk_query_arg: None,
-                              self.pagination_count_query_arg: pagination_count, 'next': None}
+                              self.pagination_count_query_arg: pagination_count,
+                              self.pagination_next: None}
         else:
             query_args, pagination_keys = self.get_next_query_args(last_model, pagination_count, filters=filters)
             return obj_list, {self.pagination_pk_query_arg: pagination_keys,
-                              self.pagination_count_query_arg: pagination_count, 'next': query_args}
+                              self.pagination_count_query_arg: pagination_count,
+                              self.pagination_next: query_args}
 
     def update(self, lookup_keys, updates, *args, **kwargs):
         """

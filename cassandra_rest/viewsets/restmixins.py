@@ -27,11 +27,12 @@ class RetrieveList(APIBase):
         manager = self._get_manager()
         filters = parser.parse(manager.arg_parser, request, targets=('url_params', 'querystring'))
         results, next_query_args = manager.retrieve_list(filters)
-        if next_query_args.get('next') is None:
+        if next_query_args.get(self.manager.pagination_next) is None:
             next_page_url = None
         else:
-            next_page_url = '{0}?{1}'.format(self.get_base_url(pluralized=True), next_query_args['next'])
-        next_query_args['next'] = next_page_url
+            next_page_url = '{0}?{1}'.format(self.get_base_url(pluralized=True),
+                                             next_query_args[self.manager.pagination_next])
+        next_query_args[self.manager.pagination_next] = next_page_url
         response = jsonify({self._pluralization: results, 'meta': next_query_args})
         response.status_code = 200
         return response

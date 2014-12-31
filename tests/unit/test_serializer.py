@@ -44,8 +44,6 @@ class TestSerializerSimple(DummyModelsBase):
         self.person_serializer.delete({'id': _id})
         self.assertRaises(DoesNotExist, Person.objects.filter(id=_id).get)
 
-        Person.objects.filter(id=_id).all()
-
     def test_retrieve_person(self):
         first_name = self.generate_random_name()
         last_name = self.generate_random_name()

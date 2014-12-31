@@ -121,7 +121,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">order_by</span> <span class="o">=</span> <span class="n">order_by</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="n">fields</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_args</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialize_args</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">viewset</span> <span class="o">=</span> <span class="n">viewset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ignore_pks_on_update</span> <span class="o">=</span> <span class="n">ignore_pks_on_update</span>
 
@@ -136,7 +136,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewset</span><span class="o">.</span><span class="n">queryset</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_initialize_args</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">initialize_args</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sets up the webargs parser so that it can read and effectively type incoming request variables</span>
 
