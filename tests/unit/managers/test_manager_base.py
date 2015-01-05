@@ -159,20 +159,20 @@ class TestManagerBase(unittest.TestCase):
 
         pk_query_arg = manager.pagination_pk_query_arg
         count_query_arg = manager.pagination_count_query_arg
-        retrieved_list = manager.retrieve_list({})
-        next_pk = retrieved_list[1][pk_query_arg]
+        retrieved_list, meta = manager.retrieve_list({})
+        next_pk = meta[pk_query_arg]
         self.assertIsNotNone(next_pk)
-        self.assertEqual(len(retrieved_list[0]), manager.paginate_by)
+        self.assertEqual(len(retrieved_list), manager.paginate_by)
         while next_pk:
             count = random.choice(range(1, 10))
-            retrieved_list, status_code = manager.retrieve_list({
+            retrieved_list, meta = manager.retrieve_list({
                 pk_query_arg: next_pk,
                 count_query_arg: count
             })
-            next_pk = retrieved_list[1].get(pk_query_arg)
-            objects_count = len(retrieved_list[0])
+            next_pk = meta.get(pk_query_arg)
+            objects_count = len(retrieved_list)
             logger().debug('Retrieved count: {0}'.format(objects_count))
             if next_pk:
-                self.assertEqual(len(retrieved_list[0]), count)
+                self.assertEqual(len(retrieved_list), count)
             else:
-                self.assertLessEqual(len(retrieved_list[0]), count)
+                self.assertLessEqual(len(retrieved_list), count)

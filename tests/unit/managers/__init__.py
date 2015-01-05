@@ -1,3 +1,3 @@
 __author__ = 'Tim Martin'
-from test_cqlmanager import TestCQLManagerBase
-import unittest
+from tests.unit.managers.test_cqlmanager import TestCQLManagerBase
+from tests.unit.managers.test_alchemymanager import TestAlchemyManager

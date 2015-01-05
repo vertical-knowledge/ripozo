@@ -1,6 +1,6 @@
 __author__ = 'Tim Martin'
 from cassandra_rest.managers.base import BaseManager, NotFoundException
-from cqlengine.query import DoesNotExist
+from cqlengine.query import DoesNotExist, Token
 import logging
 
 
@@ -204,12 +204,17 @@ class CQLManager(BaseManager):
         if len(last_pagination_pk) == 0:
             return queryset
         partition_key_count = len(self.model._partition_keys)
-        for i in range(len(self.model._partition_keys)):
-            key = self.model._partition_keys.items()[i][0]
-            if key in filters:
-                continue
-            value = last_pagination_pk[i]
-            queryset = queryset.filter(**{'{0}__gte'.format(key): value})
+        if len(dict(filters.items() + self.model._partition_keys.items())) < len(filters) + len(self.model._partition_keys):
+            # There is some overlap between the partition keys filters
+            # TODO make a better way to do filtering
+            for i in range(len(self.model._partition_keys)):
+                key = self.model._partition_keys.items()[i][0]
+                if key in filters:
+                    continue
+                value = last_pagination_pk[i]
+                queryset = queryset.filter(**{'{0}__gte'.format(key): value})
+        else:
+            queryset = queryset.filter(pk__token__gte=Token(last_pagination_pk))
         if len(self.model._primary_keys) <= partition_key_count:
             return queryset
 

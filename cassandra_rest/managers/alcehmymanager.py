@@ -7,7 +7,7 @@ class AlchemyManager(BaseManager):
     pagination_pk_query_arg = 'page'
 
     def get_field_type(self, name):
-        raise NotImplementedError
+        return self.model.metadata.tables[self.model.__tablename__].columns._data[name].type.python_type
 
     def create(self, values, *args, **kwargs):
         model = self.model()
@@ -15,6 +15,7 @@ class AlchemyManager(BaseManager):
             setattr(model, name, value)
         self.db.session.add(model)
         self.db.session.commit()
+        return self.serialize_model(model)
 
     def retrieve(self, lookup_keys, *args, **kwargs):
         return self.serialize_model(self._get_model(lookup_keys))
@@ -31,11 +32,11 @@ class AlchemyManager(BaseManager):
         if pagination_pk is None:
             pagination_pk = 1
         q = self.queryset.filter_by(**filters)
-        q = q.paginate(pagination_pk, pagination_count, False)
         if self.order_by:
             q = q.order_by(self.order_by)
+        q = q.paginate(pagination_pk, pagination_count, False)
         model_list = []
-        for m in q:
+        for m in q.items:
             model_list.append(self.serialize_model(m))
         next_page = pagination_pk + 1
         query_args = '{0}={1}&{2}={3}'.format(self.pagination_pk_query_arg, next_page,
@@ -48,7 +49,6 @@ class AlchemyManager(BaseManager):
         model = self._get_model(lookup_keys)
         for name, value in updates.iteritems():
             setattr(model, name, value)
-        model.save()
         self.db.session.commit()
         return self.serialize_model(model)
 
@@ -63,7 +63,7 @@ class AlchemyManager(BaseManager):
 
     @property
     def queryset(self):
-        return self.model.query.all()
+        return self.model.query
 
     def _get_model(self, lookup_keys):
         """

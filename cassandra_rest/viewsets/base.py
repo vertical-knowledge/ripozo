@@ -108,6 +108,7 @@ class APIBase(View):
             name = self.model_name
         return '{0}s'.format(name)
 
+
 def register_viewset(app, viewset):
     """
     Adds the routes to the application and or blueprint
