@@ -1,5 +1,8 @@
 __author__ = 'Tim Martin'
 from cassandra_rest.managers.base import BaseManager, NotFoundException
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class AlchemyManager(BaseManager):
@@ -10,6 +13,7 @@ class AlchemyManager(BaseManager):
         return self.model.metadata.tables[self.model.__tablename__].columns._data[name].type.python_type
 
     def create(self, values, *args, **kwargs):
+        logger.info('Creating model')
         model = self.model()
         for name, value in values.iteritems():
             setattr(model, name, value)

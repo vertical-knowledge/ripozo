@@ -13,7 +13,7 @@ def generate_random_name():
     return ''.join(random.choice(string.letters) for _ in range(15))
 
 
-class TestManagerBase(unittest.TestCase):
+class TestManagerBase(object):
     """
     manager, does_not_exist_exception, and all_person_models proeprties need to be implemented
     get_person_model_by_id method needs to be implemented

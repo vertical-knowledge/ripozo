@@ -5,6 +5,7 @@ from flask.views import View
 from werkzeug.routing import Map, Rule
 from cassandra_rest.utilities import convert_to_underscore
 import inspect
+import logging
 
 
 class APIBase(View):
@@ -74,13 +75,33 @@ class APIBase(View):
 
         endpoint, values = adapter.match()
         f = self.routed_methods_dict[endpoint]
-        return f(*args, **kwargs)
+
+        self.run_processors(self.preprocessors, extra_args=args, **kwargs)
+        response = f(*args, **kwargs)
+        self.run_processors(self.postprocessors, response=response, extra_args=args, **kwargs)
+
+        return response
 
     def setup_rest_routes(self):
         for name, method in inspect.getmembers(self, inspect.ismethod):
             if getattr(method, 'rest_route', False) is True:
                 for route, options, pluralized in getattr(method, 'routes'):
                     self.add_routed_method(method, route, pluralized=pluralized, **options)
+
+    def run_processors(self, processors, response=None, extra_args=None, **kwargs):
+        """
+        Runs the processors. processors should abort or throw an exception if there is an issue
+        """
+        logger = logging.getLogger(__name__)
+        if extra_args is None:
+            extra_args = []
+        if processors is not None:
+            for function in processors:
+                logger.debug('Running processor: {0}'.format(str(function)))
+                if response:
+                    function(response, self, *extra_args, **kwargs)
+                else:
+                    function(self, *extra_args, **kwargs)
 
     @classmethod
     def get_custom_route_endpoint(cls, f):

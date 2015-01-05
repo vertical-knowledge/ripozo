@@ -4,6 +4,7 @@ from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from cassandra_rest.managers.base import NotFoundException
 from tests.unit.managers.test_manager_base import TestManagerBase
+import unittest
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
@@ -25,7 +26,7 @@ class PersonManager(AlchemyManager):
     fields = ('id', 'first_name', 'last_name')
 
 
-class TestAlchemyManager(TestManagerBase):
+class TestAlchemyManager(TestManagerBase, unittest.TestCase):
     @property
     def manager(self):
         return PersonManager()

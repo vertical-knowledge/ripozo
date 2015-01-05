@@ -1,13 +1,18 @@
 __author__ = 'Tim Martin'
+from cassandra_rest.managers.cqlmanager import CQLManager
 from cqlengine.exceptions import LWTException
 from cqlengine.query import DoesNotExist
 from tests.base import DummyModelsBase
-from tests.integration.helpers.managers import PersonManager
 from tests.test_models import Person
 from tests.unit.managers.test_manager_base import TestManagerBase, generate_random_name
 
 
-class TestCQLManagerBase(DummyModelsBase, TestManagerBase):
+class PersonManager(CQLManager):
+    model = Person
+    fields = ('id', 'first_name', 'last_name')
+
+
+class TestCQLManagerBase(TestManagerBase, DummyModelsBase):
     @property
     def manager(self):
         return PersonManager()

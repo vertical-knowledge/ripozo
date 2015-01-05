@@ -1,6 +1,10 @@
 __author__ = 'Tim Martin'
 from tests.integration.helpers.managers import PersonManager, DummyManager, PaginatedPersonManager, MultipleKeysManager
-from cassandra_rest.viewsets.common import CRUD
+from cassandra_rest.viewsets.restmixins import RetrieveList, RetrieveSingle, Delete, Update, Create
+
+
+class CRUD(RetrieveList, RetrieveSingle, Delete, Update, Create):
+    pass
 
 
 class PersonViewset(CRUD):

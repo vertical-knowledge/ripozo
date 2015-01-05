@@ -39,10 +39,6 @@ class apimethod(object):
 
         @wraps(f)
         def wrapped(instance, *args, **kwargs):
-            if instance.preprocessors is not None:
-                for function in instance.preprocessors:
-                    logger.debug('Running preprocessor: {0}'.format(str(function)))
-                    function(instance, *args, **kwargs)
             try:
                 response = f(instance, *args, **kwargs)
             except NotFoundException, e:
