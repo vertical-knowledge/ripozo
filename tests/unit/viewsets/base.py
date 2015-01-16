@@ -61,4 +61,5 @@ class PersonInMemoryManager(InMemoryManager):
 
 
 class TesAPIBase(unittest.TestCase):
-    def test_
+    def test_something(self):
+        pass
