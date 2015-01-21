@@ -1,14 +1,13 @@
 __author__ = 'Tim Martin'
-from cassandra_rest.utilities import classproperty
-from flask import request
-from flask.views import View
-from werkzeug.routing import Map, Rule
-from cassandra_rest.utilities import convert_to_underscore
+from rest.utilities import classproperty
+from rest.utilities import convert_to_underscore
+from rest.viewsets.base2 import ResourceMetaClass
 import inspect
 import logging
 
 
-class APIBase(View):
+class APIBase(object):
+    __metaclass__ = ResourceMetaClass
     manager = None
     preprocessors = None
     postprocessors = None
@@ -32,29 +31,58 @@ class APIBase(View):
 
     @classproperty
     def model(cls):
+        """
+        Returns the model class that is being used for this APIBase.
+        It is expected that the type of the model is appropriate for
+        the manager property on the class.  i.e. if you are using a
+        SQLAlchemy model, you should be using a sqlalchemy manager
+
+        :return: The model class being used
+        :rtype: type
+        """
         return cls.manager.model
 
     @property
     def model_name(self):
+        """
+        The name of the model converted to an underscored version.
+        E.G. ModelName would convert to model_name
+
+        :return: The underscored name
+        :rtype: unicode
+        """
         return convert_to_underscore(self._get_manager().model_name)
 
     def _get_manager(self):
+        """
+        :return: An instance of the manager type
+        """
         return self.manager()
 
     @property
     def url_map(self):
-        if self._url_map is None:
-            self._url_map = Map()
-        return self._url_map
+        return None
+        # if self._url_map is None:
+        #     self._url_map = Map()
+        # return self._url_map
 
     @property
     def routed_methods(self):
+        """
+        :return: A list of the routed methods in the tuple form (method, route, options, endpoint)
+        :rtype: list
+        """
         if self._routed_methods_list is None:
             self._routed_methods_list = []
         return self._routed_methods_list
 
     @property
     def routed_methods_dict(self):
+        """
+        :return: A dictionary of the endpoints and methods with the endpoints
+            being the keys and the methods being the values
+        :rtype: dict
+        """
         if self._routed_methods_dict is None:
             self._routed_methods_dict = {}
         return self._routed_methods_dict
@@ -65,22 +93,23 @@ class APIBase(View):
         self.routed_methods_dict[endpoint] = f
         base_url = self.get_base_url(pluralized=pluralized)
         route = u'{0}{1}'.format(base_url, route)
-        self.url_map.add(Rule(route, endpoint=endpoint, **options))
+        # self.url_map.add(Rule(route, endpoint=endpoint, **options))
         t = (f, route, options, endpoint)
         self.routed_methods.append(t)
 
     def dispatch_request(self, *args, **kwargs):
-        environ = request.environ
-        adapter = self.url_map.bind_to_environ(environ)
-
-        endpoint, values = adapter.match()
-        f = self.routed_methods_dict[endpoint]
-
-        self.run_processors(self.preprocessors, extra_args=args, **kwargs)
-        response = f(*args, **kwargs)
-        self.run_processors(self.postprocessors, response=response, extra_args=args, **kwargs)
-
-        return response
+        # environ = request.environ
+        # adapter = self.url_map.bind_to_environ(environ)
+        #
+        # endpoint, values = adapter.match()
+        # f = self.routed_methods_dict[endpoint]
+        #
+        # self.run_processors(self.preprocessors, extra_args=args, **kwargs)
+        # response = f(*args, **kwargs)
+        # self.run_processors(self.postprocessors, response=response, extra_args=args, **kwargs)
+        #
+        # return response
+        pass
 
     def setup_rest_routes(self):
         for name, method in inspect.getmembers(self, inspect.ismethod):

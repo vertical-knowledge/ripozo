@@ -1,6 +1,6 @@
 __author__ = 'Tim Martin'
 import unittest
-from cassandra_rest.viewsets.base import APIBase
+from rest.viewsets.base import APIBase
 from werkzeug.routing import Map
 
 

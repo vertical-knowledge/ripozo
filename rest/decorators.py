@@ -1,5 +1,5 @@
 __author__ = 'Tim Martin'
-from cassandra_rest.managers.base import NotFoundException
+from rest.managers.base import NotFoundException
 from functools import wraps
 from flask import jsonify, url_for
 import logging

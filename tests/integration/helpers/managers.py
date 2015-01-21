@@ -1,5 +1,5 @@
 __author__ = 'Tim Martin'
-from cassandra_rest.managers.cqlmanager import CQLManager
+from rest.managers.cqlmanager import CQLManager
 from tests.test_models import Person, Dummy, MultipleKeys
 
 

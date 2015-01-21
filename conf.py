@@ -16,7 +16,7 @@ import sys
 import os
 
 sys.path.append(os.path.dirname(__file__))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'cassandra_rest'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'rest'))
 sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
 
 # If extensions (or modules to document with autodoc) are in another directory,

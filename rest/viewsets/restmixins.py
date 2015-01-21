@@ -2,8 +2,8 @@ __author__ = 'Tim Martin'
 import logging
 from flask import request, jsonify, Response
 from webargs.flaskparser import FlaskParser
-from cassandra_rest.decorators import apimethod
-from cassandra_rest.viewsets.base import APIBase
+from rest.decorators import apimethod
+from rest.viewsets.base import APIBase
 
 
 parser = FlaskParser()

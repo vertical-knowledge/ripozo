@@ -1,5 +1,5 @@
 __author__ = 'Tim Martin'
-from cassandra_rest.managers.base import BaseManager, NotFoundException
+from rest.managers.base import BaseManager, NotFoundException
 import logging
 
 logger = logging.getLogger(__name__)

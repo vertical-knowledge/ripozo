@@ -1,6 +1,6 @@
 __author__ = 'Tim Martin'
 from abc import ABCMeta, abstractmethod, abstractproperty
-from cassandra_rest.utilities import make_json_serializable, convert_to_datetime, convert_to_boolean
+from rest.utilities import make_json_serializable, convert_to_datetime, convert_to_boolean
 from decimal import Decimal
 from webargs import Arg
 import logging

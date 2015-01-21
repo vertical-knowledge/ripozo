@@ -1,8 +1,8 @@
 __author__ = 'Tim Martin'
-from cassandra_rest.managers.alcehmymanager import AlchemyManager
+from rest.managers.alcehmymanager import AlchemyManager
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
-from cassandra_rest.managers.base import NotFoundException
+from rest.managers.base import NotFoundException
 from tests.unit.managers.test_manager_base import TestManagerBase
 import unittest
 

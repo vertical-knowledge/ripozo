@@ -1,5 +1,5 @@
 __author__ = 'Tim Martin'
-from cassandra_rest.managers.cqlmanager import CQLManager
+from rest.managers.cqlmanager import CQLManager
 from cqlengine.exceptions import LWTException
 from cqlengine.query import DoesNotExist
 from tests.base import DummyModelsBase

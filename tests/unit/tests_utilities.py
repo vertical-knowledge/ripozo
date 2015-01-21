@@ -1,6 +1,6 @@
 __author__ = 'Tim Martin'
 import unittest
-from cassandra_rest.viewsets import _convert_to_underscore
+from rest.viewsets import _convert_to_underscore
 
 
 class UtilitiesTestCase(unittest.TestCase):

@@ -10,12 +10,12 @@ __version__ = '.'.join(map(str, version))
 setup(
     name='flask-cassandra-rest',
     version=__version__,
-    packages=['cassandra_rest', 'cassandra_rest.managers', 'cassandra_rest.viewsets'],
+    packages=['rest', 'rest.managers', 'rest.viewsets'],
     include_package_data=True,
     description='An tool for easily making cassandra RESTful interfaces',
     author='Tim Martin',
     author_email='tim.martin@vertical-knowledge.com',
-    install_requires=['Flask', 'cqlengine', 'webargs<=0.5.1', 'Flask-SQLAlchemy'],
+    install_requires=['Flask', 'cqlengine', 'webargs', 'Flask-SQLAlchemy'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Framework :: Flask',
