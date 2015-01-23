@@ -22,7 +22,7 @@ class apimethod(object):
     """
     Decorator for declaring routes on a rest resource
     """
-    def __init__(self, route='', pluralized=False, **options):
+    def __init__(self, route='', **options):
         """
         Hold on to the arguments for the decorator to append to the class map
         """
@@ -30,13 +30,13 @@ class apimethod(object):
         logger.info('Initializing apimethod route: {0} with options {1}'.format(route, options))
         self.route = route
         self.options = options
-        self.pluralized = pluralized
 
     def __call__(self, f):
         # TODO: add documentation here
 
         logger = logging.getLogger(__name__)
 
+        @classmethod
         @wraps(f)
         def wrapped(instance, *args, **kwargs):
             try:

@@ -12,9 +12,26 @@ __author__ = 'Tim Martin'
 
 @six.add_metaclass(ResourceMetaClass)
 class ResourceBase(object):
+    manager = None
     _endpoint_dictionary = None
     resource_name = None
-    pluralization = None
+    relationships = None
+
+    def __init__(self, properties=None, status_code=200, errors=None, meta=None):
+        """
+        Initializes a response
+
+        :param dict properties:
+        """
+        self.properties = properties or {}
+        self.status_code = status_code
+        self.errors = errors or []
+        self.meta = meta or {}
+        if len(errors) == 0:
+            self.has_error = False
+        else:
+            self.has_error = True
+
 
     @classproperty
     def endpoint_dictionary(cls):
@@ -29,20 +46,6 @@ class ResourceBase(object):
         if cls._endpoint_dictionary is None:
             cls._endpoint_dictionary = {}
         return cls._endpoint_dictionary
-
-    @classproperty
-    def _pluralization(cls):
-        """
-        The pluralization for this Resource.
-        Checks if one has been explicitly declared and returns that if so.
-        Otherwise, it simply appends and "s" to the resource_name/model_name
-
-        :return: The pluralized name for the resource on this class
-        :rtype: unicode
-        """
-        if cls.pluralization:
-            return cls.pluralization
-        return '{0}s'.format(cls._resource_name)
 
     @classproperty
     def _resource_name(cls):
@@ -72,14 +75,14 @@ class ResourceBase(object):
         :type function: types.FunctionType
         """
         all_routes = []
-        for route, endpoint, options, pluralized in function.routes:
+        for route, endpoint, options in function.routes:
             route = route.lstrip('/')
-            route = parse.urljoin(cls.get_base_url(pluralized=pluralized), route)
+            route = parse.urljoin(cls.base_url, route)
             all_routes.append(dict(route=route, **options))
         cls.endpoint_dictionary[function.func_name] = all_routes
 
-    @classmethod
-    def get_base_url(cls, pluralized=False):
+    @classproperty
+    def base_url(cls):
         """
         Gets the base_url for the resource
         This is prepended to all routes indicated
@@ -87,16 +90,13 @@ class ResourceBase(object):
         indicates whether more than one resource of the
         type for this method is being acted upon.
 
-        :param bool pluralized: Indicates whether more than one resource is being acted upon
         :return: The base_url for the resource(s)
         :rtype: unicode
         """
-        if pluralized:
-            secondary = cls._pluralization
-        elif cls.resource_name:
-            secondary = cls.resource_name
-        else:
-            secondary = cls.model_name
-        if cls.pks and len(cls.pks) != 0 and not pluralized:
-            return parse.urljoin(cls.namespace, secondary, *map(lambda pk: '<{0}>'.format(pk), cls.pks))
-        return parse.urljoin(cls.namespace, secondary)
+        pks = cls.pks or []
+        return parse.urljoin(cls.namespace, cls._resource_name,
+                             *map(lambda pk: '<{0}>'.format(pk), pks))
+
+    @classproperty
+    def _manager(cls):
+        return cls.manager()
