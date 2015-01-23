@@ -12,6 +12,7 @@ __author__ = 'Tim Martin'
 
 @six.add_metaclass(ResourceMetaClass)
 class ResourceBase(object):
+    # TODO class documentation
     manager = None
     _endpoint_dictionary = None
     resource_name = None
@@ -22,6 +23,9 @@ class ResourceBase(object):
         Initializes a response
 
         :param dict properties:
+        :param int status_code:
+        :param list errors:
+        :param dict meta:
         """
         self.properties = properties or {}
         self.status_code = status_code
