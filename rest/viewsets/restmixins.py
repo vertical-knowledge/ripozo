@@ -1,83 +1,57 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 __author__ = 'Tim Martin'
 import logging
-from flask import request, jsonify, Response
-from webargs.flaskparser import FlaskParser
 from rest.decorators import apimethod
 from rest.viewsets.base import APIBase
 
+logger = logging.getLogger(__name__)
 
-parser = FlaskParser()
+# TODO documentation
 
 
 class Create(APIBase):
-    @apimethod(pluralized=True, methods=['POST'])
-    def create(self):
-        manager = self._get_manager()
-        kwargs = parser.parse(manager.arg_parser, request, targets=('form', 'json', 'url_params'))
-        obj = manager.create(kwargs)
-        obj_name = self.resource_name if self.resource_name is not None else self.model_name
-        response = jsonify({obj_name: obj})
-        response.status_code = 201
-        return response
+    @apimethod(methods=['POST'])
+    def create(cls, values, *args, **kwargs):
+        logger.info('Creating a model for resource {0}'.format(cls._resource_name))
+        obj = cls._manager.create(values, *args, **kwargs)
+        return cls(properties=obj, status_code=201)
 
 
 class RetrieveList(APIBase):
-    @apimethod(pluralized=True, methods=['GET'])
-    def retrieve_list(self):
-        manager = self._get_manager()
-        filters = parser.parse(manager.arg_parser, request, targets=('url_params', 'querystring'))
-        results, next_query_args = manager.retrieve_list(filters)
-        if next_query_args.get(self.manager.pagination_next) is None:
-            next_page_url = None
-        else:
-            next_page_url = '{0}?{1}'.format(self.get_base_url(pluralized=True),
-                                             next_query_args[self.manager.pagination_next])
-        next_query_args[self.manager.pagination_next] = next_page_url
-        response = jsonify({self._pluralization: results, 'meta': next_query_args})
-        response.status_code = 200
-        return response
+    @apimethod(methods=['GET'])
+    def retrieve_list(cls, filters, *args, **kwargs):
+        logger.info('Retrieving a list of models for resource {0} '
+                    'with filters {1}'.format(cls._resource_name, filters))
+        results, next_query_args = cls._manager.retrieve_list(filters, *args, **kwargs)
+        return cls(properties=results, meta=next_query_args, status_code=200)
 
 
 class RetrieveSingle(APIBase):
-    @apimethod(pluralized=False, methods=['GET'])
-    def retrieve(self, **primary_keys):
-        manager = self._get_manager()
-        obj = manager.retrieve(primary_keys)
-        obj_name = self.resource_name if self.resource_name is not None else self.model_name
-        response = jsonify({obj_name: obj})
-        response.status_code = 200
-        return response
+    @apimethod(methods=['GET'])
+    def retrieve(cls, primary_keys, *args, **kwargs):
+        logger.info('Retrieving a model for resource {0}'
+                    'with primary keys {0}'.format(cls._resource_name, primary_keys))
+        obj = cls._manager.retrieve(primary_keys, *args, **kwargs)
+        return cls(properties=obj, status_code=200)
 
 
 class Update(APIBase):
-    @apimethod(pluralized=False, methods=['PUT', 'PATCH'])
-    def update(self, **primary_keys):
-        manager = self._get_manager()
-        kwargs = parser.parse(manager.arg_parser, request, targets=('form', 'json', 'url_params'))
-        obj = manager.update(primary_keys, kwargs)
-        obj_name = self.resource_name if self.resource_name is not None else self.model_name
-        response = jsonify({obj_name: obj})
-        response.status_code = 200
-        return response
+    @apimethod(methods=['PUT', 'PATCH'])
+    def update(cls, primary_keys, updates, *args, **kwargs):
+        logger.info('Updating a model for resource {0}'
+                    'with primary keys'.format(cls._resource_name, primary_keys))
+        obj = cls._manager.update(primary_keys, updates, *args, **kwargs)
+        return cls(properties=obj, status_code=200)
 
 
 class Delete(APIBase):
-    @apimethod(pluralized=False, methods=['DELETE'])
-    def remove(self, **primary_keys):
-        manager = self._get_manager()
-        manager.delete(primary_keys)
-        response = Response()
-        response.status_code = 204
-        return response
-
-
-@parser.target_handler('url_params')
-def parse_url_kwargs(request, name, arg):
-    """
-    This allows webargs to find the keyword args contained in the url
-    (e.g. It would grab the kwarg model_id from the url route /somemodel/<model_id>)
-    """
-    kwargs = request.view_args.get(name)
-    logger = logging.getLogger(__name__)
-    logger.debug('Parsed kwargs from url')
-    return kwargs
+    @apimethod(methods=['DELETE'])
+    def remove(cls, primary_keys, *args, **kwargs):
+        logger.info('Deleting a model for resource {0}'
+                    'with primary keys'.format(cls._resource_name, primary_keys))
+        cls._manager.delete(primary_keys, *args, **kwargs)
+        return cls(status_code=204)
