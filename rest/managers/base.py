@@ -18,23 +18,24 @@ class BaseManager(object):
     all direct interactions with a database or ORM.  The extended classes are injected into
     viewsets in order to specify how to get the data from the database.
 
-    :param pagination_pk_query_arg: The name of the query parameter that specifies the page or pk
-    for the next set page to return when paginating over a list
-    :type pagination_pk_query_arg: str
-    :param pagination_count_query_arg: The name of the query parameter that specifies the maximum number of results
-    to return in a list retrieval
-    :type pagination_count_query_arg: str
-    :param pagination_next: The meta parameter to return that specifies the next query parameters
-    :type pagination_next: str
-    :param paginate_by: The number of results to return by default.  This gets overridden by pagination_count_query_arg
-    :type paginate_by: int
-    :param order_by: A list of the fields to order the results by.  This may be restricted in certain databases
-    :type order_by: list
-    :param fields: A list of the fields that are able to be manipulated or retrieved by the _manager
-    :type fields: list
-    :param model: The model that is being managed.  This is the individual model that is set by the user.
-    For any type of base class this should be None.  However, it is required for actual implementations
-    :type model: type
+    :param unicode pagination_pk_query_arg: The name of the query parameter
+        that specifies the page or pk
+        for the next set page to return when paginating over a list
+    :param unicode pagination_count_query_arg: The name of the
+        query parameter that specifies the maximum number of results
+        to return in a list retrieval
+    :param unicode pagination_next: The meta parameter to return that
+        specifies the next query parameters
+    :param int paginate_by: The number of results to return by default.
+        This gets overridden by pagination_count_query_arg
+    :param list order_by: A list of the fields to order the results by.
+        This may be restricted in certain databases
+    :param list fields: A list of the fields that are able to be manipulated
+        or retrieved by the _manager
+    :param type model: The model that is being managed.
+        This is the individual model that is set by the user.
+        For any type of base class this should be None.
+        However, it is required for actual implementations
     """
     __metaclass__ = ABCMeta
     pagination_pk_query_arg = 'pagination_pk'

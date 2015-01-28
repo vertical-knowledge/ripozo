@@ -1,65 +1,118 @@
-__author__ = 'Tim Martin'
-from rest.managers.base import BaseManager, NotFoundException
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
+from rest.decorators import apimethod
+from rest.exceptions import BaseRestEndpointAlreadyExists
+from rest.viewsets.base2 import ResourceMetaClass
+from rest.viewsets.resource_base import ResourceBase
+from tests.unit.helpers.inmemory_manager import InMemoryManager
+
+import six
 import unittest
-from uuid import uuid1
 
 
-class InMemoryManager(BaseManager):
-    objects = None
-    _model_name = 'Fake'
-
-    def __init__(self):
-        super(InMemoryManager, self).__init__()
-        self.objects = {}
-
-    def create(self, values, *args, **kwargs):
-        new_id = uuid1()
-        values['id'] = new_id
-        self.queryset[new_id] = values
-        return values
-
-    def retrieve_list(self, filters, *args, **kwargs):
-        return self.queryset.values(), {self.pagination_next: None,
-                                        self.pagination_pk_query_arg: None,
-                                        self.pagination_count_query_arg: None}
-
-    @property
-    def queryset(self):
-        return self.objects
-
-    def retrieve(self, lookup_keys, *args, **kwargs):
-        return self._get_model(lookup_keys)
-
-    @property
-    def model_name(self):
-        return self._model_name
-
-    def update(self, lookup_keys, updates, *args, **kwargs):
-        obj = self._get_model(lookup_keys)
-        for key, value in updates.iteritems():
-            obj.set(key, value)
-        self.queryset[lookup_keys] = obj
-        return obj
-
-    def get_field_type(self, name):
-        pass
-
-    def delete(self, lookup_keys, *args, **kwargs):
-        self.queryset.pop(lookup_keys)
-        return None
-
-    def _get_model(self, model_id):
-        obj = self.queryset.get(model_id, None)
-        if not obj:
-            raise NotFoundException
-        return obj
-
-
-class PersonInMemoryManager(InMemoryManager):
+class MM1(InMemoryManager):
     model = 'Something'
-    _model_name = 'Person'
+    _model_name = 'modelname'
+
+name_space = '/mynamspace/'
 
 
-class TesAPIBase(unittest.TestCase):
-    def test_something(self):
-        pass
+class TestResource(ResourceBase):
+    __abstract__ = True
+    resource_name = 'myresource'
+    manager = MM1
+    namespace = name_space
+
+
+class TestResourceBase(unittest.TestCase):
+    # TODO documentation
+
+    def tearDown(self):
+        ResourceMetaClass.registered_resource_classes.clear()
+
+    def test_abstract_not_implemented(self):
+        """
+        asserts that a class that inherits from
+        resource base with __abstract__ == True
+        is not registered on the ResourceMetaClass
+        """
+        class TestResourceClass(ResourceBase):
+            __abstract__ = True
+        self.assertEquals(len(ResourceMetaClass.registered_resource_classes), 0)
+
+    def test_resource_name(self):
+        """Tests whether the resource_name is properly constructed"""
+        resourcename = 'myresource'
+        class T1(TestResource):
+            resource_name = resourcename
+        self.assertEqual(resourcename, T1._resource_name)
+
+    def test_resource_name2(self):
+        """
+        Tests whether the resource_name is properly retrieved from
+        manager if the resource_name is not specified.
+        """
+        class T2(TestResource):
+            resource_name = None
+            manager = MM1
+        self.assertEqual(T2._resource_name, T2.manager()._model_name)
+
+    def test_model_name(self):
+        """Tests whether the model name is retrieved from manager"""
+        class T1(TestResource):
+            manager = MM1
+        self.assertEqual(T1.model_name, MM1().model_name)
+
+    def test_manager_property(self):
+        """Tests whether the manager instance is properly instantiated"""
+        class T1(TestResource):
+            manager = MM1
+        self.assertIsInstance(T1._manager, MM1)
+
+    def test_base_url(self):
+        """Tests whether the base_url is properly constructed"""
+        class T1(TestResource):
+            pks = ['something', 'another_thing']
+        self.assertIsInstance(T1.base_url, six.text_type)
+        self.assertIn(name_space, T1.base_url)
+        self.assertIn(T1._resource_name, T1.base_url)
+        for pk in T1.pks:
+            self.assertIn(pk, T1.base_url)
+
+    def test_class_registered(self):
+        """Tests whether an implement Resource is registered on the meta class"""
+        class T1(TestResource):
+            pass
+        self.assertIn(T1, ResourceMetaClass.registered_resource_classes.keys())
+
+    def test_register_endpoint(self):
+        """Tests whether the endpoint is registered on the class"""
+        class T1(TestResource):
+            @apimethod(methods=['GET'])
+            def my_api_method1(self):
+                pass
+
+        self.assertIn('my_api_method1', T1._endpoint_dictionary)
+
+    def test_base_url_duplication_exception(self):
+        """Tests whether an excption is raised if the base_url
+        already exists"""
+        class T1(TestResource):
+            pass
+
+        try:
+            class T2(TestResource):
+                pass
+            assert False
+        except BaseRestEndpointAlreadyExists:
+            pass
+
+    def test_init(self):
+        """Just tests whether the __init__ method initializes without exception"""
+        class T1(TestResource):
+            pass
+        # TODO add more once you determine exactly what the __init__ should do
+        x = T1()

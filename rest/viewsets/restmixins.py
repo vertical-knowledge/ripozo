@@ -6,14 +6,16 @@ from __future__ import unicode_literals
 __author__ = 'Tim Martin'
 import logging
 from rest.decorators import apimethod
-from rest.viewsets.base import APIBase
+from rest.viewsets.resource_base import ResourceBase
 
 logger = logging.getLogger(__name__)
 
 # TODO documentation
 
 
-class Create(APIBase):
+class Create(ResourceBase):
+    __abstract__ = True
+
     @apimethod(methods=['POST'])
     def create(cls, values, *args, **kwargs):
         logger.info('Creating a model for resource {0}'.format(cls._resource_name))
@@ -21,7 +23,7 @@ class Create(APIBase):
         return cls(properties=obj, status_code=201)
 
 
-class RetrieveList(APIBase):
+class RetrieveList(ResourceBase):
     @apimethod(methods=['GET'])
     def retrieve_list(cls, filters, *args, **kwargs):
         logger.info('Retrieving a list of models for resource {0} '
@@ -30,7 +32,7 @@ class RetrieveList(APIBase):
         return cls(properties=results, meta=next_query_args, status_code=200)
 
 
-class RetrieveSingle(APIBase):
+class RetrieveSingle(ResourceBase):
     @apimethod(methods=['GET'])
     def retrieve(cls, primary_keys, *args, **kwargs):
         logger.info('Retrieving a model for resource {0}'
@@ -39,7 +41,7 @@ class RetrieveSingle(APIBase):
         return cls(properties=obj, status_code=200)
 
 
-class Update(APIBase):
+class Update(ResourceBase):
     @apimethod(methods=['PUT', 'PATCH'])
     def update(cls, primary_keys, updates, *args, **kwargs):
         logger.info('Updating a model for resource {0}'
@@ -48,7 +50,7 @@ class Update(APIBase):
         return cls(properties=obj, status_code=200)
 
 
-class Delete(APIBase):
+class Delete(ResourceBase):
     @apimethod(methods=['DELETE'])
     def remove(cls, primary_keys, *args, **kwargs):
         logger.info('Deleting a model for resource {0}'
