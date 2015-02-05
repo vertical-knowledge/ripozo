@@ -22,7 +22,6 @@ class ResourceMetaClass(type):
             return klass
 
         mcs._register_endpoints(klass)
-
         mcs._register_class(klass)
         return klass
 

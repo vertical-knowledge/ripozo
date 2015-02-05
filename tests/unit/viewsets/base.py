@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 
 from rest.decorators import apimethod
 from rest.exceptions import BaseRestEndpointAlreadyExists
-from rest.viewsets.base2 import ResourceMetaClass
+from rest.viewsets.constructor import ResourceMetaClass
 from rest.viewsets.resource_base import ResourceBase
 from tests.unit.helpers.inmemory_manager import InMemoryManager
 
@@ -116,3 +116,13 @@ class TestResourceBase(unittest.TestCase):
             pass
         # TODO add more once you determine exactly what the __init__ should do
         x = T1()
+
+    def test_url_property(self):
+        """Tests whether the url for an individual resource is properly created"""
+        class T1(TestResource):
+            namespace = '/api'
+            resource_name = 'my_resource'
+            pks = ['pk']
+
+        x = T1(properties={'pk': 1})
+        self.assertEqual(x.url, '/api/my_resource/1')

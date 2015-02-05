@@ -4,11 +4,12 @@ from __future__ import print_function
 from __future__ import unicode_literals
 import six
 from six.moves.urllib import parse
-from rest.viewsets.base2 import ResourceMetaClass
+from rest.viewsets.constructor import ResourceMetaClass
 from rest.utilities import classproperty
 import re
 
-__author__ = 'Tim Martin'
+
+url_part_finder = re.compile(r'<([^>]+)>')
 
 
 @six.add_metaclass(ResourceMetaClass)
@@ -41,10 +42,33 @@ class ResourceBase(object):
         self.status_code = status_code
         self.errors = errors
         self.meta = meta
-        if len(errors) == 0:
-            self.has_error = False
-        else:
-            self.has_error = True
+        self._url = None
+
+    @property
+    def has_error(self):
+        return len(self.errors) > 0
+
+    @property
+    def url(self):
+        """
+        Lazily constructs the url for this specific resource using the specific
+        pks as specified in the pks tuple.
+
+        :return: The url for this resource
+        :rtype: unicode
+        """
+        if not self._url:
+            self._url = create_url(self.base_url, **self.item_pks)
+        return self._url
+
+    @property
+    def item_pks(self):
+        # TODO docs
+        pks = self.pks or []
+        pk_dict = {}
+        for pk in pks:
+            pk_dict[pk] = self.properties.get(pk, None)
+        return pk_dict
 
 
     @classproperty
@@ -92,7 +116,7 @@ class ResourceBase(object):
         for route, endpoint, options in function.routes:
             route = route.lstrip('/')
             route = parse.urljoin(cls.base_url, route)
-            all_routes.append(dict(route=route, **options))
+            all_routes.append(dict(route=route, endpoint_func=function, **options))
         cls.endpoint_dictionary[function.func_name] = all_routes
 
     @classproperty
@@ -108,11 +132,11 @@ class ResourceBase(object):
         :rtype: unicode
         """
         pks = cls.pks or []
-        #  TODO don't use urljoin.  It only works in specific cases.
         parts = map(lambda pk: '<{0}>'.format(pk), pks)
-        parts.append(re.search(r'(.*)/?$', cls.namespace.strip('/')).group(1))
-        parts.append(cls._resource_name)
-        return '/'.join(parts)
+        parts.insert(0, cls._resource_name)
+        parts.insert(0, re.search(r'(.*)/?$', cls.namespace.strip('/')).group(1))
+        base_url = '/'.join(parts)
+        return '/{0}'.format(base_url)
 
     @classproperty
     def model_name(cls):
@@ -121,3 +145,11 @@ class ResourceBase(object):
     @classproperty
     def _manager(cls):
         return cls.manager()
+
+
+def create_url(base_url, **kwargs):
+    # TODO docstring
+    for key, value in kwargs:
+        to_replace = '<{0}>'.format(key)
+        base_url = re.sub(to_replace, six.text_type(value), base_url)
+    return base_url
