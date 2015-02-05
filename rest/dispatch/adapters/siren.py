@@ -18,6 +18,7 @@ class SirenAdapter(AdapterBase):
     def get_formatted_body(self):
         actions = []
         for endpoint, options in self.resource.endpoint_dictionary.iteritems():
+            options = options[0]
             all_methods = options.get('methods', [])
             if len(all_methods) == 0:
                 meth = 'GET'

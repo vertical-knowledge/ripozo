@@ -15,6 +15,7 @@ class ResourceMetaClass(type):
     :param dict registered_resource_classes: TODO
     """
     registered_resource_classes = {}
+    registered_names_map = {}
 
     def __new__(mcs, name, bases, attrs):
         klass = super(ResourceMetaClass, mcs).__new__(mcs, name, bases, attrs)
@@ -54,3 +55,4 @@ class ResourceMetaClass(type):
         if klass.base_url in mcs.registered_resource_classes.values():
             raise BaseRestEndpointAlreadyExists
         mcs.registered_resource_classes[klass] = klass.base_url
+        mcs.registered_names_map[klass.__name__] = klass

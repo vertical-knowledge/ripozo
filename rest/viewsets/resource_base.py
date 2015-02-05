@@ -63,7 +63,14 @@ class ResourceBase(object):
 
     @property
     def item_pks(self):
-        # TODO docs
+        """
+        Gets a dictionary of an individual resource's
+        primary keys.  The key of the dictionary is the
+        name of the primary key and the value is the
+        actual value of the primary key specified
+
+        :rtype: dict
+        """
         pks = self.pks or []
         pk_dict = {}
         for pk in pks:
@@ -124,9 +131,7 @@ class ResourceBase(object):
         """
         Gets the base_url for the resource
         This is prepended to all routes indicated
-        by an api_method decorator.  Pluralized
-        indicates whether more than one resource of the
-        type for this method is being acted upon.
+        by an apimethod decorator.
 
         :return: The base_url for the resource(s)
         :rtype: unicode
@@ -149,7 +154,7 @@ class ResourceBase(object):
 
 def create_url(base_url, **kwargs):
     # TODO docstring
-    for key, value in kwargs:
+    for key, value in kwargs.iteritems():
         to_replace = '<{0}>'.format(key)
         base_url = re.sub(to_replace, six.text_type(value), base_url)
     return base_url

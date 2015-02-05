@@ -39,17 +39,7 @@ class apimethod(object):
 
         @wraps(f)
         def wrapped(instance, *args, **kwargs):
-            try:
-                response = f(instance, *args, **kwargs)
-            except NotFoundException, e:
-                response = jsonify(dict(error=True, message=e.message))
-                response.status_code = 404
-
-            if instance.postprocessors is not None:
-                for function in instance.postprocessors:
-                    logger.debug('Running postprocessor: {0}'.format(str(function)))
-                    function(response, instance, *args, **kwargs)
-            return response
+            return f(instance, *args, **kwargs)
 
         wrapped.rest_route = True
         if getattr(f, 'routes', None) is None:
