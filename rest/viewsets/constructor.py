@@ -46,7 +46,7 @@ class ResourceMetaClass(type):
         :param klass: The class to register endpoints on.
         """
         print(inspect.getmembers(klass))
-        for name, method in inspect.getmembers(klass, inspect.isfunction):
+        for name, method in inspect.getmembers(klass, inspect.ismethod):
             print('name')
             if getattr(method, 'rest_route', False):
                 logger.debug('Registering method {0} as a valid '
