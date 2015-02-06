@@ -5,8 +5,11 @@ from __future__ import unicode_literals
 
 from rest.exceptions import BaseRestEndpointAlreadyExists
 
+import logging
 import inspect
 import six
+
+logger = logging.getLogger(__name__)
 
 
 # TODO the metaclass requires knowledge of the class... Maybe this shouldn't be so?
@@ -19,12 +22,16 @@ class ResourceMetaClass(type):
     registered_names_map = {}
 
     def __new__(mcs, name, bases, attrs):
+        logger.debug('ResourceMetaClass "{0}" instance being created'.format(name))
         klass = super(ResourceMetaClass, mcs).__new__(mcs, name, bases, attrs)
         if attrs.get('__abstract__', False):  # Don't register endpoints of abstract classes
+            logger.debug('ResourceMetaClass "{0}" is abstract.  Not being registered'.format(name))
             return klass
 
         mcs._register_endpoints(klass)
         mcs._register_class(klass)
+
+        logger.debug('ResourceMetaClass "{0}" successfully registered'.format(name))
         return klass
 
     @classmethod
@@ -40,6 +47,8 @@ class ResourceMetaClass(type):
         """
         for name, method in inspect.getmembers(klass, inspect.ismethod):
             if getattr(method, 'rest_route', False):
+                logger.debug('Registering method {0} as a valid '
+                             'action on resource {1}'.format(method.__name__, klass.__name__))
                 klass.register_endpoint(method)
 
     @classmethod
