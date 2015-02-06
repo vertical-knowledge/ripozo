@@ -1,6 +1,8 @@
 __author__ = 'Tim Martin'
-from rest.utilities import convert_to_underscore
+from rest.utilities import convert_to_underscore, serialize_fields
 from tests.python2base import TestBase
+from tests.unit.managers.test_manager_common import generate_random_name
+import six
 
 
 class UtilitiesTestCase(TestBase):
@@ -20,3 +22,14 @@ class UtilitiesTestCase(TestBase):
             old_name = camel_case_names[i]
             new_name = convert_to_underscore(old_name)
             self.assertEqual( underscore_names[i], new_name)
+
+    def test_serialize_fields(self):
+        """
+        Tests whether the fields are properly serialized
+        """
+        t = dict()
+        for i in xrange(10):
+            t[generate_random_name()] = generate_random_name()
+        t2 = t.copy()
+        t3 = serialize_fields(six.iterkeys(t2), six.itervalues(t2))
+        self.assertDictEqual(t2, t3)

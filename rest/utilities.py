@@ -1,7 +1,6 @@
 __author__ = 'Tim Martin'
-from datetime import datetime, timedelta
+from datetime import datetime
 from decimal import Decimal
-import inspect
 import re
 
 
@@ -48,13 +47,6 @@ def classproperty(func):
     return ClassPropertyDescriptor(func)
 
 
-def get_class_that_defined_method(meth):
-    for cls in inspect.getmro(meth.im_class):
-        if meth.__name__ in cls.__dict__:
-            return cls
-    return None
-
-
 _first_cap_re = re.compile('(.)([A-Z][a-z]+)')
 _all_cap_re = re.compile('([a-z0-9])([A-Z])')
 
@@ -91,41 +83,22 @@ def make_json_serializable(value):
         return list(value)
     else:
         return value
-
-
-def convert_to_datetime(d):
-    """
-    For webargs so that it can correctly parse incoming datetime objects
-
-    :param d: A datetime string formatted as %Y-%m-%d %H:%M:%S.%f
-    :type d: str
-    :return: The datetime object
-    :rtype: datetime
-    """
-    if type(d) == datetime:
-        return d
-    d = datetime.strptime(d, '%Y-%m-%d %H:%M:%S.%f')
-    # remove the resolution that cassandra can't handle
-    td = timedelta(microseconds=d.microsecond % 1000)
-    return d - td
-
-
-def convert_to_boolean(val):
-    """
-    Converts a string of either "True" or "False" case-insensitive into a boolean
-
-    :param val: The true or false string
-    :type val: str
-    :return: The mapped boolean
-    :rtype: bool
-    """
-    if type(val) == bool:
-        return val
-    elif val is None:
-        return val
-    elif val.lower() == 'false':
-        return False
-    elif val.lower() == 'true':
-        return True
-    else:
         raise ValueError('A boolean value accepted as a string must be either "true" or "false"')
+
+
+def serialize_fields(field_names, field_values):
+    """
+    Takes two lists and iterates through them to combine them into a dictionary
+
+    :param field_names: The names of the fields that were retrieved.  Order is important.
+      These will be the dictionary keys
+    :type field_names: list
+    :param field_values: The values that were retrieved. These will be the dictionary values
+    :type field_values: list
+    :return: A dictionary of the combined lists
+    :rtype: dict
+    """
+    dictified = {}
+    for i, name in enumerate(field_names):
+        dictified[name] = make_json_serializable(field_values.next())
+    return dictified

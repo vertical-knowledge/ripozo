@@ -25,8 +25,10 @@ class InMemoryManager(BaseManager):
         return values
 
     def retrieve_list(self, filters, *args, **kwargs):
-        pagination_page = filters.get(self.pagination_pk_query_arg, None) or 0
-        pagination_count = filters.get(self.pagination_count_query_arg, None) or self.paginate_by
+        pagination_page, filters = self.get_pagination_pks(filters)
+        if not pagination_page:
+            pagination_page = 0
+        pagination_count, filters = self.get_pagination_count(filters)
         values = list(six.itervalues(self.queryset))
         first = pagination_page * pagination_count
         last = first + pagination_count
