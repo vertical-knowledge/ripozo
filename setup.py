@@ -1,24 +1,23 @@
 __author__ = 'Tim Martin'
 from setuptools import setup
-import os
+from os import path
 
-os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
+here = path.abspath(path.dirname(__file__))
 
-version = (0, 2, 1, 'b28')
-__version__ = '.'.join(map(str, version))
+with open(path.join(here, 'VERSION')) as f:
+    version = f.read().strip()
 
 setup(
-    name='flask-cassandra-rest',
-    version=__version__,
+    name='ripozo',
+    version=version,
     packages=['rest', 'rest.managers', 'rest.viewsets'],
     include_package_data=True,
     description='An tool for easily making cassandra RESTful interfaces',
     author='Tim Martin',
     author_email='tim.martin@vertical-knowledge.com',
-    install_requires=['Flask', 'cqlengine', 'webargs', 'Flask-SQLAlchemy'],
+    install_requires=['six'],
     classifiers=[
         'Development Status :: 3 - Alpha',
-        'Framework :: Flask',
         'License :: Other/Proprietary License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
