@@ -1,1 +1,3 @@
-__author__ = 'Tim Martin'
+import pkg_resources
+
+__version__ = pkg_resources.get_distribution('ripozo').version

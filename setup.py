@@ -2,10 +2,7 @@ __author__ = 'Tim Martin'
 from setuptools import setup, find_packages
 from os import path
 
-here = path.abspath(path.dirname(__file__))
-
-with open(path.join(here, 'VERSION')) as f:
-    version = f.read().strip()
+version = '0.1.0'
 
 setup(
     name='ripozo',
