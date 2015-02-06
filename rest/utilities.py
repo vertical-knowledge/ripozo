@@ -1,7 +1,13 @@
-__author__ = 'Tim Martin'
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 from datetime import datetime
 from decimal import Decimal
+
 import re
+import six
 
 
 class ClassPropertyDescriptor(object):
@@ -101,5 +107,5 @@ def serialize_fields(field_names, field_values):
     dictified = {}
     field_values = iter(field_values)
     for i, name in enumerate(field_names):
-        dictified[name] = make_json_serializable(field_values.next())
+        dictified[name] = make_json_serializable(six.next(field_values))
     return dictified
