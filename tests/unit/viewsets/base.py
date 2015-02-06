@@ -27,8 +27,8 @@ name_space = '/mynamspace/'
 
 class TestResource(ResourceBase):
     __abstract__ = True
-    resource_name = 'myresource'
-    manager = MM1
+    __resource_name__ = 'myresource'
+    __manager__ = MM1
     namespace = name_space
 
 
@@ -53,8 +53,8 @@ class TestResourceBase(TestBase):
         resourcename = 'myresource'
 
         class T1(TestResource):
-            resource_name = resourcename
-        self.assertEqual(resourcename, T1._resource_name)
+            __resource_name__ = resourcename
+        self.assertEqual(resourcename, T1.resource_name)
 
     def test_resource_name2(self):
         """
@@ -62,21 +62,21 @@ class TestResourceBase(TestBase):
         manager if the resource_name is not specified.
         """
         class T2(TestResource):
-            resource_name = None
-            manager = MM1
-        self.assertEqual(T2._resource_name, T2.manager()._model_name)
+            __resource_name__ = None
+            __manager__ = MM1
+        self.assertEqual(T2.resource_name, T2.__manager__()._model_name)
 
     def test_model_name(self):
         """Tests whether the model name is retrieved from manager"""
         class T1(TestResource):
-            manager = MM1
+            __manager__ = MM1
         self.assertEqual(T1.model_name, MM1().model_name)
 
     def test_manager_property(self):
         """Tests whether the manager instance is properly instantiated"""
         class T1(TestResource):
-            manager = MM1
-        self.assertIsInstance(T1._manager, MM1)
+            __manager__ = MM1
+        self.assertIsInstance(T1.manager, MM1)
 
     def test_base_url(self):
         """Tests whether the base_url is properly constructed"""
@@ -84,7 +84,7 @@ class TestResourceBase(TestBase):
             pks = ['something', 'another_thing']
         self.assertIsInstance(T1.base_url, six.text_type)
         self.assertIn(name_space, T1.base_url)
-        self.assertIn(T1._resource_name, T1.base_url)
+        self.assertIn(T1.resource_name, T1.base_url)
         for pk in T1.pks:
             self.assertIn(pk, T1.base_url)
 
@@ -129,7 +129,7 @@ class TestResourceBase(TestBase):
         """Tests whether the url for an individual resource is properly created"""
         class T1(TestResource):
             namespace = '/api'
-            resource_name = 'my_resource'
+            __resource_name__ = 'my_resource'
             pks = ['pk']
 
         x = T1(properties={'pk': 1})

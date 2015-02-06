@@ -30,7 +30,7 @@ class BaseManager(object):
     :param list order_by: A list of the fields to order the results by.
         This may be restricted in certain databases
     :param list fields: A list of the fields that are able to be manipulated
-        or retrieved by the _manager
+        or retrieved by the manager
     :param type model: The model that is being managed.
         This is the individual model that is set by the user.
         For any type of base class this should be None.

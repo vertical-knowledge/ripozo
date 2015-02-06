@@ -16,12 +16,16 @@ url_part_finder = re.compile(r'<([^>]+)>')
 class ResourceBase(object):
     # TODO class documentation
     __abstract__ = True
-    manager = None
     _endpoint_dictionary = None
-    resource_name = None
     relationships = None
     pks = None
     namespace = None
+
+    class ResourceSettings(object):
+        manager = None
+        resource_name = None
+        preprocessors = None
+        postprocessors = None
 
     def __init__(self, properties=None, status_code=200, errors=None, meta=None):
         """
@@ -93,7 +97,7 @@ class ResourceBase(object):
         return cls._endpoint_dictionary
 
     @classproperty
-    def _resource_name(cls):
+    def resource_name(cls):
         """
         The resource name for this Resource class
         returns resource_name if not None
@@ -102,8 +106,8 @@ class ResourceBase(object):
         :return: The name of the resource for this class
         :rtype: unicode
         """
-        if cls.resource_name:
-            return cls.resource_name
+        if cls.ResourceSettings.resource_name:
+            return cls.ResourceSettings.resource_name
         return cls.model_name
 
     @classmethod
@@ -138,18 +142,26 @@ class ResourceBase(object):
         """
         pks = cls.pks or []
         parts = list(map(lambda pk: '<{0}>'.format(pk), pks))
-        parts.insert(0, cls._resource_name)
+        parts.insert(0, cls.resource_name)
         parts.insert(0, re.search(r'(.*)/?$', cls.namespace.strip('/')).group(1))
         base_url = '/'.join(parts)
         return '/{0}'.format(base_url)
 
     @classproperty
     def model_name(cls):
-        return cls.manager().model_name
+        return cls.manager.model_name
 
     @classproperty
-    def _manager(cls):
-        return cls.manager()
+    def manager(cls):
+        return cls.ResourceSettings.manager()
+
+    @classproperty
+    def postprocessors(cls):
+        return cls.ResourceSettings.postprocessors or []
+
+    @classproperty
+    def preprocessors(cls):
+        return cls.ResourceSettings.preprocessors or []
 
 
 def create_url(base_url, **kwargs):

@@ -20,8 +20,8 @@ class AdapterBase(object):
         """
         self.resource = resource
 
-    @abstractmethod
-    def get_formatted_body(self):
+    @abstractproperty
+    def formatted_body(self):
         """
 
         :return:
