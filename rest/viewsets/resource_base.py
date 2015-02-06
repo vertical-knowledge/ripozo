@@ -137,7 +137,7 @@ class ResourceBase(object):
         :rtype: unicode
         """
         pks = cls.pks or []
-        parts = map(lambda pk: '<{0}>'.format(pk), pks)
+        parts = list(map(lambda pk: '<{0}>'.format(pk), pks))
         parts.insert(0, cls._resource_name)
         parts.insert(0, re.search(r'(.*)/?$', cls.namespace.strip('/')).group(1))
         base_url = '/'.join(parts)
