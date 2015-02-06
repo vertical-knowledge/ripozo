@@ -9,8 +9,11 @@ from rest.viewsets.constructor import ResourceMetaClass
 from rest.viewsets.resource_base import ResourceBase
 from tests.unit.helpers.inmemory_manager import InMemoryManager
 
+import logging
 import six
 import unittest
+
+logger = logging.getLogger(__name__)
 
 
 class MM1(InMemoryManager):
@@ -95,7 +98,7 @@ class TestResourceBase(unittest.TestCase):
             def my_api_method1(self):
                 pass
 
-        self.assertIn('my_api_method1', T1._endpoint_dictionary)
+        self.assertIn('my_api_method1', T1.endpoint_dictionary)
 
     def test_base_url_duplication_exception(self):
         """Tests whether an excption is raised if the base_url
