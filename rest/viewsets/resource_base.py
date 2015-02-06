@@ -124,7 +124,7 @@ class ResourceBase(object):
             route = route.lstrip('/')
             route = parse.urljoin(cls.base_url, route)
             all_routes.append(dict(route=route, endpoint_func=function, **options))
-        cls.endpoint_dictionary[function.func_name] = all_routes
+        cls.endpoint_dictionary[function.__name__] = all_routes
 
     @classproperty
     def base_url(cls):
