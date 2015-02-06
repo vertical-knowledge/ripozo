@@ -99,6 +99,7 @@ def serialize_fields(field_names, field_values):
     :rtype: dict
     """
     dictified = {}
+    field_values = iter(field_values)
     for i, name in enumerate(field_names):
         dictified[name] = make_json_serializable(field_values.next())
     return dictified

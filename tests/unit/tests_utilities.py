@@ -33,3 +33,5 @@ class UtilitiesTestCase(TestBase):
         t2 = t.copy()
         t3 = serialize_fields(six.iterkeys(t2), six.itervalues(t2))
         self.assertDictEqual(t2, t3)
+        t4 = serialize_fields(list(six.iterkeys(t2)), list(six.itervalues(t2)))
+        self.assertDictEqual(t2, t4)
