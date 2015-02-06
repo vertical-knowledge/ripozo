@@ -22,7 +22,7 @@ class ResourceMetaClass(type):
     registered_names_map = {}
 
     def __new__(mcs, name, bases, attrs):
-        logger.debug('ResourceMetaClass "{0}" instance being created'.format(name))
+        logger.debug('ResourceMetaClass "{0}" class being created'.format(name))
         klass = super(ResourceMetaClass, mcs).__new__(mcs, name, bases, attrs)
         if attrs.get('__abstract__', False):  # Don't register endpoints of abstract classes
             logger.debug('ResourceMetaClass "{0}" is abstract.  Not being registered'.format(name))
@@ -45,7 +45,9 @@ class ResourceMetaClass(type):
 
         :param klass: The class to register endpoints on.
         """
+        print(inspect.getmembers(klass))
         for name, method in inspect.getmembers(klass, inspect.ismethod):
+            print('name')
             if getattr(method, 'rest_route', False):
                 logger.debug('Registering method {0} as a valid '
                              'action on resource {1}'.format(method.__name__, klass.__name__))
