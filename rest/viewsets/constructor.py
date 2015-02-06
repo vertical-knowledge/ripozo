@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 from rest.exceptions import BaseRestEndpointAlreadyExists
 
 import inspect
+import six
 
 
 # TODO the metaclass requires knowledge of the class... Maybe this shouldn't be so?
@@ -52,7 +53,7 @@ class ResourceMetaClass(type):
         :param klass: The class to register
         :raises: BaseRestEndpointAlreadyExists
         """
-        if klass.base_url in mcs.registered_resource_classes.values():
+        if klass.base_url in six.itervalues(mcs.registered_resource_classes):
             raise BaseRestEndpointAlreadyExists
         mcs.registered_resource_classes[klass] = klass.base_url
         mcs.registered_names_map[klass.__name__] = klass

@@ -154,7 +154,7 @@ class ResourceBase(object):
 
 def create_url(base_url, **kwargs):
     # TODO docstring
-    for key, value in kwargs.iteritems():
+    for key, value in six.iteritems(kwargs):
         to_replace = '<{0}>'.format(key)
         base_url = re.sub(to_replace, six.text_type(value), base_url)
     return base_url

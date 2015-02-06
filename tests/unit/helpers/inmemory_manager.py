@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from rest.managers.base import BaseManager, NotFoundException
 from uuid import uuid1
+import six
 
 __author__ = 'Tim Martin'
 
@@ -22,9 +23,9 @@ class InMemoryManager(BaseManager):
         return values
 
     def retrieve_list(self, filters, *args, **kwargs):
-        return self.queryset.values(), {self.pagination_next: None,
-                                        self.pagination_pk_query_arg: None,
-                                        self.pagination_count_query_arg: None}
+        return six.itervalues(self.queryset), {self.pagination_next: None,
+                              self.pagination_pk_query_arg: None,
+                              self.pagination_count_query_arg: None}
 
     @property
     def queryset(self):
@@ -39,7 +40,7 @@ class InMemoryManager(BaseManager):
 
     def update(self, lookup_keys, updates, *args, **kwargs):
         obj = self._get_model(lookup_keys)
-        for key, value in updates.iteritems():
+        for key, value in six.iteritems(updates):
             obj.set(key, value)
         self.queryset[lookup_keys] = obj
         return obj

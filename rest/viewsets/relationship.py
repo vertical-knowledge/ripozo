@@ -3,6 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 from rest.viewsets.constructor import ResourceMetaClass
+import six
 
 __author__ = 'Tim Martin'
 
@@ -78,7 +79,7 @@ class Relationship(object):
         :rtype: dict
         """
         properties = properties.copy()
-        for key in self.property_map.keys():
+        for key in six.iterkeys(self.property_map):
             properties.pop(key)
         return properties
 
@@ -100,6 +101,6 @@ class Relationship(object):
         :rtype: dict
         """
         properties = {}
-        for parent_prop, prop in self.property_map.iteritems():
+        for parent_prop, prop in six.iteritems(self.property_map):
             properties[prop] = parent_properties[parent_prop]
         return properties

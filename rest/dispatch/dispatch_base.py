@@ -15,7 +15,7 @@ __author__ = 'Tim Martin'
 class DispatcherBase(object):
     # TODO docs
     def setup_all_class_routes(self, klass):
-        for endpoint, routes in klass.endpoint_dictionary.iteritems():
+        for endpoint, routes in six.iteritems(klass.endpoint_dictionary):
             for options in routes:
                 options = options.copy()
                 route = options.pop('route', klass.base_url)

@@ -86,7 +86,7 @@ class TestResourceBase(unittest.TestCase):
         """Tests whether an implement Resource is registered on the meta class"""
         class T1(TestResource):
             pass
-        self.assertIn(T1, ResourceMetaClass.registered_resource_classes.keys())
+        self.assertIn(T1, six.iterkeys(ResourceMetaClass.registered_resource_classes))
 
     def test_register_endpoint(self):
         """Tests whether the endpoint is registered on the class"""

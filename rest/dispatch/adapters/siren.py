@@ -17,7 +17,7 @@ class SirenAdapter(AdapterBase):
     # TODO docs
     def get_formatted_body(self):
         actions = []
-        for endpoint, options in self.resource.endpoint_dictionary.iteritems():
+        for endpoint, options in six.iteritems(self.resource.endpoint_dictionary):
             options = options[0]
             all_methods = options.get('methods', [])
             if len(all_methods) == 0:

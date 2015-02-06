@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from rest.dispatch.adapters.contructor import AdapterMeta
 from rest.dispatch.adapters.base import AdapterBase
 import unittest
+import six
 __author__ = 'Tim Martin'
 
 
@@ -25,12 +26,12 @@ class TestAdapterBase(unittest.TestCase):
     def test_registered_adapter(self):
         class T(TestAdapter):
             formats = ['something']
-        self.assertIn('something', AdapterMeta.formats.keys())
+        self.assertIn('something', six.iterkeys(AdapterMeta.formats))
         self.assertEqual(AdapterBase.formats['something'], T)
 
     def test_registered_adapter_multiple_formats(self):
         class T2(TestAdapter):
             formats = ['one', 'two', 'three']
         for f in T2.formats:
-            self.assertIn(f, AdapterBase.formats.keys())
+            self.assertIn(f, six.iterkeys(AdapterBase.formats))
             self.assertEqual(AdapterBase.formats[f], T2)
