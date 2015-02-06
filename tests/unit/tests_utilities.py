@@ -1,9 +1,9 @@
 __author__ = 'Tim Martin'
-import unittest
 from rest.utilities import convert_to_underscore
+from tests.python2base import TestBase
 
 
-class UtilitiesTestCase(unittest.TestCase):
+class UtilitiesTestCase(TestBase):
 
     def test_convert_to_underscore(self):
         camel_case_names = ['CamelCase', 'camelCase', 'camel_case', '_CamelCase',

@@ -3,15 +3,17 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import logging
+
+import six
+
 from rest.decorators import apimethod
 from rest.exceptions import BaseRestEndpointAlreadyExists
 from rest.viewsets.constructor import ResourceMetaClass
 from rest.viewsets.resource_base import ResourceBase
 from tests.unit.helpers.inmemory_manager import InMemoryManager
+from tests.python2base import TestBase
 
-import logging
-import six
-import unittest
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +32,7 @@ class TestResource(ResourceBase):
     namespace = name_space
 
 
-class TestResourceBase(unittest.TestCase):
+class TestResourceBase(TestBase):
     # TODO documentation
 
     def setUp(self):

@@ -2,10 +2,13 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
+
+import six
+
 from rest.dispatch.adapters.contructor import AdapterMeta
 from rest.dispatch.adapters.base import AdapterBase
-import unittest
-import six
+from tests.python2base import TestBase
+
 __author__ = 'Tim Martin'
 
 
@@ -19,7 +22,7 @@ class TestAdapter(AdapterBase):
         pass
 
 
-class TestAdapterBase(unittest.TestCase):
+class TestAdapterBase(TestBase):
     def tearDown(self):
         AdapterMeta.formats = None
 
