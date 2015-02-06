@@ -46,8 +46,8 @@ class ResourceMetaClass(type):
         :param klass: The class to register endpoints on.
         """
         print(inspect.getmembers(klass))
-        for name, method in inspect.getmembers(klass, is_method_or_classmethod):
-            print('name')
+        for name, method in inspect.getmembers(klass, inspect.ismethod):
+            print(name)
             if getattr(method, 'rest_route', False):
                 logger.debug('Registering method {0} as a valid '
                              'action on resource {1}'.format(method.__name__, klass.__name__))
@@ -68,20 +68,3 @@ class ResourceMetaClass(type):
             raise BaseRestEndpointAlreadyExists
         mcs.registered_resource_classes[klass] = klass.base_url
         mcs.registered_names_map[klass.__name__] = klass
-
-
-def is_method_or_classmethod(obj):
-    """
-    Checks if the method is either a bound method or a
-    classmethod.  Unforunately, I believe an @wraps decorator
-    was forgotten on classmethod in python 3.3  This is an
-    attempt to resolve that
-    
-    :param object obj:
-    :return: True if its either a bound method or classmethod instance
-        otherwise, False
-    :rtype: bool
-    """
-    if inspect.ismethod(obj) or isinstance(obj, classmethod):
-        return True
-    return False
