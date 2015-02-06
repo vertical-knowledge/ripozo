@@ -17,15 +17,13 @@ class ResourceBase(object):
     # TODO class documentation
     __abstract__ = True
     _endpoint_dictionary = None
-    relationships = None
-    pks = None
-    namespace = None
-
-    class ResourceSettings(object):
-        manager = None
-        resource_name = None
-        preprocessors = None
-        postprocessors = None
+    _relationships = None
+    _pks = None
+    _manager = None
+    _namespace = None
+    _resource_name = None
+    _preprocessors = None
+    _postprocessors = None
 
     def __init__(self, properties=None, status_code=200, errors=None, meta=None):
         """
@@ -81,35 +79,6 @@ class ResourceBase(object):
             pk_dict[pk] = self.properties.get(pk, None)
         return pk_dict
 
-
-    @classproperty
-    def endpoint_dictionary(cls):
-        """
-        A dictionary of the endpoints with the
-        method as the key and the route options as the
-        value
-
-        :return: dictionary of endpoints
-        :rtype: dict
-        """
-        if cls._endpoint_dictionary is None:
-            cls._endpoint_dictionary = {}
-        return cls._endpoint_dictionary
-
-    @classproperty
-    def resource_name(cls):
-        """
-        The resource name for this Resource class
-        returns resource_name if not None
-        Otherwise it returns the model_name
-
-        :return: The name of the resource for this class
-        :rtype: unicode
-        """
-        if cls.ResourceSettings.resource_name:
-            return cls.ResourceSettings.resource_name
-        return cls.model_name
-
     @classmethod
     def register_endpoint(cls, function):
         """
@@ -148,20 +117,60 @@ class ResourceBase(object):
         return '/{0}'.format(base_url)
 
     @classproperty
+    def endpoint_dictionary(cls):
+        """
+        A dictionary of the endpoints with the
+        method as the key and the route options as the
+        value
+
+        :return: dictionary of endpoints
+        :rtype: dict
+        """
+        if cls._endpoint_dictionary is None:
+            cls._endpoint_dictionary = {}
+        return cls._endpoint_dictionary
+
+    @classproperty
+    def manager(cls):
+        return cls._manager()
+
+    @classproperty
     def model_name(cls):
         return cls.manager.model_name
 
     @classproperty
-    def manager(cls):
-        return cls.ResourceSettings.manager()
+    def namespace(cls):
+        return cls._namespace or ''
+
+    @classproperty
+    def pks(cls):
+        return cls._pks or []
 
     @classproperty
     def postprocessors(cls):
-        return cls.ResourceSettings.postprocessors or []
+        return cls._postprocessors or []
 
     @classproperty
     def preprocessors(cls):
-        return cls.ResourceSettings.preprocessors or []
+        return cls._preprocessors or []
+
+    @classproperty
+    def relationships(cls):
+        return cls._relationships or []
+
+    @classproperty
+    def resource_name(cls):
+        """
+        The resource name for this Resource class
+        returns resource_name if not None
+        Otherwise it returns the model_name
+
+        :return: The name of the resource for this class
+        :rtype: unicode
+        """
+        if cls._resource_name:
+            return cls._resource_name
+        return cls.model_name
 
 
 def create_url(base_url, **kwargs):

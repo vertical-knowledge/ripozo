@@ -16,9 +16,9 @@ name_space = '/mynamspace/'
 
 
 class HelloWorldViewset(ResourceBase):
-    __resource_name__ = 'myresource'
-    __manager__ = MM1
     namespace = name_space
+    _manager = MM1
+    _resource_name = 'myresource'
 
     @apimethod(methods=['GET'])
     def hello(cls, primary_keys, filters, values, *args, **kwargs):

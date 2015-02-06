@@ -27,9 +27,9 @@ name_space = '/mynamspace/'
 
 class TestResource(ResourceBase):
     __abstract__ = True
-    __resource_name__ = 'myresource'
-    __manager__ = MM1
-    namespace = name_space
+    _manager = MM1
+    _resource_name = 'myresource'
+    _namespace = name_space
 
 
 class TestResourceBase(TestBase):
@@ -62,7 +62,8 @@ class TestResourceBase(TestBase):
         manager if the resource_name is not specified.
         """
         class T2(TestResource):
-            __resource_name__ = None
+            _resource_name = None
+
             __manager__ = MM1
         self.assertEqual(T2.resource_name, T2.__manager__()._model_name)
 
@@ -129,8 +130,8 @@ class TestResourceBase(TestBase):
         """Tests whether the url for an individual resource is properly created"""
         class T1(TestResource):
             namespace = '/api'
-            __resource_name__ = 'my_resource'
             pks = ['pk']
+            _resource_name = 'my_resource'
 
         x = T1(properties={'pk': 1})
         self.assertEqual(x.url, '/api/my_resource/1')
