@@ -1,12 +1,13 @@
-__author__ = 'Tim Martin'
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 from abc import ABCMeta, abstractmethod, abstractproperty
-from rest.utilities import make_json_serializable, convert_to_datetime, convert_to_boolean
-from decimal import Decimal
+from rest.utilities import make_json_serializable
+
 import logging
-
-
-class NotFoundException(Exception):
-    pass
+logger = logging.getLogger(__name__)
 
 
 class BaseManager(object):
@@ -176,7 +177,6 @@ class BaseManager(object):
         :rtype: tuple
         """
         # get the pagination count or else use the default
-        logger = logging.getLogger(__name__)
         filters = filters.copy()
         pagination_count_query = filters.pop(self.pagination_count_query_arg, None)
         pagination_count = int(pagination_count_query) if pagination_count_query else self.paginate_by

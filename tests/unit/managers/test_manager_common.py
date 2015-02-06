@@ -1,6 +1,7 @@
 __author__ = 'Tim Martin'
 import logging
 import random
+import six
 import string
 
 # TODO actually create test
@@ -14,7 +15,7 @@ def generate_random_name():
     return ''.join(random.choice(string.letters) for _ in range(15))
 
 
-class TestManagerBase(object):
+class TestManagerMixin(object):
     """
     manager, does_not_exist_exception, and all_person_models proeprties need to be implemented
     get_person_model_by_id method needs to be implemented
@@ -32,7 +33,7 @@ class TestManagerBase(object):
         """
         Return the serializer for the specific implementation
 
-        :rtype: cassandra_rest.managers.base.BaseManager
+        :rtype: rest.managers.base.BaseManager
         """
         raise NotImplementedError
 
@@ -95,13 +96,13 @@ class TestManagerBase(object):
         new_first_name = generate_random_name()
         new_last_name = generate_random_name()
         self._manager.update({self.id_field: p[self.id_field]},
-                            {self.first_name_field: new_first_name,
-                             self.last_name_field: new_last_name})
+                             {self.first_name_field: new_first_name,
+                              self.last_name_field: new_last_name})
         p2 = self._manager.retrieve({self.id_field: p[self.id_field]})
         self.assertEqual(new_first_name, p2[self.first_name_field])
         self.assertEqual(new_last_name, p2[self.last_name_field])
-        self.assertNotEqual(new_first_name, p[self.first_name_field])
-        self.assertNotEqual(new_last_name, p[self.last_name_field])
+        self.assertNotEqual(first_name, p[self.first_name_field])
+        self.assertNotEqual(last_name, p[self.last_name_field])
 
     def test_create_many(self):
         num_randoms = 10
@@ -109,7 +110,7 @@ class TestManagerBase(object):
             self._manager.create({self.first_name_field: generate_random_name(),
                                  self.last_name_field: generate_random_name()})
         response = self._manager.retrieve_list({})
-        self.assertEqual(num_randoms, len(response[0]))
+        self.assertEqual(num_randoms, len(list(response[0])))
 
         # Check the meta response
         meta = response[1]
@@ -164,8 +165,8 @@ class TestManagerBase(object):
         next_pk = meta[pk_query_arg]
         self.assertIsNotNone(next_pk)
         self.assertEqual(len(retrieved_list), manager.paginate_by)
+        count = random.choice(range(1, 10))
         while next_pk:
-            count = random.choice(range(1, 10))
             retrieved_list, meta = manager.retrieve_list({
                 pk_query_arg: next_pk,
                 count_query_arg: count

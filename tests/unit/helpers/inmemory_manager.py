@@ -2,7 +2,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-from rest.managers.base import BaseManager, NotFoundException
+
+from rest.exceptions import NotFoundException
+from rest.managers.base import BaseManager
 from uuid import uuid1
 import six
 
@@ -23,9 +25,20 @@ class InMemoryManager(BaseManager):
         return values
 
     def retrieve_list(self, filters, *args, **kwargs):
-        return six.itervalues(self.queryset), {self.pagination_next: None,
-                              self.pagination_pk_query_arg: None,
-                              self.pagination_count_query_arg: None}
+        pagination_page = filters.get(self.pagination_pk_query_arg, None) or 0
+        pagination_count = filters.get(self.pagination_count_query_arg, None) or self.paginate_by
+        values = list(six.itervalues(self.queryset))
+        first = pagination_page * pagination_count
+        last = first + pagination_count
+        if last > len(values):
+            values = values[first:]
+            pagination_page = None
+        else:
+            values = values[first:last]
+            pagination_page += 1
+        return values, {self.pagination_next: None,
+                        self.pagination_pk_query_arg: pagination_page,
+                        self.pagination_count_query_arg: pagination_count}
 
     @property
     def queryset(self):
@@ -41,19 +54,19 @@ class InMemoryManager(BaseManager):
     def update(self, lookup_keys, updates, *args, **kwargs):
         obj = self._get_model(lookup_keys)
         for key, value in six.iteritems(updates):
-            obj.set(key, value)
-        self.queryset[lookup_keys] = obj
+            obj[key] = value
+        self.queryset[lookup_keys['id']] = obj
         return obj
 
     def get_field_type(self, name):
         pass
 
     def delete(self, lookup_keys, *args, **kwargs):
-        self.queryset.pop(lookup_keys)
+        self.queryset.pop(lookup_keys['id'])
         return None
 
     def _get_model(self, model_id):
-        obj = self.queryset.get(model_id, None)
+        obj = self.queryset.get(model_id['id'], None)
         if not obj:
             raise NotFoundException
         return obj
