@@ -17,4 +17,4 @@ class TestBase(TestCase):
     def assertDictEqual(self, d1, d2, msg=None):
         self.assertIsInstance(d1, dict, 'First argument is not a dictionary')
         self.assertIsInstance(d2, dict, 'Second argument is not a dictionary')
-        self.assertTrue(d1 == d2)
+        self.assertTrue(d1 == d2, msg=msg)
