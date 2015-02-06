@@ -12,7 +12,7 @@ def logger():
 
 
 def generate_random_name():
-    return ''.join(random.choice(string.letters) for _ in range(15))
+    return ''.join(random.choice(string.ascii_letters) for _ in range(15))
 
 
 class TestManagerMixin(object):

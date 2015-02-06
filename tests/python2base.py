@@ -18,3 +18,9 @@ class TestBase(TestCase):
         self.assertIsInstance(d1, dict, 'First argument is not a dictionary')
         self.assertIsInstance(d2, dict, 'Second argument is not a dictionary')
         self.assertTrue(d1 == d2, msg=msg)
+
+    def assertIsNotNone(self, obj, msg=None):
+        self.assertTrue(obj is not None, msg=msg)
+
+    def assertIsNone(self, obj, msg=None):
+        self.assertTrue(obj is None, msg=msg)

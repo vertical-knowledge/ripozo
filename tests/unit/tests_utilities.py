@@ -28,7 +28,7 @@ class UtilitiesTestCase(TestBase):
         Tests whether the fields are properly serialized
         """
         t = dict()
-        for i in xrange(10):
+        for i in six.moves.range(10):
             t[generate_random_name()] = generate_random_name()
         t2 = t.copy()
         t3 = serialize_fields(six.iterkeys(t2), six.itervalues(t2))
