@@ -1,5 +1,5 @@
 __author__ = 'Tim Martin'
-from setuptools import setup
+from setuptools import setup, find_packages
 from os import path
 
 here = path.abspath(path.dirname(__file__))
@@ -10,7 +10,7 @@ with open(path.join(here, 'VERSION')) as f:
 setup(
     name='ripozo',
     version=version,
-    packages=['rest', 'rest.managers', 'rest.viewsets'],
+    packages=find_packages(exclude=['tests', 'tests.*']),
     include_package_data=True,
     description='An tool for easily making cassandra RESTful interfaces',
     author='Tim Martin',

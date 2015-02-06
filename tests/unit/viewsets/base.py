@@ -30,7 +30,7 @@ class TestResource(ResourceBase):
 class TestResourceBase(unittest.TestCase):
     # TODO documentation
 
-    def tearDown(self):
+    def setUp(self):
         ResourceMetaClass.registered_resource_classes.clear()
 
     def test_abstract_not_implemented(self):

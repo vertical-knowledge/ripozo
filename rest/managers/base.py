@@ -2,7 +2,6 @@ __author__ = 'Tim Martin'
 from abc import ABCMeta, abstractmethod, abstractproperty
 from rest.utilities import make_json_serializable, convert_to_datetime, convert_to_boolean
 from decimal import Decimal
-from webargs import Arg
 import logging
 
 
@@ -197,55 +196,55 @@ class BaseManager(object):
         last_pagination_pk = filters.pop(self.pagination_pk_query_arg, None)
         return last_pagination_pk, filters
 
-    def initialize_args(self):
-        """
-        Sets up the webargs parser so that it can read and effectively type incoming request variables
-
-        :return: Nothing
-        :rtype: NoneType
-        """
-        self.arg_parser = dict()
-
-        # set up the pagination args
-        self.arg_parser[self.pagination_pk_query_arg] = Arg(str, multiple=True, allow_missing=True)
-        self.arg_parser[self.pagination_count_query_arg] = Arg(int, multiple=False, allow_missing=True)
-
-        # only allow the specified fields
-        for name in self.fields:
-            t = self.get_field_type(name)
-            multiple = False
-            use = None
-            # Get the correct type to cast the incoming argument to
-            if t in ['text', 'ascii', 'uuid', 'timeuuid']:
-                arg_type = str
-            elif t in ['int', 'varint']:
-                arg_type = int
-            elif t == 'bigint':
-                arg_type = long
-            elif t == 'timestamp':
-                arg_type = convert_to_datetime
-            elif t == 'boolean':
-                arg_type = bool
-                use = convert_to_boolean
-            elif t == 'double':
-                arg_type = float
-            elif t == 'decimal':
-                arg_type = Decimal
-            elif 'set<' in t:
-                arg_type = set
-                multiple = True
-            elif 'list<' in t:
-                arg_type = list
-                multiple = True
-            elif 'map<' in t:
-                arg_type = dict
-                multiple = True
-            elif t == 'blob':
-                arg_type = bytes
-            else:
-                raise TypeError('Unexpected column type: {0}'.format(t))
-
-            self.arg_parser[name] = Arg(arg_type, multiple=multiple, use=use, allow_missing=True)
+    # def initialize_args(self):
+    #     """
+    #     Sets up the webargs parser so that it can read and effectively type incoming request variables
+    #
+    #     :return: Nothing
+    #     :rtype: NoneType
+    #     """
+    #     self.arg_parser = dict()
+    #
+    #     # set up the pagination args
+    #     self.arg_parser[self.pagination_pk_query_arg] = Arg(str, multiple=True, allow_missing=True)
+    #     self.arg_parser[self.pagination_count_query_arg] = Arg(int, multiple=False, allow_missing=True)
+    #
+    #     # only allow the specified fields
+    #     for name in self.fields:
+    #         t = self.get_field_type(name)
+    #         multiple = False
+    #         use = None
+    #         # Get the correct type to cast the incoming argument to
+    #         if t in ['text', 'ascii', 'uuid', 'timeuuid']:
+    #             arg_type = str
+    #         elif t in ['int', 'varint']:
+    #             arg_type = int
+    #         elif t == 'bigint':
+    #             arg_type = long
+    #         elif t == 'timestamp':
+    #             arg_type = convert_to_datetime
+    #         elif t == 'boolean':
+    #             arg_type = bool
+    #             use = convert_to_boolean
+    #         elif t == 'double':
+    #             arg_type = float
+    #         elif t == 'decimal':
+    #             arg_type = Decimal
+    #         elif 'set<' in t:
+    #             arg_type = set
+    #             multiple = True
+    #         elif 'list<' in t:
+    #             arg_type = list
+    #             multiple = True
+    #         elif 'map<' in t:
+    #             arg_type = dict
+    #             multiple = True
+    #         elif t == 'blob':
+    #             arg_type = bytes
+    #         else:
+    #             raise TypeError('Unexpected column type: {0}'.format(t))
+    #
+    #         self.arg_parser[name] = Arg(arg_type, multiple=multiple, use=use, allow_missing=True)
 
     @classmethod
     def serialize_fields(cls, field_names, field_values):

@@ -1,5 +1,4 @@
 __author__ = 'Tim Martin'
-from cassandra.util import sortedset
 from datetime import datetime, timedelta
 from decimal import Decimal
 import inspect
@@ -88,7 +87,7 @@ def make_json_serializable(value):
         return float(value)
     elif isinstance(value, datetime):
         return value.strftime('%Y-%m-%d %H:%M:%S.%f')
-    elif isinstance(value, set) or isinstance(value, sortedset):
+    elif isinstance(value, set):
         return list(value)
     else:
         return value
