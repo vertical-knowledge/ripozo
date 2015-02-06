@@ -44,11 +44,12 @@ class TestResourceBase(unittest.TestCase):
         """
         class TestResourceClass(ResourceBase):
             __abstract__ = True
-        self.assertEquals(len(ResourceMetaClass.registered_resource_classes), 0)
+        self.assertEqual(len(ResourceMetaClass.registered_resource_classes), 0)
 
     def test_resource_name(self):
         """Tests whether the resource_name is properly constructed"""
         resourcename = 'myresource'
+
         class T1(TestResource):
             resource_name = resourcename
         self.assertEqual(resourcename, T1._resource_name)
@@ -97,6 +98,8 @@ class TestResourceBase(unittest.TestCase):
             @apimethod(methods=['GET'])
             def my_api_method1(self):
                 pass
+        # for python 3.3  Otherwise it never gets registered for some reason
+        print(T1.__name__)
 
         self.assertIn('my_api_method1', T1.endpoint_dictionary)
 
