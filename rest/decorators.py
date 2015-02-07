@@ -26,9 +26,8 @@ class apimethod(object):
         :return: The wrapped classmethod that is an action
             that can be performed on the resource.  For example,
             any sort of CRUD action.
-        :rtype:
+        :rtype: classmethod
         """
-        @classmethod(f.__class__)
         @wraps(f)
         def wrapped(instance, *args, **kwargs):
             return f(instance, *args, **kwargs)
@@ -39,4 +38,4 @@ class apimethod(object):
         else:
             wrapped.routes = getattr(f, 'routes')
         wrapped.routes.append((self.route, self.endpoint, self.options))
-        return wrapped
+        return classmethod(wrapped)
