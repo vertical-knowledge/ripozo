@@ -76,7 +76,7 @@ class Relationship(object):
         :param dict properties: The properties that are in the related
             resource map that should not be in the parent resource.
         :return: a dictionary of the updated properties
-        :rtype: dict
+        :rtype: :py:class:`dict`
         """
         properties = properties.copy()
         for key in six.iterkeys(self.property_map):
@@ -98,7 +98,7 @@ class Relationship(object):
         :return: A dictionary of the related resources properties.
             The key is the name of the related resource's property
             and the value is the value of that resource's property.
-        :rtype: dict
+        :rtype: :py:class:`dict`
         """
         properties = {}
         for parent_prop, prop in six.iteritems(self.property_map):
