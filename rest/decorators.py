@@ -2,18 +2,6 @@ __author__ = 'Tim Martin'
 from functools import wraps
 import logging
 
-http_methods = {
-    'get': 'Retrieve',
-    'post': 'Add',
-    'put': 'Edit idempotent',
-    'patch': 'Edit',
-    'delete': 'Delete',
-    'head': 'Head',
-    'options': 'Options'
-}
-
-form_methods = ['post', 'put', 'patch']
-
 
 class apimethod(object):
     """
@@ -30,10 +18,17 @@ class apimethod(object):
         self.endpoint = endpoint
 
     def __call__(self, f):
-        # TODO: add documentation here
+        """
+        The actual decorator that will be called and returns the method
+        that is a rest route.
 
-        logger = logging.getLogger(__name__)
-
+        :param classmethod f:
+        :return: The wrapped classmethod that is an action
+            that can be performed on the resource.  For example,
+            any sort of CRUD action.
+        :rtype:
+        """
+        @classmethod(f.__class__)
         @wraps(f)
         def wrapped(instance, *args, **kwargs):
             return f(instance, *args, **kwargs)
@@ -44,4 +39,4 @@ class apimethod(object):
         else:
             wrapped.routes = getattr(f, 'routes')
         wrapped.routes.append((self.route, self.endpoint, self.options))
-        return classmethod(wrapped)
+        return wrapped
