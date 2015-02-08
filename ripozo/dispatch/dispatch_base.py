@@ -3,9 +3,9 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 from abc import ABCMeta, abstractmethod
-from rest.dispatch.adapters.contructor import AdapterMeta
-from rest.dispatch.adapters.siren import SirenAdapter
-from rest.viewsets.constructor import ResourceMetaClass
+from ripozo.dispatch.adapters.contructor import AdapterMeta
+from ripozo.dispatch.adapters.siren import SirenAdapter
+from ripozo.viewsets.constructor import ResourceMetaClass
 import six
 
 

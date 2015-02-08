@@ -4,8 +4,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 import six
 from six.moves.urllib import parse
-from rest.viewsets.constructor import ResourceMetaClass
-from rest.utilities import classproperty
+from ripozo.viewsets.constructor import ResourceMetaClass
+from ripozo.utilities import classproperty
 import re
 
 

@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from rest.dispatch.adapters.siren import SirenAdapter
+from ripozo.dispatch.adapters.siren import SirenAdapter
 from tests.python2base import TestBase
 from tests.unit.helpers.hello_world_viewset import HelloWorldViewset
 

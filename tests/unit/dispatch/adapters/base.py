@@ -5,8 +5,8 @@ from __future__ import unicode_literals
 
 import six
 
-from rest.dispatch.adapters.contructor import AdapterMeta
-from rest.dispatch.adapters.base import AdapterBase
+from ripozo.dispatch.adapters.contructor import AdapterMeta
+from ripozo.dispatch.adapters.base import AdapterBase
 from tests.python2base import TestBase
 
 __author__ = 'Tim Martin'

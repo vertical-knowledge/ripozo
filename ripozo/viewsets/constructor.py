@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from rest.exceptions import BaseRestEndpointAlreadyExists
+from ripozo.exceptions import BaseRestEndpointAlreadyExists
 
 import logging
 import inspect
@@ -40,7 +40,7 @@ class ResourceMetaClass(type):
         Finds all methods that have been marked with the
         rest_route indicator.  It then uses the classes register_endpoint
         method to register the endpoints appropriately.  This is done to
-        avoid accidentally registering methods that are not rest
+        avoid accidentally registering methods that are not ripozo
         endpoints.
 
         :param klass: The class to register endpoints on.

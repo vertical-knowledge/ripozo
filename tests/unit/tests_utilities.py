@@ -1,5 +1,5 @@
 __author__ = 'Tim Martin'
-from rest.utilities import convert_to_underscore, serialize_fields, titlize_endpoint
+from ripozo.utilities import convert_to_underscore, serialize_fields, titlize_endpoint
 from tests.python2base import TestBase
 from tests.unit.managers.test_manager_common import generate_random_name
 import six

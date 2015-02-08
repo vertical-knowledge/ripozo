@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 from abc import abstractproperty
-from rest.dispatch.adapters.contructor import AdapterMeta
+from ripozo.dispatch.adapters.contructor import AdapterMeta
 import six
 
 

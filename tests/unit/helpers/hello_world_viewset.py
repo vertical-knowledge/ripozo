@@ -2,8 +2,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-from rest.decorators import apimethod
-from rest.viewsets.resource_base import ResourceBase
+from ripozo.decorators import apimethod
+from ripozo.viewsets.resource_base import ResourceBase
 from tests.unit.helpers.inmemory_manager import InMemoryManager
 __author__ = 'Tim Martin'
 

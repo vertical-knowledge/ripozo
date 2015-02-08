@@ -2,9 +2,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-from rest.dispatch.adapters.base import AdapterBase
-from rest.utilities import titlize_endpoint
-from rest.viewsets.resource_base import create_url
+from ripozo.dispatch.adapters.base import AdapterBase
+from ripozo.utilities import titlize_endpoint
+from ripozo.viewsets.resource_base import create_url
 import json
 import six
 

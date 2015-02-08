@@ -5,7 +5,7 @@ import logging
 
 class apimethod(object):
     """
-    Decorator for declaring routes on a rest resource
+    Decorator for declaring routes on a ripozo resource
     """
     def __init__(self, route='', endpoint=None, **options):
         """
@@ -20,7 +20,7 @@ class apimethod(object):
     def __call__(self, f):
         """
         The actual decorator that will be called and returns the method
-        that is a rest route.
+        that is a ripozo route.
 
         :param classmethod f:
         :return: The wrapped classmethod that is an action

@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-from rest.viewsets.constructor import ResourceMetaClass
+from ripozo.viewsets.constructor import ResourceMetaClass
 import six
 
 __author__ = 'Tim Martin'

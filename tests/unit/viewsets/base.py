@@ -6,10 +6,10 @@ from __future__ import unicode_literals
 import logging
 import six
 
-from rest.decorators import apimethod
-from rest.exceptions import BaseRestEndpointAlreadyExists
-from rest.viewsets.constructor import ResourceMetaClass
-from rest.viewsets.resource_base import ResourceBase
+from ripozo.decorators import apimethod
+from ripozo.exceptions import BaseRestEndpointAlreadyExists
+from ripozo.viewsets.constructor import ResourceMetaClass
+from ripozo.viewsets.resource_base import ResourceBase
 from tests.unit.helpers.inmemory_manager import InMemoryManager
 from tests.python2base import TestBase
 

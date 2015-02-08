@@ -5,8 +5,8 @@ from __future__ import unicode_literals
 
 __author__ = 'Tim Martin'
 import logging
-from rest.decorators import apimethod
-from rest.viewsets.resource_base import ResourceBase
+from ripozo.decorators import apimethod
+from ripozo.viewsets.resource_base import ResourceBase
 
 logger = logging.getLogger(__name__)
 

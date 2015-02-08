@@ -3,8 +3,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from rest.exceptions import NotFoundException
-from rest.managers.base import BaseManager
+from ripozo.exceptions import NotFoundException
+from ripozo.managers.base import BaseManager
 from uuid import uuid1
 import six
 
