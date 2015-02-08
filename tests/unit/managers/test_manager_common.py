@@ -1,10 +1,7 @@
 __author__ = 'Tim Martin'
 import logging
 import random
-import six
 import string
-
-# TODO actually create test
 
 
 def logger():

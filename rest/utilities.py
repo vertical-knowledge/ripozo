@@ -109,3 +109,21 @@ def serialize_fields(field_names, field_values):
     for i, name in enumerate(field_names):
         dictified[name] = make_json_serializable(six.next(field_values))
     return dictified
+
+
+def titlize_endpoint(endpoint):
+    """
+    Capitalizes the endpoint and makes it look like a title
+    Just to prettify the output of the actions.  It capitalizes
+    the first letter of every word and replaces underscores with
+    spaces.  It is opinionated in how it determines words.  It
+    simply looks for underscores and splits based on that.
+
+    :param unicode endpoint: The endpoint name on the resource
+    :return: The prettified endpoint name
+    :rtype: unicode
+    """
+    parts = endpoint.split('_')
+    parts = (p.capitalize() for p in parts)
+    endpoint = ' '.join(parts)
+    return endpoint.strip()

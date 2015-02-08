@@ -5,8 +5,15 @@ from __future__ import unicode_literals
 from abc import ABCMeta
 
 
-# TODO docs
 class AdapterMeta(ABCMeta):
+    """
+    The meta class that is responsible for registering adapters.
+    All adapters should be allowed by default hence the meta-class.
+
+    :param dict formats: A dictionary with the format names/types as
+        the key and the responsible klass for that format type as
+        the value.
+    """
     formats = None
 
     def __new__(mcs, name, bases, attrs):

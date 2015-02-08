@@ -1,5 +1,5 @@
 __author__ = 'Tim Martin'
-from rest.utilities import convert_to_underscore, serialize_fields
+from rest.utilities import convert_to_underscore, serialize_fields, titlize_endpoint
 from tests.python2base import TestBase
 from tests.unit.managers.test_manager_common import generate_random_name
 import six
@@ -35,3 +35,21 @@ class UtilitiesTestCase(TestBase):
         self.assertDictEqual(t2, t3)
         t4 = serialize_fields(list(six.iterkeys(t2)), list(six.itervalues(t2)))
         self.assertDictEqual(t2, t4)
+
+    def test_titlelize_endpoint(self):
+        """
+        Tests whether an underscored function name
+        is properly converted into a title
+        """
+        name = "some_name_or_something"
+        expected = "Some Name Or Something"
+        updated = titlize_endpoint(name)
+        self.assertEqual(updated, expected)
+
+        name = '_some_name_or_something'
+        updated = titlize_endpoint(name)
+        self.assertEqual(updated, expected)
+
+        name = 'some_name_or_something_'
+        updated = titlize_endpoint(name)
+        self.assertEqual(updated, expected)
