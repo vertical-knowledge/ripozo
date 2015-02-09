@@ -1,6 +1,5 @@
 __author__ = 'Tim Martin'
 from setuptools import setup, find_packages
-from os import path
 
 version = '0.1.2b2'
 
