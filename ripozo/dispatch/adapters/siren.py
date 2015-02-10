@@ -62,9 +62,25 @@ class SirenAdapter(AdapterBase):
                 meth = all_methods[0]
             base_route = options.get('route', self.resource.base_url)
             route = create_url(base_route, **self.resource.properties)
-            actn = dict(name=endpoint, title=titlize_endpoint(endpoint), method=meth, href=route)
+            fields = self.generate_fields_for_endpoint_funct(options.get('endpoint_func'))
+            actn = dict(name=endpoint, title=titlize_endpoint(endpoint), method=meth, href=route, fields=fields)
             actions.append(actn)
         return actions
+
+    def generate_fields_for_endpoint_funct(self, endpoint_func):
+        """
+        Returns the action's fields attribute in a SIREN
+        appropriate format.
+
+        :param apimethod endpoint_func:
+        :return: A dictionary of action fields
+        :rtype: dict
+        """
+        fields = []
+        for field in getattr(endpoint_func, 'fields', []):
+            fields.append(dict(name=field.name, type=field.field_type.__name__,
+                               location=field.arg_type, required=field.required))
+        return fields
 
     def get_entities_and_remove_related_properties(self):
         """

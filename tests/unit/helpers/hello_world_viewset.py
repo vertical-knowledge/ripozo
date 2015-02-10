@@ -3,8 +3,9 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.decorators import apimethod
+from ripozo.decorators import apimethod, validate
 from ripozo.viewsets.relationship import Relationship
+from ripozo.viewsets.fields.common import StringField
 from ripozo.viewsets.resource_base import ResourceBase
 from tests.unit.helpers.inmemory_manager import InMemoryManager
 
@@ -26,8 +27,9 @@ class HelloWorldViewset(ResourceBase):
     _fields = ['content']
 
     @apimethod(methods=['GET'])
+    @validate(fields=[StringField('content')])
     def hello(cls, primary_keys, filters, values, *args, **kwargs):
-        return cls(properties={'content': 'hello', 'related': 'world'})
+        return cls(properties={'related': 'world'})
 
 
 class ComplimentaryViewset(ResourceBase):

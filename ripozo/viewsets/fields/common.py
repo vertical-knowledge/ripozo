@@ -15,7 +15,7 @@ class StringField(BaseField):
     """
     Used for casting and validating string fields.
     """
-    field_type = six.string_types
+    field_type = six.text_type
 
     def __init__(self, name, required=False, maximum=None, minimum=None, arg_type=QUERY_ARGS, regex=None):
         """
@@ -61,7 +61,7 @@ class StringField(BaseField):
         """
         obj = super(StringField, self).validate(obj)
         obj = self._validate_size(obj, len(obj))
-        if not self.regex.match(obj):
+        if self.regex and not self.regex.match(obj):
             raise ValidationException('The input string did not match the'
                                       ' required regex: {0} != {1}'.format(obj, self.regex))
 

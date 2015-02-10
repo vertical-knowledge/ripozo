@@ -91,4 +91,4 @@ class validate(object):
             return f(cls, url_params, query_args, body_args, *args, **kwargs)
 
         action.fields = self.fields
-        return classmethod(action)
+        return action

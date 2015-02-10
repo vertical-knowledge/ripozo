@@ -18,7 +18,7 @@ class TestSirenAdapter(TestBase):
     """
 
     def setUp(self):
-        self.resource = HelloWorldViewset.hello([], [], [])
+        self.resource = HelloWorldViewset.hello([], {'content': 'hello'}, [])
         self.adapter = SirenAdapter(self.resource)
         self.data = json.loads(self.adapter.formatted_body)
 
