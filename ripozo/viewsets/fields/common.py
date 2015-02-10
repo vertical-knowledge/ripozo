@@ -3,6 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from datetime import datetime
 from ripozo.exceptions import ValidationException, TranslationException
 from ripozo.viewsets.fields.base import BaseField
 
@@ -94,6 +95,7 @@ class FloatField(IntegerField):
     """
     A field used for translating and validating a float input
     """
+    field_type = float
 
     def translate(self, obj):
         # A none input should be handled by the validator
@@ -112,6 +114,7 @@ class BooleanField(BaseField):
     A field used for translating and validating a boolean input
     It can take either a boolean or a string.
     """
+    field_type = bool
 
     def translate(self, obj):
         # A none input should be handled by the validator
@@ -127,3 +130,47 @@ class BooleanField(BaseField):
                 return True
         raise ValidationException('{0} is not a valid boolean.  Either'
                                   ' "true" or "false" is required (case insensitive)'.format(obj))
+
+
+class DateTimeField(BaseField):
+    """
+    A field for validating and translating a datetime input.
+    By default it accepts the following formats:
+
+    %Y-%m-%dT%H:%M:%S.%fZ
+
+    If you need other formats simply pass a list of valid formats
+    into the formats parameter on initialization
+    """
+    field_type = datetime
+    valid_formats = ['%Y-%m-%dT%H:%M:%S.%fZ']
+
+    def __init__(self, name, required=False, maximum=None, minimum=None, valid_formats=None):
+        super(DateTimeField, self).__init__(name, required=required, maximum=maximum, minimum=minimum)
+        if valid_formats is not None:
+            self.valid_formats = valid_formats
+
+    def translate(self, obj):
+        """
+        First checks if the obj is None or already a datetime object
+        Returns that if true.  Otherwise assumes that it is a string
+        and attempts to parse it out using the formats in self.valid_formats
+        and the datetime.strptime method
+
+        Additionally it strips out any whitespace from the beginning and
+        end of the input before attempting to parse out a datetime string
+
+        :param unicode obj: The input that is being translated
+        :return: The parse datetime object
+        :rtype: datetime
+        """
+        if obj is None or isinstance(obj, datetime):
+            return obj
+        obj = obj.strip()
+        for f in self.valid_formats:
+            try:
+                return datetime.strptime(obj, f)
+            except ValueError:
+                continue
+        raise TranslationException('The object ({0}) could not be parsed as a datetime '
+                                   'string using the formats {1}'.format(obj, self.valid_formats))
