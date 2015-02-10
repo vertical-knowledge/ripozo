@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 __author__ = 'Tim Martin'
 
 
-class RestExceptions(Exception):
+class RestException(Exception):
     """
     The base exception for any of the package
     specific exceptions
@@ -14,7 +14,7 @@ class RestExceptions(Exception):
     pass
 
 
-class BaseRestEndpointAlreadyExists(RestExceptions):
+class BaseRestEndpointAlreadyExists(RestException):
     """
     This exception is raised when the ResourceBaseMetaClass
     finds an endpoint has already been registered for the application
@@ -22,7 +22,7 @@ class BaseRestEndpointAlreadyExists(RestExceptions):
     pass
 
 
-class ManagerException(RestExceptions):
+class ManagerException(RestException):
     """
     A base exception for when the manager has an exception specific
     to it. For example, not finding a model.
@@ -38,7 +38,7 @@ class NotFoundException(ManagerException):
     pass
 
 
-class FieldException(RestExceptions, ValueError):
+class FieldException(RestException, ValueError):
     """
     An exception specifically for Field errors.  Specifically,
     when validation or casting fail.

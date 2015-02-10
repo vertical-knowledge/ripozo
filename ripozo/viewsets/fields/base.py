@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.exceptions import ValidationException
+from ripozo.viewsets.constants.input_categories import QUERY_ARGS
 
 import six
 
@@ -17,11 +18,12 @@ class BaseField(object):
     """
     field_type = object
 
-    def __init__(self, name, required=False, maximum=None, minimum=None):
+    def __init__(self, name, required=False, maximum=None, minimum=None, arg_type=QUERY_ARGS):
         self.name = name
         self.required = required
         self.maximum = maximum
         self.minimum = minimum
+        self.arg_type = arg_type
 
     def __str__(self):
         """

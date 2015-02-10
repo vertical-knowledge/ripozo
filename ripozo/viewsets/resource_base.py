@@ -2,12 +2,14 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
+import re
+
 import six
+
 from six.moves.urllib import parse
 from ripozo.viewsets.constructor import ResourceMetaClass
-from ripozo.viewsets import status_constants
+from ripozo.viewsets.constants import status
 from ripozo.utilities import classproperty
-import re
 
 
 url_part_finder = re.compile(r'<([^>]+)>')
@@ -49,7 +51,7 @@ class ResourceBase(object):
 
     @property
     def has_error(self):
-        return len(self.errors) > 0 or self.status == status_constants.ERRORED
+        return len(self.errors) > 0 or self.status == status.ERRORED
 
     @property
     def url(self):

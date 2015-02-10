@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 
 from datetime import datetime
 from ripozo.exceptions import ValidationException, TranslationException
+from ripozo.viewsets.constants.input_categories import QUERY_ARGS
 from ripozo.viewsets.fields.base import BaseField
 
 import six
@@ -16,18 +17,17 @@ class StringField(BaseField):
     """
     field_type = six.string_types
 
-    def __init__(self, name, max_length=None, min_length=None, regex=None, required=False):
+    def __init__(self, name, required=False, maximum=None, minimum=None, arg_type=QUERY_ARGS, regex=None):
         """
         A field class for validating string inputs.
 
-        :param int max_length: The maximum length of the string
+        :param arg_type:
         :param int min_length: The minimum legnth of the string
         :param _sre.SRE_Pattern regex: A compiled regular expression that must
             match at least once.
         """
-        super(StringField, self).__init__(name, required=required)
-        self.max_length = max_length
-        self.min_length = min_length
+        super(StringField, self).__init__(name, required=required, maximum=maximum,
+                                          minimum=minimum, arg_type=arg_type)
         self.regex = regex
 
     def translate(self, obj):
@@ -145,8 +145,9 @@ class DateTimeField(BaseField):
     field_type = datetime
     valid_formats = ['%Y-%m-%dT%H:%M:%S.%fZ']
 
-    def __init__(self, name, required=False, maximum=None, minimum=None, valid_formats=None):
-        super(DateTimeField, self).__init__(name, required=required, maximum=maximum, minimum=minimum)
+    def __init__(self, name, required=False, maximum=None, minimum=None, arg_type=QUERY_ARGS, valid_formats=None):
+        super(DateTimeField, self).__init__(name, required=required, maximum=maximum,
+                                            minimum=minimum, arg_type=arg_type)
         if valid_formats is not None:
             self.valid_formats = valid_formats
 

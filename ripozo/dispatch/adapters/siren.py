@@ -2,12 +2,15 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
+import json
+
+import six
+
 from ripozo.dispatch.adapters.base import AdapterBase
 from ripozo.utilities import titlize_endpoint
 from ripozo.viewsets.resource_base import create_url
-from ripozo.viewsets import status_constants
-import json
-import six
+from ripozo.viewsets.constants import status
+
 
 _content_type = 'application/vnd.siren+json'
 
@@ -28,7 +31,7 @@ class SirenAdapter(AdapterBase):
         :return: The siren formatted response body
         :rtype: unicode
         """
-        if self.resource.status == status_constants.DELETED:
+        if self.resource.status == status.DELETED:
             return ''  # TODO write test to prevent regressions here
 
         links = [dict(rel=['self'], href=self.resource.url)]

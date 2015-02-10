@@ -27,7 +27,7 @@ class RetrieveList(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['GET'])
-    def retrieve_list(cls, primary_keys, filters, values,*args, **kwargs):
+    def retrieve_list(cls, primary_keys, filters, values, *args, **kwargs):
         logger.info('Retrieving a list of models for resource {0} '
                     'with filters {1}'.format(cls.resource_name, filters))
         results, next_query_args = cls.manager.retrieve_list(filters, *args, **kwargs)

@@ -1,5 +1,11 @@
-__author__ = 'Tim Martin'
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 from functools import wraps
+from ripozo.exceptions import RestException
+from ripozo.viewsets.constants import input_categories
 import logging
 
 
@@ -70,12 +76,19 @@ class validate(object):
         :rtype: function
         """
         @wraps(f)
-        def action(*args, **kwargs):
-            translated_and_validated = {}
+        def action(cls, url_params, query_args, body_args, *args, **kwargs):
             for field in self.fields:
-                value = kwargs.get(field.name, None)
-                translated_and_validated[field.name] = field.translate_and_validate(value)
-            return f(*args, **translated_and_validated)
+                # Translate and validate the inputs
+                if field.arg_type == input_categories.URL_PARAMS:
+                    url_params[field.name] = field.translate_and_validate(url_params.get(field.name, None))
+                elif field.arg_type == input_categories.BODY_ARGS:
+                    body_args[field.name] = field.translate_and_validate(body_args.get(field.name, None))
+                elif field.arg_type == input_categories.QUERY_ARGS:
+                    query_args[field.name] = field.translate_and_validate(query_args.get(field.name, None))
+                else:
+                    raise RestException('Invalid arg_type, {0}, on Field {1}'.format(field.arg_type, field.name))
+
+            return f(cls, url_params, query_args, body_args, *args, **kwargs)
 
         action.fields = self.fields
         return classmethod(action)
