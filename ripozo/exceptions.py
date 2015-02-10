@@ -36,3 +36,26 @@ class NotFoundException(ManagerException):
     find a model that was requested.
     """
     pass
+
+
+class FieldException(RestExceptions, ValueError):
+    """
+    An exception specifically for Field errors.  Specifically,
+    when validation or casting fail.
+    """
+    pass
+
+
+class ValidationException(FieldException):
+    """
+    An exception for when validation fails on a field.
+    """
+    pass
+
+
+class TranslationException(ValidationException):
+    """
+    An exception that is raised when casting fails on
+    a field.
+    """
+    pass

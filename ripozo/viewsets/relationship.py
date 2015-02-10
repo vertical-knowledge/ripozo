@@ -2,10 +2,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-from ripozo.viewsets.constructor import ResourceMetaClass
-import six
 
-__author__ = 'Tim Martin'
+from ripozo.viewsets.constructor import ResourceMetaClass
+
+import six
 
 
 class Relationship(object):
