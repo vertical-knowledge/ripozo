@@ -143,6 +143,7 @@ class BaseManager(object):
         :return: The type of the field
         :rtype: type
         """
+        # TODO update docstring for use of fields
         pass
 
     @abstractproperty

@@ -18,7 +18,7 @@ class TestSirenAdapter(TestBase):
     """
 
     def setUp(self):
-        self.resource = HelloWorldViewset()
+        self.resource = HelloWorldViewset.hello([], [], [])
         self.adapter = SirenAdapter(self.resource)
         self.data = json.loads(self.adapter.formatted_body)
 
@@ -43,8 +43,12 @@ class TestSirenAdapter(TestBase):
         self.assertIsInstance(props, dict)
 
     def test_entities_available(self):
-        # TODO
-        pass
+        self.assertIn('entities', self.data)
+        entities = self.data['entities']
+        self.assertIsInstance(entities, list)
+        for ent in entities:
+            self.assertIsInstance(ent, dict)
+            # TODO actually check the entities
 
     def test_actions_available(self):
         """

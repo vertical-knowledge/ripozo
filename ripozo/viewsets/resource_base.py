@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 import six
 from six.moves.urllib import parse
 from ripozo.viewsets.constructor import ResourceMetaClass
+from ripozo.viewsets import status_constants
 from ripozo.utilities import classproperty
 import re
 
@@ -25,7 +26,7 @@ class ResourceBase(object):
     _preprocessors = None
     _postprocessors = None
 
-    def __init__(self, properties=None, status_code=200, errors=None, meta=None):
+    def __init__(self, properties=None, errors=None, meta=None, status=None):
         """
         Initializes a response
 
@@ -41,14 +42,14 @@ class ResourceBase(object):
         if not meta:
             meta = {}
         self.properties = properties
-        self.status_code = status_code
+        self.status = status
         self.errors = errors
         self.meta = meta
         self._url = None
 
     @property
     def has_error(self):
-        return len(self.errors) > 0
+        return len(self.errors) > 0 or self.status == status_constants.ERRORED
 
     @property
     def url(self):
@@ -156,7 +157,7 @@ class ResourceBase(object):
 
     @classproperty
     def relationships(cls):
-        return cls._relationships or []
+        return cls._relationships or {}
 
     @classproperty
     def resource_name(cls):
