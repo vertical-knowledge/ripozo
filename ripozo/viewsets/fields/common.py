@@ -13,6 +13,7 @@ class StringField(BaseField):
     """
     Used for casting and validating string fields.
     """
+    field_type = six.string_types
 
     def __init__(self, name, max_length=None, min_length=None, regex=None, required=False):
         """
@@ -29,7 +30,18 @@ class StringField(BaseField):
         self.regex = regex
 
     def translate(self, obj):
-        # TODO
+        """
+        Attempts to convert the object to a string type
+
+        :param object obj:
+        :return: The object in its string representation
+        :rtype: unicode
+        :raises: TranslationsException
+        """
+        # A none input should be handled by the validator
+        if obj is None:
+            return obj
+
         obj = super(StringField, self).translate(obj)
         try:
             return six.text_type(obj)
@@ -37,15 +49,17 @@ class StringField(BaseField):
             raise TranslationException('obj is not a valid unicode string: {0}'.format(obj))
 
     def validate(self, obj):
-        # TODO
+        """
+        Validates the object.  It makes a call to super checking if the input
+        can be None
+
+        :param unicode obj:
+        :return:
+        :rtype: unicode
+        :raises: ValidationException
+        """
         obj = super(StringField, self).validate(obj)
-        if not isinstance(obj, six.string_types):
-            raise ValidationException('The object validated is not a string: {0}'.format(obj))
-        if self.max_length and len(obj) > self.max_length:
-            raise ValidationException('The input string was too long: {0} > {1}'.format(len(obj), self.max_length))
-        if self.min_length and len(obj) < self.min_length:
-            raise ValidationException('The input string was too short '
-                                      'for validation: {0} < {1}'.format(len(obj), self.min_length))
+        obj = self._validate_size(obj, len(obj))
         if not self.regex.match(obj):
             raise ValidationException('The input string did not match the'
                                       ' required regex: {0} != {1}'.format(obj, self.regex))
@@ -55,13 +69,16 @@ class StringField(BaseField):
 
 
 class IntegerField(BaseField):
-    # TODO
-    def __init__(self, name, maximum=None, minimum=None, required=False):
-        super(IntegerField, self).__init__(name, required=required)
-        self.maximum = maximum
-        self.minimum = minimum
+    """
+    A field used for translating and validating an integer input
+    """
+    field_type = int
 
     def translate(self, obj):
+        # A none input should be handled by the validator
+        if obj is None:
+            return obj
+
         obj = super(IntegerField, self).translate(obj)
         try:
             return int(obj)
@@ -70,40 +87,37 @@ class IntegerField(BaseField):
 
     def validate(self, obj):
         obj = super(IntegerField, self).validate(obj)
-        obj = self._type_helper(obj)
-        if self.maximum and obj > self.maximum:
-            raise ValidationException('The object is larger than the required'
-                                      ' maximum: {0} > {1}'.format(obj, self.maximum))
-        if self.minimum and self.minimum > obj:
-            raise ValidationException('The object is smaller than the required'
-                                      ' minimum: {0} < {1}'.format(obj, self.minimum))
-
-        # validation passed
-        return obj
-
-    def _type_helper(self, obj):
-        if not isinstance(obj, six.integer_types):
-            raise ValidationException('the object is not a valid integer type: {0}'.format(obj))
-        return obj
+        return self._validate_size(obj, obj)
 
 
 class FloatField(IntegerField):
+    """
+    A field used for translating and validating a float input
+    """
+
     def translate(self, obj):
+        # A none input should be handled by the validator
+        if obj is None:
+            return obj
+
         obj = super(FloatField, self).translate(obj)
         try:
             return float(obj)
         except ValueError:
             raise TranslationException('obj is not castable to float: {0}'.format(obj))
 
-    def _type_helper(self, obj):
-        if not isinstance(obj, float):
-            raise ValidationException('obj is not a float type: {0}'.format(obj))
-        return obj
-
 
 class BooleanField(BaseField):
-    # TODO
+    """
+    A field used for translating and validating a boolean input
+    It can take either a boolean or a string.
+    """
+
     def translate(self, obj):
+        # A none input should be handled by the validator
+        if obj is None:
+            return obj
+
         if isinstance(obj, bool):
             return obj
         if isinstance(obj, six.string_types):
