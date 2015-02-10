@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 from ripozo.exceptions import ValidationException, TranslationException
 from ripozo.viewsets.fields.base import BaseField
 
-import json
 import six
 
 
@@ -15,7 +14,7 @@ class StringField(BaseField):
     Used for casting and validating string fields.
     """
 
-    def __init__(self, max_length=None, min_length=None, regex=None, required=False):
+    def __init__(self, name, max_length=None, min_length=None, regex=None, required=False):
         """
         A field class for validating string inputs.
 
@@ -24,7 +23,7 @@ class StringField(BaseField):
         :param _sre.SRE_Pattern regex: A compiled regular expression that must
             match at least once.
         """
-        super(StringField, self).__init__()
+        super(StringField, self).__init__(name, required=required)
         self.max_length = max_length
         self.min_length = min_length
         self.regex = regex
@@ -32,7 +31,10 @@ class StringField(BaseField):
     def translate(self, obj):
         # TODO
         obj = super(StringField, self).translate(obj)
-        return six.text_type(obj)
+        try:
+            return six.text_type(obj)
+        except ValueError:
+            raise TranslationException('obj is not a valid unicode string: {0}'.format(obj))
 
     def validate(self, obj):
         # TODO
@@ -54,8 +56,8 @@ class StringField(BaseField):
 
 class IntegerField(BaseField):
     # TODO
-    def __init__(self, maximum=None, minimum=None, required=False):
-        super(IntegerField, self).__init__(required=required)
+    def __init__(self, name, maximum=None, minimum=None, required=False):
+        super(IntegerField, self).__init__(name, required=required)
         self.maximum = maximum
         self.minimum = minimum
 
@@ -86,6 +88,13 @@ class IntegerField(BaseField):
 
 
 class FloatField(IntegerField):
+    def translate(self, obj):
+        obj = super(FloatField, self).translate(obj)
+        try:
+            return float(obj)
+        except ValueError:
+            raise TranslationException('obj is not castable to float: {0}'.format(obj))
+
     def _type_helper(self, obj):
         if not isinstance(obj, float):
             raise ValidationException('obj is not a float type: {0}'.format(obj))
@@ -104,4 +113,3 @@ class BooleanField(BaseField):
                 return True
         raise ValidationException('{0} is not a valid boolean.  Either'
                                   ' "true" or "false" is required (case insensitive)'.format(obj))
-

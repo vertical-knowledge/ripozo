@@ -5,15 +5,23 @@ from __future__ import unicode_literals
 
 from ripozo.exceptions import ValidationException
 
+import six
 
+
+@six.python_2_unicode_compatible
 class BaseField(object):
     """
     The BaseField class is simply an abstract base class
     that defines the necessary methods for casting and
     validating a field.
     """
-    def __init__(self, required=False):
+
+    def __init__(self, name, required=False):
+        self.name = name
         self.required = required
+
+    def __str__(self):
+        return self.name
 
     def translate_and_validate(self, obj):
         """
