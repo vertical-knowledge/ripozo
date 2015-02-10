@@ -140,7 +140,7 @@ class DateTimeField(BaseField):
     %Y-%m-%dT%H:%M:%S.%fZ
 
     If you need other formats simply pass a list of valid formats
-    into the formats parameter on initialization
+    into the valid_formats parameter on initialization
     """
     field_type = datetime
     valid_formats = ['%Y-%m-%dT%H:%M:%S.%fZ']

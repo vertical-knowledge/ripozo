@@ -33,9 +33,49 @@ class apimethod(object):
             return f(instance, *args, **kwargs)
 
         wrapped.rest_route = True
-        if getattr(f, 'routes', None) is None:
-            wrapped.routes = []
-        else:
-            wrapped.routes = getattr(f, 'routes')
+        wrapped.routes = getattr(f, 'routes', [])
         wrapped.routes.append((self.route, self.endpoint, self.options))
         return classmethod(wrapped)
+
+
+class validate(object):
+    """
+    Decorator for validating the inputs to an apimethod
+    and describing what is allowed for that apimethod to
+    an adapter if necessary.
+    """
+
+    def __init__(self, fields=None):
+        """
+        Initializes the decorator with the necessary fields.
+        the fields should be instances of FieldBase and should
+        give descriptions of the parameter and how to input them
+        (i.e. query or body parameter)
+
+        :param list fields: A list of FieldBase instances (or subclasses
+            of FieldBase).
+        """
+        self.fields = fields or []
+
+    def __call__(self, f):
+        """
+        Wraps the function with translation and validation.
+        This allows the inputs to be cast and validated as necessary.
+        Additionally, it provides the adapter with information about
+        what is necessary to successfully make a request to the wrapped
+        apimethod.
+
+        :param method f:
+        :return: The wrapped function
+        :rtype: function
+        """
+        @wraps(f)
+        def action(*args, **kwargs):
+            translated_and_validated = {}
+            for field in self.fields:
+                value = kwargs.get(field.name, None)
+                translated_and_validated[field.name] = field.translate_and_validate(value)
+            return f(*args, **translated_and_validated)
+
+        action.fields = self.fields
+        return classmethod(action)
