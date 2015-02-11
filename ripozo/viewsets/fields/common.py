@@ -60,6 +60,8 @@ class StringField(BaseField):
         :raises: ValidationException
         """
         obj = super(StringField, self).validate(obj)
+        if self._skip_validation(obj):
+            return obj
         obj = self._validate_size(obj, len(obj))
         if self.regex and not self.regex.match(obj):
             raise ValidationException('The input string did not match the'
@@ -88,6 +90,8 @@ class IntegerField(BaseField):
 
     def validate(self, obj):
         obj = super(IntegerField, self).validate(obj)
+        if self._skip_validation(obj):
+            return obj
         return self._validate_size(obj, obj)
 
 
@@ -118,6 +122,7 @@ class BooleanField(BaseField):
 
     def translate(self, obj):
         # A none input should be handled by the validator
+        obj = super(BooleanField, self).translate(obj)
         if obj is None:
             return obj
 
@@ -128,7 +133,7 @@ class BooleanField(BaseField):
                 return False
             elif obj.lower() == 'true':
                 return True
-        raise ValidationException('{0} is not a valid boolean.  Either'
+        raise TranslationException('{0} is not a valid boolean.  Either'
                                   ' "true" or "false" is required (case insensitive)'.format(obj))
 
 
@@ -175,3 +180,15 @@ class DateTimeField(BaseField):
                 continue
         raise TranslationException('The object ({0}) could not be parsed as a datetime '
                                    'string using the formats {1}'.format(obj, self.valid_formats))
+
+    def validate(self, obj):
+        """
+        Just makes a size check on top of instance type check
+
+        :param datetime obj:
+        :return: The object unchanged
+        :rtype: datetime
+        :raises: ValidationException
+        """
+        obj = super(DateTimeField, self).validate(obj)
+        return self._validate_size(obj, obj)

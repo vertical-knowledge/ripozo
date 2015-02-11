@@ -74,11 +74,25 @@ class BaseField(object):
         obj = self._validate_type(obj)
         return obj
 
+    def _skip_validation(self, obj):
+        """
+        Deteremines whether validation should be skipped because
+        the input is None and the field is not required.
+
+        :param object obj:
+        :return: A boolean indicating whether validation should
+            be skipped
+        :rtype: bool
+        """
+        if obj is None and not self.required:
+            return True
+        return False
+
     def _validate_size(self, obj, obj_size, msg=None):
         """
         Validates the size of the object.
 
-        :param obj_size: The size of the object.  This must be an object
+        :param Sized obj_size: The size of the object.  This must be an object
             that is comparable, i.e. it must be comparable via  ">" and "<"
             operators
         :param msg: The message to display if the object fails validation
