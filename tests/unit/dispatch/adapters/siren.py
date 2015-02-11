@@ -66,6 +66,7 @@ class TestSirenAdapter(TestBase):
             self.assertIsInstance(a['method'], six.text_type)
             self.assertIn('name', a)
             self.assertIsInstance(a['name'], six.text_type)
+            # TODO check actions
 
     def test_links_available(self):
         """

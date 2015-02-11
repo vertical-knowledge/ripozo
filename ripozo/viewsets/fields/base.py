@@ -107,6 +107,8 @@ class BaseField(object):
         :return: The validated object
         :rtype: object
         """
+        if obj is None and not self.required:
+            return obj
         if obj and isinstance(obj, self.field_type):
             return obj
         if msg is None:
