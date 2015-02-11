@@ -92,15 +92,15 @@ class SirenAdapter(AdapterBase):
         entities = []
         parent_properties = self.resource.properties.copy()
         for field_name, relationship in six.iteritems(self.resource.relationships):
-            ent = {'class': [relationship.relation.resource_name]}
-            related_resource = relationship.construct_resource(self.resource.properties)
-            if not relationship.embedded:
-                ent['href'] = related_resource.url
-                updated_properties = relationship.remove_child_resource_properties(parent_properties)
-            else:
-                ent['properties'] = related_resource.properties
-                ent['links'] = dict(rel=['self'], href=related_resource.url)
-            entities.append(ent)
+            for related_resource in relationship.construct_resource(self.resource.properties):
+                ent = {'class': [relationship.relation.resource_name]}
+                if not relationship.embedded:
+                    ent['href'] = related_resource.url
+                    updated_properties = relationship.remove_child_resource_properties(parent_properties)
+                else:
+                    ent['properties'] = related_resource.properties
+                    ent['links'] = dict(rel=['self'], href=related_resource.url)
+                entities.append(ent)
         return entities, parent_properties
 
 

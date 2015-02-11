@@ -4,7 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.decorators import apimethod, validate
-from ripozo.viewsets.relationship import Relationship
+from ripozo.viewsets.relationships.relationship import Relationship
 from ripozo.viewsets.fields.common import StringField
 from ripozo.viewsets.resource_base import ResourceBase
 from tests.unit.helpers.inmemory_manager import InMemoryManager

@@ -64,7 +64,7 @@ class Relationship(object):
         :rtype: rest.viewsets.resource_base.ResourceBase
         """
         related_properties = self._map_pks(properties)
-        return self.relation(properties=related_properties)
+        yield self.relation(properties=related_properties)
 
     def remove_child_resource_properties(self, properties):
         """
