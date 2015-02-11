@@ -106,7 +106,7 @@ class FloatField(IntegerField):
         if obj is None:
             return obj
 
-        obj = super(FloatField, self).translate(obj)
+        obj = super(IntegerField, self).translate(obj)
         try:
             return float(obj)
         except ValueError:

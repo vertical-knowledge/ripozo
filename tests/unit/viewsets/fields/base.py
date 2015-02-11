@@ -7,6 +7,8 @@ from ripozo.exceptions import ValidationException
 from ripozo.viewsets.fields.base import BaseField
 from tests.python2base import TestBase
 
+import six
+
 
 class TestBaseField(TestBase):
     def test_not_required(self):
@@ -65,3 +67,9 @@ class TestBaseField(TestBase):
 
         f.field_type = int
         self.assertRaises(ValidationException, f._validate_type, 'something')
+
+    def test_name(self):
+        field_name = 'field'
+        f = BaseField(field_name)
+        self.assertEqual(f.name, field_name)
+        self.assertEqual(field_name, six.text_type(f))
