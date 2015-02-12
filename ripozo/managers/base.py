@@ -46,6 +46,7 @@ class BaseManager(object):
     fields = None
     model = None
     arg_parser = None
+    _field_validators = None
 
     @abstractmethod
     def create(self, values, *args, **kwargs):
@@ -148,7 +149,7 @@ class BaseManager(object):
         pass
 
     @classproperty
-    def field_validators(self):
+    def field_validators(cls):
         """
         Gets the BaseField instances for all of the
         fields on the manager.
@@ -156,8 +157,11 @@ class BaseManager(object):
         :return:
         :rtype: list
         """
-        # TODO figure out a better way to do this
-        raise NotImplementedError
+        if cls._field_validators is None:
+            cls._field_validators = []
+            for f in cls.fields:
+                cls._field_validators.append(cls.get_field_type(f))
+        return cls._field_validators
 
     @abstractproperty
     def model_name(self):
