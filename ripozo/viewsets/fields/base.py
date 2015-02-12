@@ -170,3 +170,41 @@ def translate_and_validate_fields(url_params, query_args, body_args, fields=None
         else:
             raise RestException('Invalid arg_type, {0}, on Field {1}'.format(field.arg_type, field.name))
     return updated_url_params, updated_query_args, updated_body_args
+
+
+# TODO don't repeat the shit above
+def translate_fields(url_params, query_args, body_args, fields=None):
+    """
+    Translates and validates the supplied parameters against the
+    list of BaseField instances provided
+
+    :param dict url_params: The url parameters.  Typically this is going
+        to be things like primary keys and such
+    :param dict query_args: The query args.  Typically these are going to be
+        filters on lists and such
+    :param dict body_args: The arguments in the body.  This may be for
+        updates and creations
+    :param list fields: The list of BaseField instances that are supposed
+        to be validated.  Only items in this list will be translated
+        and validated
+    :return: Returns the translated url_params, query_args and body_args
+    :rtype: tuple
+    :raises: RestException
+    :raises: ValidationException
+    :raises: TranslationException
+    """
+    updated_url_params = url_params.copy()
+    updated_query_args = query_args.copy()
+    updated_body_args = body_args.copy()
+    fields = fields or []
+    for field in fields:
+        # Translate and validate the inputs
+        if field.arg_type == input_categories.URL_PARAMS:
+            updated_url_params[field.name] = field.translate(url_params.get(field.name, None))
+        elif field.arg_type == input_categories.BODY_ARGS:
+            updated_query_args[field.name] = field.translate(body_args.get(field.name, None))
+        elif field.arg_type == input_categories.QUERY_ARGS:
+            updated_body_args[field.name] = field.translate(query_args.get(field.name, None))
+        else:
+            raise RestException('Invalid arg_type, {0}, on Field {1}'.format(field.arg_type, field.name))
+    return updated_url_params, updated_query_args, updated_body_args
