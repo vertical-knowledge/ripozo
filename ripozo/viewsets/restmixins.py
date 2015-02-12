@@ -17,7 +17,6 @@ class Create(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['POST'])
-    @validate(UserResource.field_validators)
     def create(cls, primary_keys, filters, values, *args, **kwargs):
         logger.info('Creating a model for resource {0}'.format(cls.resource_name))
         obj = cls.manager.create(values, *args, **kwargs)

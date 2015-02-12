@@ -4,7 +4,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.exceptions import ValidationException
-from ripozo.viewsets.constants.input_categories import QUERY_ARGS
+from ripozo.viewsets.constants import input_categories
+from ripozo.exceptions import RestException
 
 import six
 
@@ -18,7 +19,8 @@ class BaseField(object):
     """
     field_type = object
 
-    def __init__(self, name, default=None, required=False, maximum=None, minimum=None, arg_type=QUERY_ARGS):
+    def __init__(self, name, default=None, required=False, maximum=None,
+                 minimum=None, arg_type=input_categories.QUERY_ARGS):
         self.name = name
         self.required = required
         self.maximum = maximum
@@ -131,3 +133,40 @@ class BaseField(object):
         if msg is None:
             msg = "obj is not a valid type for field {0}. A type of {1} is required.".format(self.name, self.field_type)
         raise ValidationException(msg)
+
+
+def translate_and_validate_fields(url_params, query_args, body_args, fields=None):
+    """
+    Translates and validates the supplied parameters against the
+    list of BaseField instances provided
+
+    :param dict url_params: The url parameters.  Typically this is going
+        to be things like primary keys and such
+    :param dict query_args: The query args.  Typically these are going to be
+        filters on lists and such
+    :param dict body_args: The arguments in the body.  This may be for
+        updates and creations
+    :param list fields: The list of BaseField instances that are supposed
+        to be validated.  Only items in this list will be translated
+        and validated
+    :return: Returns the translated url_params, query_args and body_args
+    :rtype: tuple
+    :raises: RestException
+    :raises: ValidationException
+    :raises: TranslationException
+    """
+    updated_url_params = url_params.copy()
+    updated_query_args = query_args.copy()
+    updated_body_args = body_args.copy()
+    fields = fields or []
+    for field in fields:
+        # Translate and validate the inputs
+        if field.arg_type == input_categories.URL_PARAMS:
+            updated_url_params[field.name] = field.translate_and_validate(url_params.get(field.name, None))
+        elif field.arg_type == input_categories.BODY_ARGS:
+            updated_query_args[field.name] = field.translate_and_validate(body_args.get(field.name, None))
+        elif field.arg_type == input_categories.QUERY_ARGS:
+            updated_body_args[field.name] = field.translate_and_validate(query_args.get(field.name, None))
+        else:
+            raise RestException('Invalid arg_type, {0}, on Field {1}'.format(field.arg_type, field.name))
+    return updated_url_params, updated_query_args, updated_body_args

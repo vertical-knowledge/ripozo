@@ -4,8 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from functools import wraps
-from ripozo.exceptions import RestException
-from ripozo.viewsets.constants import input_categories
+from ripozo.viewsets.fields.base import translate_and_validate_fields
 import logging
 
 
@@ -77,17 +76,8 @@ class validate(object):
         """
         @wraps(f)
         def action(cls, url_params, query_args, body_args, *args, **kwargs):
-            for field in self.fields:
-                # Translate and validate the inputs
-                if field.arg_type == input_categories.URL_PARAMS:
-                    url_params[field.name] = field.translate_and_validate(url_params.get(field.name, None))
-                elif field.arg_type == input_categories.BODY_ARGS:
-                    body_args[field.name] = field.translate_and_validate(body_args.get(field.name, None))
-                elif field.arg_type == input_categories.QUERY_ARGS:
-                    query_args[field.name] = field.translate_and_validate(query_args.get(field.name, None))
-                else:
-                    raise RestException('Invalid arg_type, {0}, on Field {1}'.format(field.arg_type, field.name))
-
+            url_params, query_args, body_args = translate_and_validate_fields(url_params, query_args,
+                                                                              body_args, fields=self.fields)
             return f(cls, url_params, query_args, body_args, *args, **kwargs)
 
         action.fields = self.fields

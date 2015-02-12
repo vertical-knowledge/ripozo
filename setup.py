@@ -1,7 +1,7 @@
 __author__ = 'Tim Martin'
 from setuptools import setup, find_packages
 
-version = '0.1.2b5'
+version = '0.1.2b6'
 
 setup(
     name='ripozo',
