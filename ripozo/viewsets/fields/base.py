@@ -18,12 +18,13 @@ class BaseField(object):
     """
     field_type = object
 
-    def __init__(self, name, required=False, maximum=None, minimum=None, arg_type=QUERY_ARGS):
+    def __init__(self, name, default=None, required=False, maximum=None, minimum=None, arg_type=QUERY_ARGS):
         self.name = name
         self.required = required
         self.maximum = maximum
         self.minimum = minimum
         self.arg_type = arg_type
+        self.default = default
 
     def __str__(self):
         """
@@ -58,6 +59,8 @@ class BaseField(object):
         :rtype: object
         :raises: ripozo.exceptions.TranslationException
         """
+        if not obj:
+            return self.default
         return obj
 
     def validate(self, obj):

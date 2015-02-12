@@ -17,7 +17,7 @@ class StringField(BaseField):
     """
     field_type = six.text_type
 
-    def __init__(self, name, required=False, maximum=None, minimum=None, arg_type=QUERY_ARGS, regex=None):
+    def __init__(self, name, default=None, required=False, maximum=None, minimum=None, arg_type=QUERY_ARGS, regex=None):
         """
         A field class for validating string inputs.
 
@@ -27,7 +27,7 @@ class StringField(BaseField):
             match at least once.
         """
         super(StringField, self).__init__(name, required=required, maximum=maximum,
-                                          minimum=minimum, arg_type=arg_type)
+                                          minimum=minimum, arg_type=arg_type, default=default)
         self.regex = regex
 
     def translate(self, obj):

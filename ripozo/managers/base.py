@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from abc import ABCMeta, abstractmethod, abstractproperty
+from ripozo.utilities import classproperty
 
 import logging
 logger = logging.getLogger(__name__)
@@ -145,6 +146,18 @@ class BaseManager(object):
         """
         # TODO update docstring for use of fields
         pass
+
+    @classproperty
+    def field_validators(self):
+        """
+        Gets the BaseField instances for all of the
+        fields on the manager.
+
+        :return:
+        :rtype: list
+        """
+        # TODO figure out a better way to do this
+        raise NotImplementedError
 
     @abstractproperty
     def model_name(self):

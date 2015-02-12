@@ -96,11 +96,11 @@ class SirenAdapter(AdapterBase):
                 ent = {'class': [relationship.relation.resource_name]}
                 if not relationship.embedded:
                     ent['href'] = related_resource.url
-                    updated_properties = relationship.remove_child_resource_properties(parent_properties)
                 else:
                     ent['properties'] = related_resource.properties
                     ent['links'] = dict(rel=['self'], href=related_resource.url)
                 entities.append(ent)
+            parent_properties = relationship.remove_child_resource_properties(parent_properties)
         return entities, parent_properties
 
 
