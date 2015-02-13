@@ -83,4 +83,4 @@ you can support as many adapters as are written by anyone in the world with no e
 work on your part outside of installing the extra adapter packages.  This is extemely 
 useful because you can write your logic once and not have to worry about duplicating
 your code so that the front-end web team can use SIREN and the mobile team can use
-COLLECTION.json with no extra work on your part.
+basic CRUD+L.
