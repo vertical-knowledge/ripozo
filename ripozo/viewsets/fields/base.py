@@ -61,7 +61,7 @@ class BaseField(object):
         :rtype: object
         :raises: ripozo.exceptions.TranslationException
         """
-        if not obj:
+        if obj is None:
             return self.default
         return obj
 

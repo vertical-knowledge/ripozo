@@ -109,7 +109,7 @@ class FloatField(IntegerField):
         obj = super(IntegerField, self).translate(obj)
         try:
             return float(obj)
-        except ValueError:
+        except (ValueError, TypeError):
             raise TranslationException('obj is not castable to float: {0}'.format(obj))
 
 
