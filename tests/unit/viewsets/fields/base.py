@@ -6,11 +6,16 @@ from __future__ import unicode_literals
 from ripozo.exceptions import ValidationException
 from ripozo.viewsets.fields.base import BaseField
 from tests.python2base import TestBase
+from tests.unit.viewsets.fields.common import CommonMixin
 
 import six
 
 
-class TestBaseField(TestBase):
+class TestBaseField(TestBase, CommonMixin):
+    field_type = BaseField
+    instance_type = object
+
+
     def test_not_required(self):
         f = BaseField('field', required=False)
         obj = f.translate_and_validate(None)
@@ -73,3 +78,20 @@ class TestBaseField(TestBase):
         f = BaseField(field_name)
         self.assertEqual(f.name, field_name)
         self.assertEqual(field_name, six.text_type(f))
+
+    def test_translate_none(self):
+        """Tests whether the field can appropriately handle None, False, etc"""
+        f = BaseField('field')
+        output = f.translate(None)
+        self.assertIsNone(output)
+
+    def test_translate_none_like(self):
+        f = BaseField('field')
+        output = f.translate(False)
+        self.assertIsNotNone(output)
+        self.assertFalse(output)
+        output = f.translate([])
+        self.assertIsNotNone(output)
+        self.assertIsInstance(output, list)
+
+

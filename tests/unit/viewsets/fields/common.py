@@ -54,6 +54,12 @@ class CommonMixin(object):
             new = f.translate(success)
             self.assertIsInstance(new, self.instance_type)
 
+    def test_translate_none(self):
+        """Tests whether the field can appropriately handle None, False, etc"""
+        f = self.field_type('field')
+        output = f.translate(None)
+        self.assertIsNone(output)
+
 
 class StringFieldTest(TestBase, CommonMixin):
     field_type = StringField
