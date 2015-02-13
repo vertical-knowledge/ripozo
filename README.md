@@ -44,4 +44,43 @@ let's keep our open source world DRY.
 Alright, so you're probably tired of hearing about all our self righteous talk 
 about ripozo's philosophy and want to know how you can actually use it to start
 building awesome APIs.  Ripozo has four basic pieces: Dispatchers, Adapters, Resources,
-and Managers.  
+and Managers.  tl:dr; version: Dispatchers handle incoming requests and direct
+them to Resources.  Resources perform the business logic, optionally using a 
+Manager to interact with a database.  The Resource returns an instance of itself
+to the dispatcher which determines which Adapter to use.  The adapter then takes the
+Resource instance and formats it into an appropriate response.  The dispatcher then
+returns this response.
+
+Now for the more detailed descriptions...
+
+## Dispatchers
+
+In this base ripozo package, the dispatcher is simply an abstract base class
+with a few convience methods.  Since the handling of incoming requests is
+dependent on the framework you are using, and we don't want to make design 
+decisions for you, we thought that this would be a bad place for making opinionated
+decisions.  However, the upside is that it is very easy to create dispatchers.
+In fact, a Flask dispatcher has already been created and is only one file less than
+100 lines long. In the future we will be adding more webframework specific 
+dispatchers and plan on making a framework of our own that is specific to ripozo.
+
+## Resources
+
+Resources are the bread and butter of ripozo.  They determine the business logic
+of an application.
+
+## Managers
+
+Managers are more or less the state keepers of the application.
+
+## Adapters
+
+Adapters determine the format in which to return a response.  They take a resource
+instance and generate what the response should look like.  For example, you could 
+have an adapter that returns a SIREN response and another adapter that returns a HAL
+response.  The best part is, that these are entirely reusable.  That means that 
+you can support as many adapters as are written by anyone in the world with no extra
+work on your part outside of installing the extra adapter packages.  This is extemely 
+useful because you can write your logic once and not have to worry about duplicating
+your code so that the front-end web team can use SIREN and the mobile team can use
+COLLECTION.json with no extra work on your part.
