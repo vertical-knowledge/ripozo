@@ -10,6 +10,8 @@ efficiently.
 
 ## Philosophy
 
+### Hypermedia
+
 Ripozo is designed first and foremost behind the belief that Hypermedia
 APIs are the way everything should be developed.  With hypermedia APIs and
 good client consumers, boilerplate code is removed and a developer is free
@@ -20,6 +22,8 @@ too much knowledge on the client side still.  With true Hypermedia, the
 client doesn't need to how to construct URLs or what the actions available
 on a given resource are.  The server can simply tell you.
 
+### Unopinionated (unless you want it to be)
+
 Ripozo doesn't make design decisions for you.  Ripozo is a tool that is capable
 of being used in any existing web framework.  It can be used with any database.
 Any Hypermedia protocol can be used.  If you really wanted to, though we don't
@@ -27,6 +31,8 @@ recommend it, you could even render raw HTML with a tool like Jinja2.  You could
 even theoretically skip the web application all together and use it directly instead
 of through a web api. Long story short, Ripozo doesn't care how it is used.  
 It can be plugged in for a small part of your application or used exclusively.
+
+### Extensible and Pluggable
 
 Ripozo is extensible/pluggable.  Just because ripozo itself doesn't make design decisions
 for you doesn't mean that it shouldn't be batteries included, we just believe
