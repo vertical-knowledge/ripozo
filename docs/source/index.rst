@@ -13,7 +13,7 @@ Contents:
 
    API/modules
 
-.. include:: ../../README.txt
+.. include:: ../../README.md
 
 
 
