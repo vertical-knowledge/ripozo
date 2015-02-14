@@ -1,13 +1,13 @@
-rest.managers package
-=====================
+ripozo.managers package
+=======================
 
 Submodules
 ----------
 
-rest.managers.base module
--------------------------
+ripozo.managers.base module
+---------------------------
 
-.. automodule:: rest.managers.base
+.. automodule:: ripozo.managers.base
     :members:
     :undoc-members:
     :show-inheritance:
@@ -16,7 +16,7 @@ rest.managers.base module
 Module contents
 ---------------
 
-.. automodule:: rest.managers
+.. automodule:: ripozo.managers
     :members:
     :undoc-members:
     :show-inheritance:

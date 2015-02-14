@@ -13,6 +13,8 @@ Contents:
 
    API/modules
 
+.. include:: ../../README.txt
+
 
 
 Indices and tables
