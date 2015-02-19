@@ -8,6 +8,10 @@ from ripozo.viewsets.fields.base import translate_and_validate_fields
 import logging
 
 
+class _customclassmethod(classmethod):
+    pass
+
+
 class apimethod(object):
     """
     Decorator for declaring routes on a ripozo resource
@@ -41,13 +45,7 @@ class apimethod(object):
         wrapped.routes = getattr(f, 'routes', [])
         wrapped.routes.append((self.route, self.endpoint, self.options))
 
-        # Hacky fix for python 3.3 and pypy3.
-        @classmethod
-        @wraps(wrapped)
-        def class_wrapped(klass, *args, **kwargs):
-            return wrapped(klass, *args, **kwargs)
-
-        return class_wrapped
+        return _customclassmethod(wrapped)
 
 
 class validate(object):
