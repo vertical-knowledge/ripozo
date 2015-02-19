@@ -18,6 +18,7 @@ class HalAdapter(AdapterBase):
     A description of the HAL format can be found here:
     `HAL Specification <http://stateless.co/hal_specification.html>`_
     """
+    formats = ['hal', _content_type]
 
     @property
     def extra_headers(self):
