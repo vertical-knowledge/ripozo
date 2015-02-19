@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.exceptions import BaseRestEndpointAlreadyExists
+from ripozo.decorators import _customclassmethod, apimethod
 
 import logging
 import inspect
@@ -48,11 +49,9 @@ class ResourceMetaClass(type):
         logger.debug(six.text_type(klass.__dict__))
         logger.debug(six.text_type(inspect.getmembers(klass)))
         for name, method in inspect.getmembers(klass, mcs.method_or_class_method):
-            logger.debug(name)
-            if getattr(method, 'rest_route', False):
-                logger.debug('Registering method {0} as a valid '
-                             'action on resource {1}'.format(method.__name__, klass.__name__))
-                klass.register_endpoint(method)
+            logger.debug('Registering method {0} as a valid '
+                         'action on resource {1}'.format(method.__name__, klass.__name__))
+            klass.register_endpoint(method)
 
     @classmethod
     def _register_class(mcs, klass):
@@ -73,7 +72,8 @@ class ResourceMetaClass(type):
     @staticmethod
     def method_or_class_method(object):
         # return getattr(object, 'rest_route', False)
-        success = isinstance(object, (types.MethodType, classmethod))
+        success = getattr(object, '__rest_route__', False)
+        # success = isinstance(object, (types.MethodType, _customclassmethod, apimethod, types.FunctionType))
         if success:
             logger.debug('{0} {1}'.format(success, object))
         return success

@@ -8,8 +8,21 @@ from ripozo.viewsets.fields.base import translate_and_validate_fields
 import logging
 
 
-class _customclassmethod(classmethod):
-    pass
+class _customclassmethod(object):
+    def __init__(self, f):
+        self.f = f
+        self.rest_route = True
+        self.routes = getattr(f, 'routes', [])
+
+    def __get__(self, obj, klass=None):
+        if klass is None:
+            klass = type(obj)
+        @wraps(self.f)
+        def newfunc(*args):
+            return self.f(klass, *args)
+        newfunc.__rest_route__ = True
+        newfunc.routes = getattr(self.f, 'routes', [])
+        return newfunc
 
 
 class apimethod(object):
@@ -38,13 +51,13 @@ class apimethod(object):
         :rtype: classmethod
         """
         @wraps(f)
-        def wrapped(klass, *args, **kwargs):
-            return f(klass, *args, **kwargs)
+        def wrapped(*args, **kwargs):
+            return f(*args, **kwargs)
 
-        wrapped.rest_route = True
+        wrapped.__rest_route__ = True
         wrapped.routes = getattr(f, 'routes', [])
-        wrapped.routes.append((self.route, self.endpoint, self.options))
 
+        wrapped.routes.append((self.route, self.endpoint, self.options))
         return _customclassmethod(wrapped)
 
 
