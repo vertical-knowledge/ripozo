@@ -8,6 +8,7 @@ from ripozo.exceptions import BaseRestEndpointAlreadyExists
 import logging
 import inspect
 import six
+import types
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +28,6 @@ class ResourceMetaClass(type):
         if attrs.get('__abstract__', False):  # Don't register endpoints of abstract classes
             logger.debug('ResourceMetaClass "{0}" is abstract.  Not being registered'.format(name))
             return klass
-
         mcs._register_endpoints(klass)
         mcs._register_class(klass)
 
@@ -45,6 +45,7 @@ class ResourceMetaClass(type):
 
         :param klass: The class to register endpoints on.
         """
+        logger.debug(six.text_type(klass.__dict__))
         for name, method in inspect.getmembers(klass, inspect.ismethod):
             if getattr(method, 'rest_route', False):
                 logger.debug('Registering method {0} as a valid '
@@ -66,3 +67,7 @@ class ResourceMetaClass(type):
             raise BaseRestEndpointAlreadyExists
         mcs.registered_resource_classes[klass] = klass.base_url
         mcs.registered_names_map[klass.__name__] = klass
+
+    @staticmethod
+    def method_or_class_method(object):
+        return isinstance(object, (types.MethodType, classmethod))
