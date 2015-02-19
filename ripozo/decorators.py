@@ -34,13 +34,20 @@ class apimethod(object):
         :rtype: classmethod
         """
         @wraps(f)
-        def wrapped(instance, *args, **kwargs):
-            return f(instance, *args, **kwargs)
+        def wrapped(klass, *args, **kwargs):
+            return f(klass, *args, **kwargs)
 
         wrapped.rest_route = True
         wrapped.routes = getattr(f, 'routes', [])
         wrapped.routes.append((self.route, self.endpoint, self.options))
-        return classmethod(wrapped)
+
+        # Hacky fix for python 3.3 and pypy3.
+        @classmethod
+        @wraps(wrapped)
+        def class_wrapped(klass, *args, **kwargs):
+            return wrapped(klass, *args, **kwargs)
+
+        return class_wrapped
 
 
 class validate(object):
