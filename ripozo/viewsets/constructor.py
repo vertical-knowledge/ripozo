@@ -47,8 +47,7 @@ class ResourceMetaClass(type):
         """
         logger.debug(six.text_type(klass.__dict__))
         logger.debug(six.text_type(inspect.getmembers(klass)))
-        for name, method in inspect.getmembers(klass, inspect.ismethod):
-            logger.debug(name)
+        for name, method in inspect.getmembers(klass, mcs.method_or_class_method):
             if getattr(method, 'rest_route', False):
                 logger.debug('Registering method {0} as a valid '
                              'action on resource {1}'.format(method.__name__, klass.__name__))
@@ -73,3 +72,7 @@ class ResourceMetaClass(type):
     @staticmethod
     def method_or_class_method(object):
         return getattr(object, 'rest_route', False)
+        # success = isinstance(object, (types.MethodType, classmethod))
+        # if success:
+        #     logger.debug('{0} {1}'.format(success, object))
+        # return success
