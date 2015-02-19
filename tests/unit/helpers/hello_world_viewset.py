@@ -29,7 +29,8 @@ class HelloWorldViewset(ResourceBase):
     @apimethod(methods=['GET'])
     @validate(fields=[StringField('content')])
     def hello(cls, primary_keys, filters, values, *args, **kwargs):
-        return cls(properties={'related': 'world'})
+        filters['related'] = 'world'
+        return cls(properties=filters)
 
 
 class ComplimentaryViewset(ResourceBase):
