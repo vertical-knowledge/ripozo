@@ -77,7 +77,6 @@ class TestBaseField(TestBase, CommonMixin):
         field_name = 'field'
         f = BaseField(field_name)
         self.assertEqual(f.name, field_name)
-        self.assertEqual(field_name, six.text_type(f))
 
     def test_translate_none(self):
         """Tests whether the field can appropriately handle None, False, etc"""

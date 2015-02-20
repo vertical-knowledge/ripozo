@@ -10,7 +10,6 @@ from ripozo.exceptions import RestException
 import six
 
 
-@six.python_2_unicode_compatible
 class BaseField(object):
     """
     The BaseField class is simply an abstract base class
@@ -27,13 +26,6 @@ class BaseField(object):
         self.minimum = minimum
         self.arg_type = arg_type
         self.default = default
-
-    def __str__(self):
-        """
-        :return: The name of the field
-        :rtype: unicode
-        """
-        return self.name
 
     def translate_and_validate(self, obj):
         """
@@ -155,24 +147,34 @@ def translate_and_validate_fields(url_params, query_args, body_args, fields=None
     :raises: ValidationException
     :raises: TranslationException
     """
-    updated_url_params = url_params.copy()
-    updated_query_args = query_args.copy()
-    updated_body_args = body_args.copy()
-    fields = fields or []
-    for field in fields:
-        # Translate and validate the inputs
-        if field.arg_type == input_categories.URL_PARAMS:
-            updated_url_params[field.name] = field.translate_and_validate(url_params.get(field.name, None))
-        elif field.arg_type == input_categories.BODY_ARGS:
-            updated_query_args[field.name] = field.translate_and_validate(body_args.get(field.name, None))
-        elif field.arg_type == input_categories.QUERY_ARGS:
-            updated_body_args[field.name] = field.translate_and_validate(query_args.get(field.name, None))
-        else:
-            raise RestException('Invalid arg_type, {0}, on Field {1}'.format(field.arg_type, field.name))
-    return updated_url_params, updated_query_args, updated_body_args
+    return _translate_or_validate_helper(url_params, query_args, body_args,
+                                         fields=fields, action='translate_and_validate')
 
 
-# TODO don't repeat the shit above
+def validate_fields(url_params, query_args, body_args, fields=None):
+    """
+    Validates the supplied parameters against the
+    list of BaseField instances provided
+
+    :param dict url_params: The url parameters.  Typically this is going
+        to be things like primary keys and such
+    :param dict query_args: The query args.  Typically these are going to be
+        filters on lists and such
+    :param dict body_args: The arguments in the body.  This may be for
+        updates and creations
+    :param list fields: The list of BaseField instances that are supposed
+        to be validated.  Only items in this list will be translated
+        and validated
+    :return: Returns the translated url_params, query_args and body_args
+    :rtype: tuple
+    :raises: RestException
+    :raises: ValidationException
+    :raises: TranslationException
+    """
+    return _translate_or_validate_helper(url_params, query_args, body_args,
+                                         fields=fields, action='validate')
+
+
 def translate_fields(url_params, query_args, body_args, fields=None):
     """
     Translates and validates the supplied parameters against the
@@ -193,18 +195,44 @@ def translate_fields(url_params, query_args, body_args, fields=None):
     :raises: ValidationException
     :raises: TranslationException
     """
+    return _translate_or_validate_helper(url_params, query_args, body_args, fields=fields, action='translate')
+
+
+def _translate_or_validate_helper(url_params, query_args, body_args, fields=None, action=None):
+    """
+    Performs the specified action on the field.  The action can be a string of
+     either translate, validate, or translate_and_validate.
+
+    :param dict url_params: The url parameters.  Typically this is going
+        to be things like primary keys and such
+    :param dict query_args: The query args.  Typically these are going to be
+        filters on lists and such
+    :param dict body_args: The arguments in the body.  This may be for
+        updates and creations
+    :param list fields: The list of BaseField instances that are supposed
+        to be validated.  Only items in this list will be translated
+        and validated
+    :param unicode action: The unicode name of the method to call on all of the
+        fields.  It is found via getattr.
+    :return: Returns the translated url_params, query_args and body_args
+    :rtype: tuple
+    :raises: RestException
+    :raises: ValidationException
+    :raises: TranslationException
+    """
     updated_url_params = url_params.copy()
     updated_query_args = query_args.copy()
     updated_body_args = body_args.copy()
     fields = fields or []
     for field in fields:
+        action = getattr(field, action)
         # Translate and validate the inputs
         if field.arg_type == input_categories.URL_PARAMS:
-            updated_url_params[field.name] = field.translate(url_params.get(field.name, None))
+            updated_url_params[field.name] = action(url_params.get(field.name, None))
         elif field.arg_type == input_categories.BODY_ARGS:
-            updated_query_args[field.name] = field.translate(body_args.get(field.name, None))
+            updated_query_args[field.name] = action(body_args.get(field.name, None))
         elif field.arg_type == input_categories.QUERY_ARGS:
-            updated_body_args[field.name] = field.translate(query_args.get(field.name, None))
+            updated_body_args[field.name] = action(query_args.get(field.name, None))
         else:
             raise RestException('Invalid arg_type, {0}, on Field {1}'.format(field.arg_type, field.name))
     return updated_url_params, updated_query_args, updated_body_args
