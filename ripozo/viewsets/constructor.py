@@ -4,12 +4,10 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.exceptions import BaseRestEndpointAlreadyExists
-from ripozo.decorators import _customclassmethod, apimethod
 
 import logging
 import inspect
 import six
-import types
 
 logger = logging.getLogger(__name__)
 
