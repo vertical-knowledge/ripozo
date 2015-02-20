@@ -25,6 +25,6 @@ env:
   - SIX_VERSION=0.9.1
   - SIX_VERSION=0.9.0
 install:
-  - pip install -q six==SIX_VERSION
+  - pip install -q six==$SIX_VERSION
   - python setup.py -q install
 script: python setup.py test
