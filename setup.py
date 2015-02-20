@@ -11,7 +11,7 @@ setup(
     description='An tool for easily making RESTful interfaces',
     author='Tim Martin',
     author_email='tim.martin@vertical-knowledge.com',
-    install_requires=['six'],
+    install_requires=['six>=1.4.1, !=1.7.1'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: Other/Proprietary License',
