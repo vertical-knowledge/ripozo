@@ -1,17 +1,18 @@
-__author__ = 'Tim Martin'
+__author__ = u'Tim Martin'
+__pkg_name__ = u'ripozo'
 from setuptools import setup, find_packages
 
 version = '0.1.2b6'
 
 setup(
-    name='ripozo',
+    name=__pkg_name__,
     version=version,
     packages=find_packages(exclude=['tests', 'tests.*']),
     include_package_data=True,
     description='An tool for easily making RESTful interfaces',
-    author='Tim Martin',
+    author=__author__,
     author_email='tim.martin@vertical-knowledge.com',
-    install_requires=['six>=1.4.1, !=1.7.1'],
+    install_requires=['six>=1.4.1,!=1.7.1'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: Other/Proprietary License',
@@ -23,6 +24,9 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
         'Topic :: Software Development :: Libraries :: Python Modules'
+    ],
+    tests_require=[
+        'tox'
     ],
     test_suite="tests"
 )

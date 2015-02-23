@@ -1,7 +1,7 @@
-rest
-====
+ripozo
+======
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
 
    ripozo

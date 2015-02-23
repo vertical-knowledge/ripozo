@@ -1,5 +1,5 @@
 ripozo
-------
+======
 
 A pluggable tool for quickly and efficiently creating web apis.
 In the modern day, your server is no longer just interacting
@@ -10,10 +10,10 @@ It allows you to easily build Hypermedia/HATEOAS/REST APIs quickly and
 efficiently.
 
 Philosophy
-==========
+----------
 
 Hypermedia
-++++++++++
+^^^^^^^^^^
 
 Ripozo is designed first and foremost behind the belief that Hypermedia
 APIs are the way everything should be developed.  With hypermedia APIs and
@@ -26,7 +26,7 @@ client doesn't need to how to construct URLs or what the actions available
 on a given resource are.  The server can simply tell you.
 
 Unopinionated (unless you want it to be)
-++++++++++++++++++++++++++++++++++++++++
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Ripozo doesn't make design decisions for you.  Ripozo is a tool that is capable
 of being used in any existing web framework.  It can be used with any database.
@@ -37,7 +37,7 @@ of through a web api. Long story short, Ripozo doesn't care how it is used.
 It can be plugged in for a small part of your application or used exclusively.
 
 Extensible and Pluggable
-++++++++++++++++++++++++
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 Ripozo is extensible/pluggable.  Just because ripozo itself doesn't make design decisions
 for you doesn't mean that it shouldn't be batteries included, we just believe
@@ -51,7 +51,7 @@ open source any ripozo based packages that you create and let us know.  After al
 let's keep our open source world DRY.
 
 Basic Concepts
---------------
+==============
 
 Alright, so you're probably tired of hearing about all our self righteous talk 
 about ripozo's philosophy and want to know how you can actually use it to start
@@ -66,7 +66,7 @@ returns this response.
 Now for the more detailed descriptions...
 
 Dispatchers
-===========
+-----------
 
 In this base ripozo package, the dispatcher is simply an abstract base class
 with a few convience methods.  Since the handling of incoming requests is
@@ -78,18 +78,18 @@ In fact, a Flask dispatcher has already been created and is only one file less t
 dispatchers and plan on making a framework of our own that is specific to ripozo.
 
 Resources
-=========
+---------
 
 Resources are the bread and butter of ripozo.  They determine the business logic
 of an application.
 
 Managers
-========
+--------
 
 Managers are more or less the state keepers of the application.
 
 Adapters
-========
+--------
 
 Adapters determine the format in which to return a response.  They take a resource
 instance and generate what the response should look like.  For example, you could 

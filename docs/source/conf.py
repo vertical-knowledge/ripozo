@@ -18,7 +18,7 @@ import os
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('../..'))
 
 # -- General configuration ------------------------------------------------
 
@@ -50,17 +50,22 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'ripozo'
-copyright = u'2015, Tim Martin, Vertical Knowledge'
+from datetime import datetime
+from setup import __author__, __pkg_name__
+import pkg_resources
+
+project = __pkg_name__
+
+package = pkg_resources.get_distribution(project)
+copyright = u'{0}, {1}'.format(datetime.now().year, __author__)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 # The short X.Y version.
-import pkg_resources
 
-version = pkg_resources.get_distribution('ripozo').version
+version = package.version
 # The full version, including alpha/beta/rc tags.
 release = version
 
