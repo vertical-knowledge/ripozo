@@ -51,8 +51,10 @@ master_doc = 'index'
 
 # General information about the project.
 from datetime import datetime
-from setup import __author__, __pkg_name__
 import pkg_resources
+
+__author__ = u'Tim Martin'
+__pkg_name__ = u'ripozo'
 
 project = __pkg_name__
 
