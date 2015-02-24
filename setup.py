@@ -26,7 +26,8 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
     tests_require=[
-        'tox'
+        'tox',
+        'mock'
     ],
     test_suite="tests"
 )

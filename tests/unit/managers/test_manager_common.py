@@ -98,8 +98,8 @@ class TestManagerMixin(object):
         p2 = self._manager.retrieve({self.id_field: p[self.id_field]})
         self.assertEqual(new_first_name, p2[self.first_name_field])
         self.assertEqual(new_last_name, p2[self.last_name_field])
-        self.assertNotEqual(first_name, p[self.first_name_field])
-        self.assertNotEqual(last_name, p[self.last_name_field])
+        self.assertNotEqual(first_name, p2[self.first_name_field])
+        self.assertNotEqual(last_name, p2[self.last_name_field])
 
     def test_create_many(self):
         num_randoms = 10

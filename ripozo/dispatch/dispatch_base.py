@@ -2,10 +2,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
+
 from abc import ABCMeta, abstractmethod
 from ripozo.dispatch.adapters.contructor import AdapterMeta
-from ripozo.dispatch.adapters.siren import SirenAdapter
-from ripozo.viewsets.constructor import ResourceMetaClass
+8
 import six
 
 
