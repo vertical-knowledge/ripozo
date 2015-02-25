@@ -4,19 +4,7 @@ python:
   - "2.7"
   - "2.6"
   - "pypy"
-env:
-  - SIX_VERSION=1.9.0
-  - SIX_VERSION=1.8.0
-  - SIX_VERSION=1.7.3
-  - SIX_VERSION=1.7.2
-  - SIX_VERSION=1.7.0
-  - SIX_VERSION=1.6.1
-  - SIX_VERSION=1.6.0
-  - SIX_VERSION=1.5.2
-  - SIX_VERSION=1.5.1
-  - SIX_VERSION=1.5.0
-  - SIX_VERSION=1.4.1
 install:
-  - pip install -q six==$SIX_VERSION, ripozo-tests
+  - pip install -q ripozo-tests
   - python setup.py -q install
 script: python setup.py test
