@@ -4,6 +4,10 @@ ripozo
 .. image:: https://travis-ci.org/vertical-knowledge/ripozo.svg?branch=master
     :target: https://travis-ci.org/vertical-knowledge/ripozos
 
+.. image:: https://readthedocs.org/projects/ripozo/badge/?version=latest
+    :target: https://ripozo.readthedocs.org/
+    :alt: Documentation Status
+
 A pluggable tool for quickly and efficiently creating web apis.
 In the modern day, your server is no longer just interacting
 with a web browser.  Instead it's interfacing with desktop and mobile 
