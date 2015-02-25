@@ -3,14 +3,15 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from tests.python2base import TestBase
-from tests.unit.helpers.inmemory_manager import InMemoryManager
-from tests.unit.managers.test_manager_common import TestManagerMixin
+from ripozo_tests.python2base import TestBase
+from ripozo_tests.bases.manager import TestManagerMixin
+from ripozo_tests.helpers.inmemory_manager import InMemoryManager
 
 import six
+import unittest
 
 
-class TestManager(TestManagerMixin, TestBase):
+class TestManager(TestManagerMixin, TestBase, unittest.TestCase):
     @property
     def manager(self):
         """

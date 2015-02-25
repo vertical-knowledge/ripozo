@@ -4,14 +4,15 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.dispatch.adapters.hal import HalAdapter
-from tests.python2base import TestBase
-from tests.unit.helpers.hello_world_viewset import HelloWorldViewset
+from ripozo_tests.python2base import TestBase
+from ripozo_tests.helpers.hello_world_viewset import HelloWorldViewset
 
 import json
 import six
+import unittest
 
 
-class TestHalAdapter(TestBase):
+class TestHalAdapter(TestBase, unittest.TestCase):
     """
     Tests whether the HalAdapter appropriately creates
     a response for a resource

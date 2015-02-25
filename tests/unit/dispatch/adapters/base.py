@@ -4,10 +4,11 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import six
+import unittest
 
 from ripozo.dispatch.adapters.contructor import AdapterMeta
 from ripozo.dispatch.adapters.base import AdapterBase
-from tests.python2base import TestBase
+from ripozo_tests.python2base import TestBase
 
 __author__ = 'Tim Martin'
 
@@ -22,7 +23,7 @@ class TestAdapter(AdapterBase):
         pass
 
 
-class TestAdapterBase(TestBase):
+class TestAdapterBase(TestBase, unittest.TestCase):
     def tearDown(self):
         AdapterMeta.formats = None
 

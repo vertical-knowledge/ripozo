@@ -4,14 +4,15 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.dispatch.adapters.siren import SirenAdapter
-from tests.python2base import TestBase
-from tests.unit.helpers.hello_world_viewset import HelloWorldViewset
+from ripozo_tests.python2base import TestBase
+from ripozo_tests.helpers.hello_world_viewset import HelloWorldViewset
 
 import json
 import six
+import unittest
 
 
-class TestSirenAdapter(TestBase):
+class TestSirenAdapter(TestBase, unittest.TestCase):
     """
     Tests whether the SirenAdapter appropriately adds
     creates a resource

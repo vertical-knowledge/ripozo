@@ -17,6 +17,6 @@ env:
   - SIX_VERSION=1.5.0
   - SIX_VERSION=1.4.1
 install:
-  - pip install -q six==$SIX_VERSION
+  - pip install -q six==$SIX_VERSION, ripozo-tests
   - python setup.py -q install
 script: python setup.py test

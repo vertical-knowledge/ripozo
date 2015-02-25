@@ -4,64 +4,61 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.exceptions import ValidationException, TranslationException
-from ripozo.viewsets.fields.common import StringField, BooleanField, FloatField, DateTimeField, IntegerField
-from tests.python2base import TestBase
+from ripozo.viewsets.fields.common import StringField, BooleanField, FloatField, DateTimeField, IntegerField, BaseField
+from ripozo_tests.bases.field import FieldTestBase
 
 import datetime
 import re
 import six
+import unittest
 
 
-class CommonMixin(object):
-    field_type = None
-    instance_type = None
-    translation_failures = []
-    translation_success = []
-
-    def test_not_required(self):
-        f = self.field_type('field', required=False)
-        obj = f.translate_and_validate(None)
-        self.assertIsNone(obj)
-        obj = f.translate(None)
-        self.assertIsNone(obj)
-        obj = f.validate(None)
-        self.assertIsNone(obj)
-
-    def test_required(self):
-        f = self.field_type('field', required=True)
-        self.assertRaises(ValidationException, f.translate_and_validate, None)
-        self.assertRaises(ValidationException, f.validate, None)
-        self.assertIsNone(f.translate(None))
-
-    def size_test_helper(self, too_small, valid, too_large, minimum=5, maximum=10):
-        f = self.field_type('field', minimum=minimum, maximum=maximum)
-        self.assertRaises(ValidationException, f.validate, too_small)
-
-        obj = f.validate(valid)
-        self.assertEqual(valid, obj)
-
-        self.assertRaises(ValidationException, f.validate, too_large)
-
-    def test_translation_failure(self):
-        f = self.field_type('field')
-        for failure in self.translation_failures:
-            self.assertRaises(TranslationException, f.translate, failure)
-            self.assertRaises(TranslationException, f.translate_and_validate, failure)
-
-    def test_translation_success(self):
-        f = self.field_type('field')
-        for success in self.translation_success:
-            new = f.translate(success)
-            self.assertIsInstance(new, self.instance_type)
-
-    def test_translate_none(self):
-        """Tests whether the field can appropriately handle None, False, etc"""
-        f = self.field_type('field')
-        output = f.translate(None)
-        self.assertIsNone(output)
+class FieldTestBase2(FieldTestBase):
+    validation_exception = ValidationException
+    translation_exception = TranslationException
 
 
-class StringFieldTest(TestBase, CommonMixin):
+class TestBaseField(FieldTestBase2, unittest.TestCase):
+    field_type = BaseField
+    instance_type = object
+
+    def required_helper(self, f):
+        original = object()
+        new = f.translate_and_validate(original)
+        self.assertEqual(original, new)
+
+        original = object()
+        new = f.translate(original)
+        self.assertEqual(original, new)
+
+        original = object()
+        new = f.validate(original)
+        self.assertEqual(original, new)
+
+    def test_validate_type(self):
+        f = BaseField('field', required=False)
+        original = object()
+
+        # test doesn't raise when valid
+        new = f._validate_type(None)
+        self.assertIsNone(new)
+        new = f._validate_type(original)
+        self.assertEqual(new, original)
+
+        f.field_type = int
+        self.assertRaises(ValidationException, f._validate_type, 'something')
+
+    def test_translate_none_like(self):
+        f = BaseField('field')
+        output = f.translate(False)
+        self.assertIsNotNone(output)
+        self.assertFalse(output)
+        output = f.translate([])
+        self.assertIsNotNone(output)
+        self.assertIsInstance(output, list)
+
+
+class StringFieldTest(FieldTestBase2, unittest.TestCase):
     field_type = StringField
     instance_type = six.text_type
     translation_success = ['', 'another', 1, True]
@@ -78,7 +75,7 @@ class StringFieldTest(TestBase, CommonMixin):
         self.assertEqual(original, new)
 
 
-class IntegerFieldTest(TestBase, CommonMixin):
+class IntegerFieldTest(FieldTestBase2, unittest.TestCase):
     field_type = IntegerField
     instance_type = int
     translation_success = [1, '123', 1.5]
@@ -88,7 +85,7 @@ class IntegerFieldTest(TestBase, CommonMixin):
         self.size_test_helper(1, 7, 12)
 
 
-class FloatFieldTest(TestBase, CommonMixin):
+class FloatFieldTest(FieldTestBase2, unittest.TestCase):
     field_type = FloatField
     instance_type = float
     translation_success = [1, '1', 1.5]
@@ -98,14 +95,14 @@ class FloatFieldTest(TestBase, CommonMixin):
         self.size_test_helper(1.0, 7.0, 12.0)
 
 
-class BoolFieldTest(TestBase, CommonMixin):
+class BoolFieldTest(FieldTestBase2, unittest.TestCase):
     field_type = BooleanField
     instance_type = bool
     translation_success = [True, False, 'True', 'False', 'true', 'false', 'TRUE', 'FALSE']
     translation_failures = ['somethingelse', 0]  # everything should be convertable to a string
 
 
-class DatetimeFieldTest(TestBase, CommonMixin):
+class DatetimeFieldTest(FieldTestBase2, unittest.TestCase):
     field_type = DateTimeField
     instance_type = datetime.datetime
     translation_success = [datetime.datetime.now(), '2015-02-10T18:15:15.123456Z']

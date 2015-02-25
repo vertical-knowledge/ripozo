@@ -4,11 +4,13 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from mock import Mock
-from tests.python2base import TestBase
-from tests.unit.helpers.dispatcher import FakeDispatcher
+from ripozo_tests.python2base import TestBase
+from ripozo_tests.helpers.dispatcher import FakeDispatcher
+
+import unittest
 
 
-class TestDispatchBase(TestBase):
+class TestDispatchBase(TestBase, unittest.TestCase):
     """
     This class is responsible for testing
     the reusable portions of the dispatcher

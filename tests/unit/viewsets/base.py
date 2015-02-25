@@ -10,8 +10,10 @@ from ripozo.decorators import apimethod
 from ripozo.exceptions import BaseRestEndpointAlreadyExists
 from ripozo.viewsets.constructor import ResourceMetaClass
 from ripozo.viewsets.resource_base import ResourceBase
-from tests.unit.helpers.inmemory_manager import InMemoryManager
-from tests.python2base import TestBase
+from ripozo_tests.helpers.inmemory_manager import InMemoryManager
+from ripozo_tests.python2base import TestBase
+
+import unittest
 
 
 logger = logging.getLogger(__name__)
@@ -31,7 +33,7 @@ class TestResource(ResourceBase):
     _namespace = name_space
 
 
-class TestResourceBase(TestBase):
+class TestResourceBase(TestBase, unittest.TestCase):
     def setUp(self):
         ResourceMetaClass.registered_resource_classes.clear()
 
