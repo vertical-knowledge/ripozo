@@ -2,7 +2,7 @@ __author__ = u'Tim Martin'
 __pkg_name__ = u'ripozo'
 from setuptools import setup, find_packages
 
-version = '0.1.3'
+version = '0.1.5b5'
 
 setup(
     name=__pkg_name__,

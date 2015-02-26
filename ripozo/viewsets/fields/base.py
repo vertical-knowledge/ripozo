@@ -120,7 +120,7 @@ class BaseField(object):
         """
         if obj is None and not self.required:
             return obj
-        if obj and isinstance(obj, self.field_type):
+        if obj is not None and isinstance(obj, self.field_type):
             return obj
         if msg is None:
             msg = "obj is not a valid type for field {0}. A type of {1} is required.".format(self.name, self.field_type)
@@ -224,15 +224,16 @@ def _translate_or_validate_helper(url_params, query_args, body_args, fields=None
     updated_query_args = query_args.copy()
     updated_body_args = body_args.copy()
     fields = fields or []
+    action_name = action
     for field in fields:
-        action = getattr(field, action)
+        action = getattr(field, action_name)
         # Translate and validate the inputs
         if field.arg_type == input_categories.URL_PARAMS:
             updated_url_params[field.name] = action(url_params.get(field.name, None))
         elif field.arg_type == input_categories.BODY_ARGS:
-            updated_query_args[field.name] = action(body_args.get(field.name, None))
+            updated_body_args[field.name] = action(body_args.get(field.name, None))
         elif field.arg_type == input_categories.QUERY_ARGS:
-            updated_body_args[field.name] = action(query_args.get(field.name, None))
+            updated_query_args[field.name] = action(query_args.get(field.name, None))
         else:
             raise RestException('Invalid arg_type, {0}, on Field {1}'.format(field.arg_type, field.name))
     return updated_url_params, updated_query_args, updated_body_args

@@ -5,6 +5,8 @@ from __future__ import unicode_literals
 
 from abc import ABCMeta, abstractproperty
 
+from ripozo.utilities import join_url_parts
+
 import six
 
 
@@ -68,4 +70,4 @@ class AdapterBase(object):
         :rtype: unicode
         """
         # TODO this needs documentation and it's rather naive in implementation
-        return '{0}{1}'.format(self.base_url, resource_url)
+        return join_url_parts(self.base_url, resource_url)

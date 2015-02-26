@@ -13,6 +13,9 @@ import six
 import unittest
 
 
+# TODO test validating, translating, etc on multiple fields.
+# TODO test field values that evaluate to None
+
 class FieldTestBase2(FieldTestBase):
     validation_exception = ValidationException
     translation_exception = TranslationException

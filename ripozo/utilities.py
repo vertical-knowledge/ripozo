@@ -127,3 +127,18 @@ def titlize_endpoint(endpoint):
     parts = (p.capitalize() for p in parts)
     endpoint = ' '.join(parts)
     return endpoint.strip()
+
+
+def join_url_parts(*parts):
+    # TODO docs and tests
+    url = None
+    if len(parts) == 0:
+        return ''
+    for part in parts:
+        if url is None:  # first case
+            url = part
+            continue
+        url = url.rstrip('/')
+        part = part.lstrip('/')
+        url = '{0}/{1}'.format(url, part)
+    return url
