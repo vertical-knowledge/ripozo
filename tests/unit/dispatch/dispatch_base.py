@@ -4,6 +4,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from mock import Mock
+from ripozo.dispatch.adapters import BoringJSONAdapter, HalAdapter, SirenAdapter
+from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
 from ripozo_tests.python2base import TestBase
 from ripozo_tests.helpers.dispatcher import FakeDispatcher
 
@@ -37,3 +39,24 @@ class TestDispatchBase(TestBase, unittest.TestCase):
 
     def test_dispatch(self):
         pass
+
+    def test_register_adapters(self):
+        """Tests whether adapters are properly registered"""
+        adapters = (SirenAdapter, HalAdapter, BoringJSONAdapter,)
+        self.dispatcher.register_adapters(*adapters)
+        self.assertEqual(self.dispatcher.default_adapter, SirenAdapter)
+        for adapter in adapters:
+            for format in adapter.formats:
+                self.assertIn(format, self.dispatcher.adapter_formats)
+                self.assertEqual(adapter, self.dispatcher.adapter_formats[format])
+
+    def test_overriding_adapters(self):
+        """Tests whether overriding adapters raises an exception"""
+        adapters = (SirenAdapter, HalAdapter)
+        self.dispatcher.register_adapters(*adapters)
+
+        # This will have the same formats as the SirenAdapter
+        class TempAdapter(SirenAdapter):
+            pass
+
+        self.assertRaises(AdapterFormatAlreadyRegisteredException, self.dispatcher.register_adapters, TempAdapter)

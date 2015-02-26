@@ -2,12 +2,13 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-from abc import abstractproperty
-from ripozo.dispatch.adapters.contructor import AdapterMeta
+
+from abc import ABCMeta, abstractproperty
+
 import six
 
 
-@six.add_metaclass(AdapterMeta)
+@six.add_metaclass(ABCMeta)
 class AdapterBase(object):
     """
     The adapter base is responsible for specifying how

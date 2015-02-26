@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 import six
 import unittest
 
-from ripozo.dispatch.adapters.contructor import AdapterMeta
 from ripozo.dispatch.adapters.base import AdapterBase
 from ripozo_tests.python2base import TestBase
 
@@ -24,18 +23,4 @@ class TestAdapter(AdapterBase):
 
 
 class TestAdapterBase(TestBase, unittest.TestCase):
-    def tearDown(self):
-        AdapterMeta.formats = None
-
-    def test_registered_adapter(self):
-        class T(TestAdapter):
-            formats = ['something']
-        self.assertIn('something', six.iterkeys(AdapterMeta.formats))
-        self.assertEqual(AdapterBase.formats['something'], T)
-
-    def test_registered_adapter_multiple_formats(self):
-        class T2(TestAdapter):
-            formats = ['one', 'two', 'three']
-        for f in T2.formats:
-            self.assertIn(f, six.iterkeys(AdapterBase.formats))
-            self.assertEqual(AdapterBase.formats[f], T2)
+    pass

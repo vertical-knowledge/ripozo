@@ -59,3 +59,19 @@ class TranslationException(ValidationException):
     a field.
     """
     pass
+
+
+class DispatchException(RestException):
+    """
+    An exception for when something is wrong with the Dispatcher
+    """
+    pass
+
+
+class AdapterFormatAlreadyRegisteredException(DispatchException):
+    """
+    An exception that is raised when an adapter format has already
+    been register with the adapter instance.  This is done
+    to prevent accidental overrides of format types.
+    """
+    pass
