@@ -25,13 +25,16 @@ class AdapterBase(object):
     """
     __abstract__ = True
 
-    def __init__(self, resource):
+    def __init__(self, resource, base_url=''):
         """
         Simple sets the resource on the instance.
 
         :param resource: The resource that is being formatted.
         :type resource: rest.viewsets.resource_base.ResourceBase
         """
+        if base_url is None:
+            base_url = ''
+        self.base_url = base_url
         self.resource = resource
 
     @abstractproperty
@@ -56,3 +59,13 @@ class AdapterBase(object):
         :rtype: list
         """
         pass
+
+    def combine_base_url_with_resource_url(self, resource_url):
+        """
+        Does exactly what it says it does
+        :param unicode resource_url:
+        :return:
+        :rtype: unicode
+        """
+        # TODO this needs documentation and it's rather naive in implementation
+        return '{0}{1}'.format(self.base_url, resource_url)

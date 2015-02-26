@@ -34,7 +34,7 @@ class SirenAdapter(AdapterBase):
         if self.resource.status == status.DELETED:
             return ''  # TODO write test to prevent regressions here
 
-        links = [dict(rel=['self'], href=self.resource.url)]
+        links = [dict(rel=['self'], href=self.combine_base_url_with_resource_url(self.resource.url))]
 
         entities, updated_properties = self.get_entities_and_remove_related_properties()
         response = dict(properties=updated_properties, actions=self._actions,
@@ -62,6 +62,7 @@ class SirenAdapter(AdapterBase):
                 meth = all_methods[0]
             base_route = options.get('route', self.resource.base_url)
             route = create_url(base_route, **self.resource.properties)
+            route = self.combine_base_url_with_resource_url(route)
             fields = self.generate_fields_for_endpoint_funct(options.get('endpoint_func'))
             actn = dict(name=endpoint, title=titlize_endpoint(endpoint), method=meth, href=route, fields=fields)
             actions.append(actn)
@@ -94,11 +95,12 @@ class SirenAdapter(AdapterBase):
         for field_name, relationship in six.iteritems(self.resource.relationships):
             for related_resource in relationship.construct_resource(self.resource.properties):
                 ent = {'class': [relationship.relation.resource_name]}
+                resource_url = self.combine_base_url_with_resource_url(related_resource.url)
                 if not relationship.embedded:
-                    ent['href'] = related_resource.url
+                    ent['href'] = resource_url
                 else:
                     ent['properties'] = related_resource.properties
-                    ent['links'] = dict(rel=['self'], href=related_resource.url)
+                    ent['links'] = dict(rel=['self'], href=resource_url)
                 entities.append(ent)
             parent_properties = relationship.remove_child_resource_properties(parent_properties)
         return entities, parent_properties

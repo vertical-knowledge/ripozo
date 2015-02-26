@@ -38,6 +38,7 @@ class TestDispatchBase(TestBase, unittest.TestCase):
         self.assertDictEqual(self.mockKlass.endpoint_dictionary, self.dispatcher.routes)
 
     def test_dispatch(self):
+        # TODO
         pass
 
     def test_register_adapters(self):

@@ -66,8 +66,7 @@ class HalAdapter(AdapterBase):
         return embedded
 
 
-    @staticmethod
-    def generate_links_for_resource(resource):
+    def generate_links_for_resource(self, resource):
         """
         Currently only returns the "self" link.  Will work for
         embedded resources as well.
@@ -77,4 +76,5 @@ class HalAdapter(AdapterBase):
         :return: A dictionary of the named links
         :rtype: dict
         """
-        return dict(self=dict(href=resource.url))
+        resource_url = self.combine_base_url_with_resource_url(resource.url)
+        return dict(self=dict(href=resource_url))

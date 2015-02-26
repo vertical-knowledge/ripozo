@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod, abstractproperty
 from ripozo.dispatch.adapters.base import AdapterBase
 from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
 
@@ -40,6 +40,18 @@ class DispatcherBase(object):
             self._adapter_formats = {}
         return self._adapter_formats
 
+    @abstractproperty
+    def base_url(self):
+        """
+        :return: The base url including the domain and protocol
+            This needs to be included so that the adapters
+            can construct fully qualified urls.  However, they
+            have no way of directly identifying that so they
+            need to be able to get it from the dispatcher.
+        :rtype: unicode
+        """
+        pass
+
     @property
     def default_adapter(self):
         """
@@ -58,7 +70,7 @@ class DispatcherBase(object):
         Sets the default adapter to use when the client
         does not explicitly ask for a certain adapter type.
 
-        :param AdapterBase adapter_class: the class to use as the default
+        :param type adapter_class: the class to use as the default
             adapter class
         """
         if not issubclass(adapter_class, AdapterBase):
@@ -144,5 +156,5 @@ class DispatcherBase(object):
         """
         result = endpoint_func(*args, **kwargs)
         adapter_class = self.adapter_formats.get(format_type, self.default_adapter)
-        adapter = adapter_class(result)
+        adapter = adapter_class(result, base_url=self.base_url)
         return adapter
