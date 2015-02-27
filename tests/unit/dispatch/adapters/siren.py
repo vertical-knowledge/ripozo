@@ -20,7 +20,7 @@ class TestSirenAdapter(TestBase, unittest.TestCase):
 
     def setUp(self):
         self.resource = HelloWorldViewset.hello({}, {'content': 'hello'}, {})
-        self.adapter = SirenAdapter(self.resource, base_url='http://localhost:5000')
+        self.adapter = SirenAdapter(self.resource, base_url='http://localhost:')
         self.data = json.loads(self.adapter.formatted_body)
 
     def test_class_available(self):

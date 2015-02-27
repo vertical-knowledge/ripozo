@@ -1,0 +1,7 @@
+{% for link in links %}
+    <div class="row">
+        <div class="col-sm-12">
+            <a href="{{ link['href'] }}">{{ link['rel'][0] }}</a>
+        </div>
+    </div>
+{% endfor %}

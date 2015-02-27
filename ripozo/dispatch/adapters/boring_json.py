@@ -35,7 +35,7 @@ class BoringJSONAdapter(AdapterBase):
         ]
     }
     """
-    formats=['json', content_type]
+    formats = ['json', content_type]
 
     @property
     def extra_headers(self):

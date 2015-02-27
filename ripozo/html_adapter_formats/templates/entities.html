@@ -1,0 +1,22 @@
+{% for entity in entities %}
+    <div class="row">
+        <div class="col-sm-12">
+            <h4>{{ entity['class'][0] }}</h4>
+
+            {% if 'links' in entity %}
+                {% set links = entity['links'] %}
+                <h5>Links</h5>
+                {% include 'links.html' %}
+            {% else %}
+                <h5>Reference</h5>
+                <a href="{{ entity['href'] }}">self</a>
+            {% endif %}
+
+            {% if 'properties' in entity %}
+                {% set properties = entity['properties'] %}
+                <h5>Properties</h5>
+                {% include 'properties.html' %}
+            {% endif %}
+        </div>
+    </div>
+{% endfor %}

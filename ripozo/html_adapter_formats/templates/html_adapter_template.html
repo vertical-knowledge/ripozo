@@ -1,0 +1,40 @@
+<html>
+<head>
+    <title>ripozo api helper</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    <style>
+        div.row {
+            padding-left: 1em;
+        }
+
+        h2, h3, h4 {
+            border-bottom-style: solid;
+            border-bottom-color: #DDDDDD;
+            border-bottom-width: 2px;
+        }
+
+        h3, h4 {
+            border-bottom-width: 1px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>{{ class[0] }}</h2>
+
+    <!-- properties -->
+    {% include 'properties.html' %}
+
+    <!-- actions -->
+    <h2>Actions</h2>
+    {% include 'actions.html' %}
+
+    <h2>Links</h2>
+    {% include 'links.html' %}
+
+    <h2>Entities</h2>
+    {% include 'entities.html' %}
+</div>
+</body>
+</html>
