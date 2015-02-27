@@ -12,7 +12,7 @@ setup(
     description='An tool for easily making RESTful interfaces',
     author=__author__,
     author_email='tim.martin@vertical-knowledge.com',
-    install_requires=['six>=1.4.1,!=1.7.1'],
+    install_requires=['six>=1.4.1,!=1.7.1', 'jinja2'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: Other/Proprietary License',

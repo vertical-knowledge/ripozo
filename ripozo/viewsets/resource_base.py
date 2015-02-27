@@ -7,6 +7,7 @@ import re
 import six
 
 from six.moves.urllib import parse
+from ripozo.exceptions import NoResourceNameDeclaredException
 from ripozo.viewsets.constructor import ResourceMetaClass
 from ripozo.viewsets.constants import status
 from ripozo.utilities import classproperty
@@ -135,10 +136,14 @@ class ResourceBase(object):
 
     @classproperty
     def manager(cls):
+        if cls._manager is None:
+            return None
         return cls._manager()
 
     @classproperty
     def model_name(cls):
+        if cls.manager is None:
+            return None
         return cls.manager.model_name
 
     @classproperty
@@ -173,6 +178,9 @@ class ResourceBase(object):
         """
         if cls._resource_name:
             return cls._resource_name
+        if cls.model_name is None:
+            raise NoResourceNameDeclaredException('Neither the _resource_name nor the'
+                                                  ' _manager was declared on the {0} class'.format(cls.__name__))
         return cls.model_name
 
 

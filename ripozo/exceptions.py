@@ -14,6 +14,17 @@ class RestException(Exception):
     pass
 
 
+class NoResourceNameDeclaredException(RestException):
+    """
+    An exception raised when neither the _resource_name
+    or the _manager attributes are set on a ResourceBase
+    subclass.  When this happens it is impossible for the
+    ResourceBase subclass to determine what to call the
+    resource it is handling
+    """
+    pass
+
+
 class BaseRestEndpointAlreadyExists(RestException):
     """
     This exception is raised when the ResourceBaseMetaClass

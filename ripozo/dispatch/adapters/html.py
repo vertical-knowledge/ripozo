@@ -28,8 +28,6 @@ class HtmlAdapter(AdapterBase):
         siren = SirenAdapter(self.resource, base_url=self.base_url)
         data = json.loads(siren.formatted_body)
         response = template.render(**data)
-        with open('/Users/martin/oss/ripozo/temp.html', 'wb') as f:
-            f.write(response)
         return response
 
     @property
