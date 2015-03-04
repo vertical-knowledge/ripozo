@@ -1,3 +1,3 @@
 __author__ = 'Tim Martin'
 
-from tests.unit.viewsets import fields, base
+from tests.unit.viewsets import fields, base, request
