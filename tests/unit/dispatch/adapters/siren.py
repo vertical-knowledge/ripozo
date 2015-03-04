@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.dispatch.adapters.siren import SirenAdapter
+from ripozo.viewsets.request import RequestContainer
 from ripozo_tests.python2base import TestBase
 from ripozo_tests.helpers.hello_world_viewset import HelloWorldViewset
 
@@ -19,7 +20,7 @@ class TestSirenAdapter(TestBase, unittest.TestCase):
     """
 
     def setUp(self):
-        self.resource = HelloWorldViewset.hello({}, {'content': 'hello'}, {})
+        self.resource = HelloWorldViewset.hello(RequestContainer(query_args={'content': 'hello', 'related': 'world'}))
         self.adapter = SirenAdapter(self.resource, base_url='http://localhost:')
         self.data = json.loads(self.adapter.formatted_body)
 
