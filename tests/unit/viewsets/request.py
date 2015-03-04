@@ -42,4 +42,3 @@ class TestRequestContainer(TestBase, unittest.TestCase):
         self.assertNotEqual(id(d), id(getattr(r, name)))
         r = RequestContainer()
         self.assertIsInstance(getattr(r, name), dict)
-

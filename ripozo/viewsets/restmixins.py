@@ -18,11 +18,10 @@ class Create(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['POST'])
-    def create(cls, primary_keys, filters, values, *args, **kwargs):
+    def create(cls, request,  *args, **kwargs):
         logger.info('Creating a model for resource {0}'.format(cls.resource_name))
-        primary_keys, filters, values = translate_and_validate_fields(primary_keys, filters, values,
-                                                                      fields=cls.manager.field_validators)
-        obj = cls.manager.create(values, *args, **kwargs)
+        request.validate(fields=cls.manager.field_validators)
+        obj = cls.manager.create(request.body_args, *args, **kwargs)
         return cls(properties=obj)
 
 
@@ -30,12 +29,9 @@ class RetrieveList(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['GET'])
-    def retrieve_list(cls, primary_keys, filters, values, *args, **kwargs):
-        logger.info('Retrieving a list of models for resource {0} '
-                    'with filters {1}'.format(cls.resource_name, filters))
-        primary_keys, filters, values = translate_fields(primary_keys, filters, values,
-                                                         fields=cls.manager.field_validators)
-        results, next_query_args = cls.manager.retrieve_list(filters, *args, **kwargs)
+    def retrieve_list(cls, request, *args, **kwargs):
+        request.translate(fields=cls.manager.field_validators)
+        results, next_query_args = cls.manager.retrieve_list(request.query_args, *args, **kwargs)
         results = dict(objects=results)
         results.update(next_query_args)
         return cls(properties=results)
@@ -45,12 +41,9 @@ class RetrieveSingle(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['GET'])
-    def retrieve(cls, primary_keys, filters, values, *args, **kwargs):
-        logger.info('Retrieving a model for resource {0}'
-                    'with primary keys {0}'.format(cls.resource_name, primary_keys))
-        primary_keys, filters, values = translate_fields(primary_keys, filters, values,
-                                                         fields=cls.manager.field_validators)
-        obj = cls.manager.retrieve(primary_keys, *args, **kwargs)
+    def retrieve(cls, request, *args, **kwargs):
+        request.translate(cls.manager.field_validators)
+        obj = cls.manager.retrieve(request.url_params, *args, **kwargs)
         return cls(properties=obj)
 
 
@@ -58,12 +51,9 @@ class Update(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['PATCH'])
-    def update(cls, primary_keys, filters, values, *args, **kwargs):
-        logger.info('Updating a model for resource {0}'
-                    'with primary keys'.format(cls.resource_name, primary_keys))
-        primary_keys, filters, values = translate_fields(primary_keys, filters, values,
-                                                         fields=cls.manager.field_validators)
-        obj = cls.manager.update(primary_keys, values, *args, **kwargs)
+    def update(cls, request, *args, **kwargs):
+        request.translate(cls.manager.field_validators)
+        obj = cls.manager.update(request.url_params, request.body_args, *args, **kwargs)
         return cls(properties=obj)
 
 
@@ -71,10 +61,7 @@ class Delete(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['DELETE'])
-    def remove(cls, primary_keys, filters, values, *args, **kwargs):
-        logger.info('Deleting a model for resource {0}'
-                    'with primary keys'.format(cls.resource_name, primary_keys))
-        primary_keys, filters, values = translate_fields(primary_keys, filters, values,
-                                                         fields=cls.manager.field_validators)
-        cls.manager.delete(primary_keys, *args, **kwargs)
+    def remove(cls, request, *args, **kwargs):
+        request.translate(fields=cls.manager.field_validators)
+        cls.manager.delete(request.url_params, *args, **kwargs)
         return cls()

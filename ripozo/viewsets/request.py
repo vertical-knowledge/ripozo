@@ -3,6 +3,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from ripozo.viewsets.fields.base import translate_fields, validate_fields, translate_and_validate_fields
+
 
 class RequestContainer(object):
     """
@@ -72,3 +74,20 @@ class RequestContainer(object):
         """
         return self._headers.get('Content-Type', None)
 
+    def translate(self, fields):
+        """
+        TODO
+        :param list fields:
+        """
+        self._url_params, self._query_args, self._body_args = translate_fields(
+            self._url_params, self._query_args, self._body_args, fields=fields
+        )
+
+    def validate(self, fields):
+        """
+        TODO
+        :param list fields:
+        """
+        self._url_params, self._query_args, self._body_args = translate_and_validate_fields(
+            self._url_params, self._query_args, self._body_args, fields=fields
+        )

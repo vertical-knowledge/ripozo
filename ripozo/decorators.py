@@ -93,10 +93,23 @@ class validate(object):
         :rtype: function
         """
         @wraps(f)
-        def action(cls, url_params, query_args, body_args, *args, **kwargs):
-            url_params, query_args, body_args = translate_and_validate_fields(url_params, query_args,
-                                                                              body_args, fields=self.fields)
-            return f(cls, url_params, query_args, body_args, *args, **kwargs)
+        def action(cls, request, *args, **kwargs):
+            request.validate(self.fields)
+            return f(cls, request,  *args, **kwargs)
 
+        action.fields = self.fields
+        return action
+
+
+class translate(object):
+    # TODO docs
+    def __init__(self, fields=None):
+        self.fields = fields or []
+
+    def __call__(self, f):
+        @wraps(f)
+        def action(cls, request, *args, **kwargs):
+            request.translate(self.fields)
+            return f(cls, request, *args, **kwargs)
         action.fields = self.fields
         return action
