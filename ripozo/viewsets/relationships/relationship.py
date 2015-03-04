@@ -66,7 +66,7 @@ class Relationship(object):
         """
         try:
             related_properties = self._map_pks(properties)
-        except ValueError:  # TODO test ths
+        except KeyError:  # TODO test ths
             if self.required is False:
                 return
             else:
