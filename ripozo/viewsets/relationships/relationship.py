@@ -68,9 +68,9 @@ class Relationship(object):
             related_properties = self._map_pks(properties)
         except ValueError:  # TODO test ths
             if self.required is False:
-                raise
-            else:
                 return
+            else:
+                raise
         yield self.relation(properties=related_properties)
 
     def remove_child_resource_properties(self, properties):
