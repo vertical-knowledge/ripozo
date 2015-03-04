@@ -19,13 +19,15 @@ class AdapterBase(object):
     protocol or format it in a manner that is specific to
     your client (though you should probably avoid that)
 
-    :param bool __abstract__: This property indicates whether
-         the adapter should be registered as a valid format
-         by the meta class or not.  If you don't want the client
-         to be able to use it (maybe you're creating a base class
-         such as this one), than it should be set to True.
+    :param list formats: A list of strings that indicate which Content-Types
+        will match with this adapter.  For example, you might include
+        'application/vnd.siren+json' in the formats for a SIREN adapter.
+        This means that any request with that content type will be responded
+        to in the appropriate manner.  Any of the strings in the list will be
+        considered the appropriate format for the adapter on which they are
+        specified.
     """
-    __abstract__ = True
+    formats = None
 
     def __init__(self, resource, base_url=''):
         """

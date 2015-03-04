@@ -1,0 +1,74 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
+
+class RequestContainer(object):
+    """
+    An object that represents an incoming request.
+    This is done primarily to keep the data in one
+    place and to make a generically accessible object.
+    It should be assumed that no parameter is required
+    and no property is guaranteed.
+    """
+
+    def __init__(self, url_params=None, query_args=None, body_args=None, headers=None):
+        """
+        Safely generate a Request object.  There should be reasonable defaults
+        for every parameter.  No parameter is guaranteed.
+
+        :param dict url_params: The url parameters that are a part of the
+            request.  These are the variable parts of the url.  For example,
+            a request with /resource/<id> would have the id as a url_param
+        :param dict query_args: The query args are were in the request.  They
+            should be a adictionary
+        :param dict body_args: The arguments in the body.
+        :param dict headers: A dictionary of the headers and their values
+        """
+        self._url_params = url_params or {}
+        self._query_args = query_args or {}
+        self._body_args = body_args or {}
+        self._headers = headers or {}
+
+    @property
+    def url_params(self):
+        """
+        :return: TODO
+        :rtype: dict
+        """
+        return self._url_params.copy()
+
+    @property
+    def query_args(self):
+        """
+        :return: TODO
+        :rtype: dict
+        """
+        return self._query_args.copy()
+
+    @property
+    def body_args(self):
+        """
+        :return: TODO
+        :rtype: dict
+        """
+        return self._body_args.copy()
+
+    @property
+    def headers(self):
+        """
+        :return: TODO
+        :rtype: dict
+        """
+        return self._headers.copy()
+
+    @property
+    def content_type(self):
+        """
+        :return: The Content-Type header or None if it is not available in
+            the headers property on this request object.
+        :rtype: unicode
+        """
+        return self._headers.get('Content-Type', None)
+
