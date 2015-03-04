@@ -26,7 +26,7 @@ class ListRelationship(Relationship):
 
     def construct_resource(self, properties):
         # TODO
-        objects = properties[self.list_name]
+        objects = properties.get(self.list_name, [])
         for obj in objects:
             yield self.relation(properties=obj)
 

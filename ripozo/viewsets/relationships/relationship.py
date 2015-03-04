@@ -17,7 +17,7 @@ class Relationship(object):
     to return the whole resource, a link, etc...
     """
 
-    def __init__(self, property_map=None, relation=None, embedded=False):
+    def __init__(self, property_map=None, relation=None, embedded=False, required=False):
         """
         :param dict property_map: A map of the parent's property name
             to the corresponding related fields properties.  For example,
@@ -36,6 +36,7 @@ class Relationship(object):
         self.property_map = property_map or {}
         self._relation = relation
         self.embedded = embedded
+        self.required = required
 
     @property
     def relation(self):
@@ -63,7 +64,13 @@ class Relationship(object):
             to this related resource
         :rtype: rest.viewsets.resource_base.ResourceBase
         """
-        related_properties = self._map_pks(properties)
+        try:
+            related_properties = self._map_pks(properties)
+        except ValueError:  # TODO test ths
+            if self.required is False:
+                raise
+            else:
+                return
         yield self.relation(properties=related_properties)
 
     def remove_child_resource_properties(self, properties):
