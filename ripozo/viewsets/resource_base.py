@@ -185,7 +185,19 @@ class ResourceBase(object):
 
 
 def create_url(base_url, **kwargs):
-    # TODO docstring
+    """
+    Generates a fully qualified url.  It iterates
+    over the keyword arguments and for each key
+    it replaces any instances of "<key>" with "value"
+    The keys of the dictionary must be strings.
+
+    :param unicode base_url: The url template that will
+        be used to generate an acutal url
+    :param dict kwargs: The dictionary of template variables
+        and their associated values
+    :return: A complete url.
+    :rtype: unicode
+    """
     for key, value in six.iteritems(kwargs):
         to_replace = '<{0}>'.format(key)
         base_url = re.sub(to_replace, six.text_type(value), base_url)

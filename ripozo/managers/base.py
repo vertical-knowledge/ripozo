@@ -137,15 +137,20 @@ class BaseManager(object):
     @abstractmethod
     def get_field_type(self, name):
         """
-        This should return the field type for the given name.  This is used to construct
-        the webargs parser
+        Returns the BaseField instance (or subclass) instance
+        that corresponds to the named attribute on the model.
+        For example, if you the column "name" on the model
+        for this manager is a String column, then this should
+        return an instance of StringField with the appropriate
+        requirements.
 
-        :param name: The name of the field on the mode for which you are getting the field name
-        :type name: str
-        :return: The type of the field
-        :rtype: type
+        :param name: The name of the field on the model
+            for which you are getting the field name
+        :type name: unicode
+        :return: The BaseField class (or subclass) instance to handle
+            the field specified by the name
+        :rtype: ripozo.viewsets.fields.base.BaseField
         """
-        # TODO update docstring for use of fields
         pass
 
     @classproperty

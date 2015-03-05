@@ -7,9 +7,12 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 from ripozo.dispatch.adapters.base import AdapterBase
 from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
 
+import logging
 import six
 
-# TODO add logging
+logger = logging.getLogger(__name__)
+
+
 @six.add_metaclass(ABCMeta)
 class DispatcherBase(object):
     """
@@ -76,6 +79,7 @@ class DispatcherBase(object):
         if not issubclass(adapter_class, AdapterBase):
             raise ValueError('The default adapter must be an subclass of an'
                              ' AdapterBase class. Type provided: {0}'.format(adapter_class))
+        logger.info('Setting the default adapter for a Dispatcher as {0}'.format(adapter_class))
         self._default_adapter = adapter_class
 
     def register_adapters(self, *adapter_classes):
@@ -102,6 +106,8 @@ class DispatcherBase(object):
                                                                   'it.'.format(format,
                                                                                self.adapter_formats[format].__name__,
                                                                                klass.__name__))
+                logger.debug('Registering format {0} to be hanlded by the AdapterBase'
+                             ' subclass {1}'.format(format, klass))
                 self.adapter_formats[format] = klass
 
     def register_class_routes(self, klass):
@@ -117,6 +123,9 @@ class DispatcherBase(object):
                 options = options.copy()
                 route = options.pop('route', klass.base_url)
                 methods = options.pop('methods', ['GET'])
+                logger.info('Registering the endpoint {0} to handle route {1}'
+                            ' with the methods {2} on a DispatcherBase '
+                            'subclass'.format(endpoint, route, methods))
                 self.register_route(endpoint, route=route, methods=methods, **options)
 
     @abstractmethod
@@ -154,7 +163,10 @@ class DispatcherBase(object):
             can be used to find
         :rtype:
         """
+        logger.info('Dispatching request to endpoint function: {0}'.format(endpoint_func))
         result = endpoint_func(*args, **kwargs)
         adapter_class = self.adapter_formats.get(format_type, self.default_adapter)
+        logger.info('Using adapter {0} to format response for format'
+                    ' type {1}'.format(adapter_class, format_type))
         adapter = adapter_class(result, base_url=self.base_url)
         return adapter

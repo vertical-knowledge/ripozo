@@ -52,10 +52,10 @@ class apimethod(object):
         """
         @wraps(f)
         def wrapped(cls, request, *args, **kwargs):
-            for proc in cls.preprocessors:
+            for proc in cls.preprocessors:  # TODO test
                 proc(cls, request, *args, **kwargs)
             resource = f(cls, request, *args, **kwargs)
-            for proc in cls.postprocessors:
+            for proc in cls.postprocessors:  # TODO test
                 proc(cls, request, resource, *args, **kwargs)
             return resource
 

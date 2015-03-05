@@ -25,7 +25,20 @@ class ListRelationship(Relationship):
         self.list_name = list_name
 
     def construct_resource(self, properties):
-        # TODO
+        """
+        Takes a list of properties and returns a generator that
+        yields Resource instances.  These related ResourceBase subclass
+        will be asked to construct an instance with the keyword argument
+        properties equal to each item in the list of properties provided to
+        this function.
+
+        :param dict properties: A dictionary of the properties
+            on the parent model.  The list_name provided in the construction
+            of an instance of this class is used to find the list that will be
+            iterated over to generate the resources.
+        :return: A generator that yields the relationships.
+        :rtype: types.GeneratorType
+        """
         objects = properties.get(self.list_name, [])
         for obj in objects:
             yield self.relation(properties=obj)
