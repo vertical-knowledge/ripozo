@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 __author__ = 'Tim Martin'
 import logging
 from ripozo.decorators import apimethod
-from ripozo.viewsets.fields.base import translate_and_validate_fields, translate_fields
 from ripozo.viewsets.resource_base import ResourceBase
 
 logger = logging.getLogger(__name__)

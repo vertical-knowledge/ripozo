@@ -24,7 +24,7 @@ class ResourceBase(object):
     _relationships = None
     _pks = None
     _manager = None
-    _namespace = None
+    _namespace = '/'
     _resource_name = None
     _preprocessors = None
     _postprocessors = None

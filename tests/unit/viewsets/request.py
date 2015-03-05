@@ -7,6 +7,8 @@ from ripozo.viewsets.request import RequestContainer
 
 from ripozo_tests.python2base import TestBase
 
+from ripozo_tests.helpers.hello_world_viewset import HelloWorldViewset
+
 import unittest
 
 
