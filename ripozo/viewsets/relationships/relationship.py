@@ -16,6 +16,7 @@ class Relationship(object):
     created by an adapter which must determine whether
     to return the whole resource, a link, etc...
     """
+    _resource_meta_class = ResourceMetaClass
 
     def __init__(self, property_map=None, relation=None, embedded=False, required=False):
         """
@@ -43,15 +44,18 @@ class Relationship(object):
         """
         The ResourceBase subclass that describes the related object
         If no _relation property is available on the instance
-        it returns None.
+        it returns None.  Raises a key error when the relation
+        keyword argument passed on construction is not available
+        in the self._resource_meta_class.registered_names_map
+        dictionary (By default the self._resource_meta_class is
+        the ResourceMetaClass).
 
         :return: The ResourceBase subclass that describes the
             related resource
         :rtype: type
+        :raises: KeyError
         """
-        if self._relation:
-            return ResourceMetaClass.registered_names_map[self._relation]
-        return None
+        return self._resource_meta_class.registered_names_map[self._relation]
 
     def construct_resource(self, properties):
         """
@@ -63,6 +67,7 @@ class Relationship(object):
         :return: An instance of a self.relation class that corresponds
             to this related resource
         :rtype: rest.viewsets.resource_base.ResourceBase
+        :raises: KeyError
         """
         try:
             related_properties = self._map_pks(properties)
@@ -87,7 +92,7 @@ class Relationship(object):
         """
         properties = properties.copy()
         for key in six.iterkeys(self.property_map):
-            properties.pop(key)
+            properties.pop(key, None)
         return properties
 
     def _map_pks(self, parent_properties):
@@ -96,7 +101,9 @@ class Relationship(object):
         resources properties.  It then maps those properties
         to the named properties of the related resource
         and creates a dictionary of the related resources
-        property values.
+        property values.  Raises a KeyError if the parent
+        does not contain keys that matches every key in
+        the self.property_map
 
         :param dict parent_properties: A dictionary of the parent
             resource's properties.  The key is the name of the
@@ -106,6 +113,7 @@ class Relationship(object):
             The key is the name of the related resource's property
             and the value is the value of that resource's property.
         :rtype: :py:class:`dict`
+        :raises: KeyError
         """
         properties = {}
         for parent_prop, prop in six.iteritems(self.property_map):
