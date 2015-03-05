@@ -41,6 +41,11 @@ class RequestContainer(object):
         """
         return self._url_params.copy()
 
+    @url_params.setter
+    def url_params(self, value):
+        # TODO
+        self._url_params = value
+
     @property
     def query_args(self):
         """
@@ -48,6 +53,11 @@ class RequestContainer(object):
         :rtype: dict
         """
         return self._query_args.copy()
+
+    @query_args.setter
+    def query_args(self, value):
+        # TODO
+        self._query_args = value
 
     @property
     def body_args(self):
@@ -57,6 +67,11 @@ class RequestContainer(object):
         """
         return self._body_args.copy()
 
+    @body_args.setter
+    def body_args(self, value):
+        # TODO
+        self._body_args = value
+
     @property
     def headers(self):
         """
@@ -64,6 +79,11 @@ class RequestContainer(object):
         :rtype: dict
         """
         return self._headers.copy()
+
+    @headers.setter
+    def headers(self, value):
+        # TODO
+        self._headers = value
 
     @property
     def content_type(self):
@@ -73,6 +93,11 @@ class RequestContainer(object):
         :rtype: unicode
         """
         return self._headers.get('Content-Type', None)
+
+    @content_type.setter
+    def content_type(self, value):
+        # TODO
+        self._headers['Content-Type'] = value
 
     def translate(self, fields):
         """

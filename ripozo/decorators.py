@@ -51,8 +51,13 @@ class apimethod(object):
         :rtype: classmethod
         """
         @wraps(f)
-        def wrapped(*args, **kwargs):
-            return f(*args, **kwargs)
+        def wrapped(cls, request, *args, **kwargs):
+            for proc in cls.preprocessors:
+                proc(cls, request, *args, **kwargs)
+            resource = f(cls, request, *args, **kwargs)
+            for proc in cls.postprocessors:
+                proc(cls, request, resource, *args, **kwargs)
+            return resource
 
         wrapped.__rest_route__ = True
         wrapped.routes = getattr(f, 'routes', [])
