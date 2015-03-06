@@ -11,6 +11,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   tutorial/tutorial_part_1
    API/modules
 
 .. include:: ../../README.rst
