@@ -169,17 +169,6 @@ class BaseManager(object):
         return cls._field_validators
 
     @abstractproperty
-    def model_name(self):
-        """
-        Get the name of the model being represented.  The individual model instance is irrelevant.
-        For example if you had a Person model, it might return "person"
-
-        :return: name of the model
-        :rtype: unicode
-        """
-        pass
-
-    @abstractproperty
     def queryset(self):
         """
         Gets the list of models that are valid to operate on

@@ -64,13 +64,7 @@ class TestResourceBase(TestBase, unittest.TestCase):
             _resource_name = None
 
             __manager__ = MM1
-        self.assertEqual(T2.resource_name, T2.__manager__()._model_name)
-
-    def test_model_name(self):
-        """Tests whether the model name is retrieved from manager"""
-        class T1(TestResource):
-            __manager__ = MM1
-        self.assertEqual(T1.model_name, MM1().model_name)
+        self.assertEqual(T2.resource_name, 't2')
 
     def test_manager_property(self):
         """Tests whether the manager instance is properly instantiated"""

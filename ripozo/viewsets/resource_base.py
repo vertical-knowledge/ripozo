@@ -7,10 +7,9 @@ import re
 import six
 
 from six.moves.urllib import parse
-from ripozo.exceptions import NoResourceNameDeclaredException
 from ripozo.viewsets.constructor import ResourceMetaClass
 from ripozo.viewsets.constants import status
-from ripozo.utilities import classproperty
+from ripozo.utilities import classproperty, convert_to_underscore
 
 
 url_part_finder = re.compile(r'<([^>]+)>')
@@ -141,12 +140,6 @@ class ResourceBase(object):
         return cls._manager()
 
     @classproperty
-    def model_name(cls):
-        if cls.manager is None:
-            return None
-        return cls.manager.model_name
-
-    @classproperty
     def namespace(cls):
         return cls._namespace or ''
 
@@ -178,10 +171,7 @@ class ResourceBase(object):
         """
         if cls._resource_name:
             return cls._resource_name
-        if cls.model_name is None:
-            raise NoResourceNameDeclaredException('Neither the _resource_name nor the'
-                                                  ' _manager was declared on the {0} class'.format(cls.__name__))
-        return cls.model_name
+        return convert_to_underscore(cls.__name__)
 
 
 def create_url(base_url, **kwargs):
