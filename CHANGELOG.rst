@@ -7,7 +7,7 @@
 0.1.11 (2015-03-08)
 ===================
 
-- Nothing changed yet.
+* Some updates to the release process.
 
 
 0.1.10 (2015-03-08)
