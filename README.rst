@@ -16,6 +16,36 @@ as an API to other developers.  Ripozo is designed to solve this problem.
 It allows you to easily build Hypermedia/HATEOAS/REST APIs quickly and 
 efficiently.
 
+Installation
+------------
+
+.. code-block:: bash
+
+    pip install ripozo
+
+Example
+-------
+
+.. code-block:: python
+
+    from ripozo.decorators import apimethod
+    from ripozo.dispatch.adapters import SirenAdapter, HalAdapter
+    from ripozo.viewsets import ResourceBase
+    # import the dispatcher class for your preferred webframework
+
+    class MyResource(ResourceBase):
+        @apimethod(methods=['GET'])
+        def say_hello(cls, request):
+            return cls(properties=dict(hello='world'))
+
+    # initialize the dispatcher for your framework
+    # e.g. dispatcher = MyDispatcherImplementation()
+    dispatcher.register_adapters(SirenAdapter, HalAdapter)
+    dispatcher.register_resources(MyResource)
+
+And just like that, you have an api that can return either Siren or Hal
+formatted responses.  Pretty easy, right?
+
 Philosophy
 ----------
 

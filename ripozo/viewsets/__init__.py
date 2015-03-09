@@ -1,1 +1,1 @@
-__author__ = 'Tim Martin'
+from ripozo.viewsets.resource_base import ResourceBase

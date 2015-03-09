@@ -33,7 +33,7 @@ the resource classes is very easy.
     dispatcher.register_adapters(SirenAdapter, HalAdapter)
 
     # Register your resource classes
-    dispatcher.register_classes(MyResource, MyOtherResource)
+    dispatcher.register_resources(MyResource, MyOtherResource)
 
 I wasn't lying, it's pretty basic.
 

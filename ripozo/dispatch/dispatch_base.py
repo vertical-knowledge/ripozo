@@ -110,7 +110,7 @@ class DispatcherBase(object):
                              ' subclass {1}'.format(format, klass))
                 self.adapter_formats[format] = klass
 
-    def register_classes(self, *classes):
+    def register_resources(self, *classes):
         """
         A shortcut for register multiple classes at once.
 
