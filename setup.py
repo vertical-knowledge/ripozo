@@ -1,17 +1,31 @@
-__author__ = u'Tim Martin'
-__pkg_name__ = u'ripozo'
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
+__author__ = 'Tim Martin'
+__pkg_name__ = 'ripozo'
+
 from setuptools import setup, find_packages
 
-version = '0.1.9'
+import os
+
+version = '0.1.10'
+
+base_dir = os.path.dirname(__file__)
+
+with open(os.path.join(base_dir, 'README.rst'), 'r+b') as readme:
+    long_description = readme.read()
 
 setup(
-    name=__pkg_name__,
+    author=__author__,
+    author_email='tim.martin@vertical-knowledge.com',
+    name='ripozo',
     version=version,
     packages=find_packages(exclude=['tests', 'tests.*']),
     include_package_data=True,
     description='An tool for easily making RESTful interfaces',
-    author=__author__,
-    author_email='tim.martin@vertical-knowledge.com',
+    long_description=long_description,
     install_requires=['six>=1.4.1,!=1.7.1', 'jinja2'],
     classifiers=[
         'Development Status :: 3 - Alpha',
