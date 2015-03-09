@@ -110,6 +110,17 @@ class DispatcherBase(object):
                              ' subclass {1}'.format(format, klass))
                 self.adapter_formats[format] = klass
 
+    def register_classes(self, *classes):
+        """
+        A shortcut for register multiple classes at once.
+
+        :param list classes: A list of ResourceBase subclasses that are being
+            registered with this dispatcher.
+        """
+        # TODO test this
+        for klass in classes:
+            self.register_class_routes(klass)
+
     def register_class_routes(self, klass):
         """
         Register a subclass of the ResourceBase on the framework
