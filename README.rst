@@ -118,7 +118,10 @@ Resources
 ---------
 
 Resources are the bread and butter of ripozo.  They determine the business logic
-of an application.
+of an application.  Resources should be reusable across all ripozo dispatch and
+manager extensions.  In other words, you should be able to take your ripozo
+resources that you originally developed for Flask and plug them into a Django
+application.
 
 Managers
 --------
