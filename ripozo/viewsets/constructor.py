@@ -45,7 +45,7 @@ class ResourceMetaClass(type):
 
         :param klass: The class to register endpoints on.
         """
-        for name, method in inspect.getmembers(klass, mcs.method_or_class_method):
+        for name, method in mcs.get_apimethods(klass):
             logger.debug('Registering method {0} as a valid '
                          'action on resource {1}'.format(method.__name__, klass.__name__))
             klass.register_endpoint(method)
@@ -77,3 +77,10 @@ class ResourceMetaClass(type):
         if success:
             logger.debug('{0} {1}'.format(success, obj))
         return success
+
+    @classmethod
+    def get_apimethods(mcs, klass):
+        for name, obj in inspect.getmembers(klass):
+            print(obj)
+            if mcs.method_or_class_method(obj):
+                yield name, obj
