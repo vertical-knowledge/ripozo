@@ -23,9 +23,11 @@ class _apiclassmethod(object):
     def __get__(self, obj, klass=None):
         if klass is None:
             klass = type(obj)
-        @wraps(self.f)
+
+        method = self.f
+        @wraps(method)
         def newfunc(*args):
-            return self.f(klass, *args)
+            return method(klass, *args)
         newfunc.__rest_route__ = True
         newfunc.routes = getattr(self.f, 'routes', [])
         return newfunc
@@ -122,7 +124,7 @@ class validate(object):
 
 
 class translate(object):
-    # TODO docs
+    # TODO docs and test
     def __init__(self, fields=None):
         self.fields = fields or []
 

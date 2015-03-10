@@ -26,19 +26,6 @@ class ClassPropertyDescriptor(object):
             klass = type(obj)
         return self.fget.__get__(obj, klass)()
 
-    def __set__(self, obj, value):
-        if not self.fset:
-            raise AttributeError("can't set attribute")
-        type_ = type(obj)
-        return self.fset.__get__(obj, type_)(value)
-
-    def setter(self, func):
-        if not isinstance(func, (classmethod, staticmethod)):
-            func = classmethod(func)
-        self.fset = func
-        return self
-
-
 def classproperty(func):
     """
     Using this decorator a class can have a decorator. Necessary for dynamically settings urls
@@ -89,7 +76,6 @@ def make_json_serializable(value):
         return list(value)
     else:
         return value
-        raise ValueError('A boolean value accepted as a string must be either "true" or "false"')
 
 
 def serialize_fields(field_names, field_values):
@@ -134,7 +120,8 @@ def join_url_parts(*parts):
     Joins each of the parts with a '/'.
     Additionally, it prevents something like 'something/' and
     '/another' from turning into 'something//another' instead
-    it will return 'something/another'
+    it will return 'something/another'.
+
     :param list parts: a list of strings to join together with a '/'
     :return: The url
     :rtype: unicode

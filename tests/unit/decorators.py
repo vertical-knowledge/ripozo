@@ -25,7 +25,7 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
         endpoint = 'endpoint'
 
         def fake(*args, **kwargs):
-            pass
+            return mock.MagicMock()
 
         api = apimethod(route=route, endpoint=endpoint)
         wrapped = api(fake)
@@ -40,3 +40,24 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
         routes = getattr(wrapped, 'routes')
         self.assertEqual(len(routes), 2)
         self.assertEqual(('another', 'thing', {}), routes[1])
+
+    def test_preprocessors_and_postprocessors(self):
+        pre1 = mock.MagicMock()
+        pre2 = mock.MagicMock()
+        post1 = mock.MagicMock()
+        post2 = mock.MagicMock()
+
+        class Blah(object):
+            preprocessors = [pre1, pre2]
+            postprocessors = [post1, post2]
+
+            @apimethod()
+            def fake(cls, *args, **kwargs):
+                return mock.MagicMock()
+
+        Blah.fake(None)
+        self.assertEqual(pre1.call_count, 1)
+        self.assertEqual(pre2.call_count, 1)
+        self.assertEqual(post1.call_count, 1)
+        self.assertEqual(post2.call_count, 1)
+
