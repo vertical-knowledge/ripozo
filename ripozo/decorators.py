@@ -9,11 +9,11 @@ import logging
 import six
 
 
-class _customclassmethod(object):
+class _apiclassmethod(object):
     if six.PY2:
-        _name = six.binary_type('_customclassmethod')
+        _name = six.binary_type('_apiclassmethod')
     else:
-        _name = '_customclassmethod'
+        _name = '_apiclassmethod'
 
     def __init__(self, f):
         self.f = f
@@ -78,7 +78,7 @@ class apimethod(object):
         wrapped.routes = getattr(f, 'routes', [])
 
         wrapped.routes.append((self.route, self.endpoint, self.options))
-        return _customclassmethod(wrapped)
+        return _apiclassmethod(wrapped)
 
 
 class validate(object):

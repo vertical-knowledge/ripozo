@@ -3,6 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from ripozo.decorators import _apiclassmethod
 from ripozo.exceptions import BaseRestEndpointAlreadyExists
 
 import logging
@@ -70,8 +71,9 @@ class ResourceMetaClass(type):
     @staticmethod
     def method_or_class_method(obj):
         # return getattr(object, 'rest_route', False)
-        success = getattr(obj, 'rest_route', False) or getattr(obj, '__rest_route__', False)
-        # success = isinstance(object, (types.MethodType, _customclassmethod, apimethod, types.FunctionType))
+        # success = getattr(obj, 'rest_route', False) or getattr(obj, '__rest_route__', False)
+        # success = isinstance(object, (types.MethodType, _apiclassmethod, apimethod, types.FunctionType))
+        success = isinstance(obj, _apiclassmethod) or getattr(obj, 'rest_route', False) or getattr(obj, '__rest_route__', False)
         if success:
             logger.debug('{0} {1}'.format(success, obj))
         return success
