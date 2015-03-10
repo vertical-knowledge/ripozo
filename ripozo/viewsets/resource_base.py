@@ -105,7 +105,7 @@ class ResourceBase(object):
             route = parse.urljoin(cls.base_url, route)
             all_routes.append(dict(route=route, endpoint_func=function, **options))
         logger.info('Registering routes: {0} as key {1}'.format(all_routes, function.__name__))
-        cls.endpoint_dictionary[function.__name__] = all_routes
+        cls.endpoint_dictionary[name] = all_routes
 
     @classproperty
     def base_url(cls):
