@@ -130,7 +130,15 @@ def titlize_endpoint(endpoint):
 
 
 def join_url_parts(*parts):
-    # TODO docs and tests
+    """
+    Joins each of the parts with a '/'.
+    Additionally, it prevents something like 'something/' and
+    '/another' from turning into 'something//another' instead
+    it will return 'something/another'
+    :param list parts: a list of strings to join together with a '/'
+    :return: The url
+    :rtype: unicode
+    """
     url = None
     if len(parts) == 0:
         return ''

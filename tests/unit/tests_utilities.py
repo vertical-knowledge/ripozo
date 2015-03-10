@@ -1,11 +1,19 @@
-__author__ = 'Tim Martin'
-from ripozo.utilities import convert_to_underscore, serialize_fields, titlize_endpoint
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
+from ripozo.utilities import convert_to_underscore, serialize_fields,\
+    titlize_endpoint, join_url_parts
+
 from ripozo_tests.python2base import TestBase
 from ripozo_tests.bases.manager import generate_random_name
+
 import six
+import unittest
 
 
-class UtilitiesTestCase(TestBase):
+class UtilitiesTestCase(TestBase, unittest.TestCase):
 
     def test_convert_to_underscore(self):
         camel_case_names = ['CamelCase', 'camelCase', 'camel_case', '_CamelCase',
@@ -53,3 +61,22 @@ class UtilitiesTestCase(TestBase):
         name = 'some_name_or_something_'
         updated = titlize_endpoint(name)
         self.assertEqual(updated, expected)
+
+    def test_join_url_parts(self):
+        url = join_url_parts()
+        self.assertIsInstance(url, six.text_type)
+        self.assertEqual('', url)
+
+        url = join_url_parts('/something', '/another', '/thing')
+        self.assertEqual(url, '/something/another/thing')
+
+        url = join_url_parts('something/', '/another/', '/thing')
+        self.assertEqual(url, 'something/another/thing')
+
+        url = join_url_parts('something//', '/another')
+        self.assertEqual(url, 'something/another')
+
+        url = join_url_parts('/', '/another')
+        self.assertEqual('/another', url)
+        url = join_url_parts('/', '/')
+        self.assertEqual('/', url)
