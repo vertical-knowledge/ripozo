@@ -68,10 +68,10 @@ class ResourceMetaClass(type):
         mcs.registered_names_map[klass.__name__] = klass
 
     @staticmethod
-    def method_or_class_method(object):
+    def method_or_class_method(obj):
         # return getattr(object, 'rest_route', False)
-        success = getattr(object, '__rest_route__', False)
+        success = getattr(obj, 'rest_route', False) or getattr(obj, '__rest_route__', False)
         # success = isinstance(object, (types.MethodType, _customclassmethod, apimethod, types.FunctionType))
         if success:
-            logger.debug('{0} {1}'.format(success, object))
+            logger.debug('{0} {1}'.format(success, obj))
         return success

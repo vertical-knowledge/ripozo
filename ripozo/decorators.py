@@ -6,9 +6,12 @@ from __future__ import unicode_literals
 from functools import wraps
 from ripozo.viewsets.fields.base import translate_and_validate_fields
 import logging
+import six
 
 
 class _customclassmethod(object):
+    _name = six.binary_type('_customclassmethod')
+
     def __init__(self, f):
         self.f = f
         self.rest_route = True
@@ -23,6 +26,15 @@ class _customclassmethod(object):
         newfunc.__rest_route__ = True
         newfunc.routes = getattr(self.f, 'routes', [])
         return newfunc
+
+    @property
+    def __name__(self):
+        return self._name
+
+    @__name__.setter
+    def __name__(self, value):
+        self._name = value
+
 
 
 class apimethod(object):
