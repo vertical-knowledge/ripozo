@@ -81,6 +81,5 @@ class ResourceMetaClass(type):
     @classmethod
     def get_apimethods(mcs, klass):
         for name, obj in inspect.getmembers(klass):
-            print(obj)
             if mcs.method_or_class_method(obj):
                 yield name, obj

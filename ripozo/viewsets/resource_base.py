@@ -11,6 +11,10 @@ from ripozo.viewsets.constructor import ResourceMetaClass
 from ripozo.viewsets.constants import status
 from ripozo.utilities import classproperty, convert_to_underscore
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 url_part_finder = re.compile(r'<([^>]+)>')
 
@@ -100,6 +104,7 @@ class ResourceBase(object):
             route = route.lstrip('/')
             route = parse.urljoin(cls.base_url, route)
             all_routes.append(dict(route=route, endpoint_func=function, **options))
+        logger.info('Registering routes: {0} as key {1}'.format(all_routes, function.__name__))
         cls.endpoint_dictionary[function.__name__] = all_routes
 
     @classproperty
