@@ -87,7 +87,7 @@ class ResourceBase(object):
         return pk_dict
 
     @classmethod
-    def register_endpoint(cls, function):
+    def register_endpoint(cls, name, function):
         """
         Registers a method as an exposed endpoint.
         Any method decorated with @api_method will
