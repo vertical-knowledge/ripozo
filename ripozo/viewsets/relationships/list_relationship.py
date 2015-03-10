@@ -44,7 +44,18 @@ class ListRelationship(Relationship):
             yield self.relation(properties=obj)
 
     def remove_child_resource_properties(self, properties):
-        # TODO
+        """
+        Removes the item from the properties dict with the key
+        that matches this instance's list_name attribute.  It
+        copies the properties and pops the property from the copy
+        before returning it.
+
+        :param dict properties: The properties with the list_name
+            key and value to be removed.
+        :return: The updated properties dict.  This is actually a copy
+            of the original to prevent side effects.
+        :rtype: dict
+        """
         properties = properties.copy()
-        properties.pop(self.list_name)
+        properties.pop(self.list_name, None)
         return properties
