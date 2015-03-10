@@ -10,7 +10,10 @@ import six
 
 
 class _customclassmethod(object):
-    _name = six.binary_type('_customclassmethod')
+    if six.PY2:
+        _name = six.binary_type('_customclassmethod')
+    else:
+        _name = '_customclassmethod'
 
     def __init__(self, f):
         self.f = f
