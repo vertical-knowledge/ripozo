@@ -45,8 +45,6 @@ class ResourceMetaClass(type):
 
         :param klass: The class to register endpoints on.
         """
-        logger.debug(six.text_type(klass.__dict__))
-        logger.debug(six.text_type(inspect.getmembers(klass)))
         for name, method in inspect.getmembers(klass, mcs.method_or_class_method):
             logger.debug('Registering method {0} as a valid '
                          'action on resource {1}'.format(method.__name__, klass.__name__))
@@ -73,6 +71,8 @@ class ResourceMetaClass(type):
         # return getattr(object, 'rest_route', False)
         # success = getattr(obj, 'rest_route', False) or getattr(obj, '__rest_route__', False)
         # success = isinstance(object, (types.MethodType, _apiclassmethod, apimethod, types.FunctionType))
+
+        print(obj)
         success = isinstance(obj, _apiclassmethod) or getattr(obj, 'rest_route', False) or getattr(obj, '__rest_route__', False)
         if success:
             logger.debug('{0} {1}'.format(success, obj))
