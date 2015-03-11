@@ -22,7 +22,7 @@ ripozo
     :target: https://pypi.python.org/pypi/ripozo/
     :alt: Wheel Status
 
-.. image:: https://pypip.in/py_version/ripozo/badge.svg?style=flat
+.. image:: https://pypip.in/py_versions/ripozo/badge.svg?style=flat
     :target: https://pypi.python.org/pypi/ripozo/
 
 A pluggable tool for quickly and efficiently creating web apis.
