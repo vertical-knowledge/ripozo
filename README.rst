@@ -1,29 +1,28 @@
 ripozo
 ======
 
-.. image:: https://travis-ci.org/vertical-knowledge/ripozo.svg?branch=master
+.. image:: https://travis-ci.org/vertical-knowledge/ripozo.svg?branch=master&style=flat
     :target: https://travis-ci.org/vertical-knowledge/ripozos
 
-.. image:: https://coveralls.io/repos/vertical-knowledge/ripozo/badge.svg?branch=master
+.. image:: https://coveralls.io/repos/vertical-knowledge/ripozo/badge.svg?branch=master&style=flat
   :target: https://coveralls.io/r/vertical-knowledge/ripozo?branch=master
 
-.. image:: https://readthedocs.org/projects/ripozo/badge/?version=latest
+.. image:: https://readthedocs.org/projects/ripozo/badge/?version=latest&style=flat
     :target: https://ripozo.readthedocs.org/
     :alt: Documentation Status
 
-.. image:: https://pypip.in/v/ripozo/badge.png
-    :target: https://crate.io/packages/ripozo/
-    :alt: Latest PyPI version
+.. image:: https://pypip.in/version/ripozo/badge.svg?style=flat
+    :target: https://pypi.python.org/pypi/ripozo/
 
-.. image:: https://pypip.in/d/ripozo/badge.png
+.. image:: https://pypip.in/d/ripozo/badge.png?style=flat
     :target: https://crate.io/packages/ripozo/
     :alt: Number of PyPI downloads
 
-.. image:: https://pypip.in/wheel/ripozo/badge.png
+.. image:: https://pypip.in/wheel/ripozo/badge.svg?style=flat
     :target: https://pypi.python.org/pypi/ripozo/
     :alt: Wheel Status
 
-.. image:: https://pypip.in/version/ripozo/badge.svg
+.. image:: https://pypip.in/py_version/ripozo/badge.svg?style=flat
     :target: https://pypi.python.org/pypi/ripozo/
 
 A pluggable tool for quickly and efficiently creating web apis.
