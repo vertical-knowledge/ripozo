@@ -4,7 +4,6 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from functools import wraps
-from ripozo.viewsets.fields.base import translate_and_validate_fields
 import logging
 import six
 
