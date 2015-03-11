@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.decorators import apimethod
+from ripozo.decorators import apimethod, translate
 
 from ripozo_tests.python2base import TestBase
 
@@ -60,4 +60,20 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
         self.assertEqual(pre2.call_count, 1)
         self.assertEqual(post1.call_count, 1)
         self.assertEqual(post2.call_count, 1)
+
+    def test_translate(self):
+        mkc = mock.MagicMock()
+
+        @translate(fields=[1, 2])
+        def fake(*args, **kwargs):
+            return mkc()
+
+        self.assertIsInstance(fake.fields, list)
+        self.assertListEqual(fake.fields, [1, 2])
+
+        request = mock.Mock()
+        x = fake(1, request)
+        self.assertEqual(mkc.call_count, 1)
+        self.assertEqual(request.translate.call_count, 1)
+
 
