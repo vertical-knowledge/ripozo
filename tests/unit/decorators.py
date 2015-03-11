@@ -63,8 +63,8 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
 
     def test_translate(self):
         mkc = mock.MagicMock()
-
-        @translate(fields=[1, 2])
+        fields = [1, 2]
+        @translate(fields=fields)
         def fake(*args, **kwargs):
             return mkc()
 
@@ -75,5 +75,7 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
         x = fake(1, request)
         self.assertEqual(mkc.call_count, 1)
         self.assertEqual(request.translate.call_count, 1)
+        x = request.translate.call_args_list
+        self.assertListEqual(x[0][0][0], fields)
 
 
