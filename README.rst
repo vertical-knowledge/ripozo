@@ -8,6 +8,14 @@ ripozo
     :target: https://ripozo.readthedocs.org/
     :alt: Documentation Status
 
+.. image:: https://pypip.in/v/ripozo/badge.png
+    :target: https://crate.io/packages/ripozo/
+    :alt: Latest PyPI version
+
+.. image:: https://pypip.in/d/ripozo/badge.png
+    :target: https://crate.io/packages/ripozo/
+    :alt: Number of PyPI downloads
+
 A pluggable tool for quickly and efficiently creating web apis.
 In the modern day, your server is no longer just interacting
 with a web browser.  Instead it's interfacing with desktop and mobile 
