@@ -4,6 +4,9 @@ ripozo
 .. image:: https://travis-ci.org/vertical-knowledge/ripozo.svg?branch=master
     :target: https://travis-ci.org/vertical-knowledge/ripozos
 
+.. image:: https://coveralls.io/repos/z4r/ripozo/badge.png?branch=master
+    :target: https://coveralls.io/r/z4r/ripozo
+
 .. image:: https://readthedocs.org/projects/ripozo/badge/?version=latest
     :target: https://ripozo.readthedocs.org/
     :alt: Documentation Status
@@ -15,6 +18,10 @@ ripozo
 .. image:: https://pypip.in/d/ripozo/badge.png
     :target: https://crate.io/packages/ripozo/
     :alt: Number of PyPI downloads
+
+.. image:: https://pypip.in/wheel/ripozo/badge.png
+    :target: https://pypi.python.org/pypi/ripozo/
+    :alt: Wheel Status
 
 A pluggable tool for quickly and efficiently creating web apis.
 In the modern day, your server is no longer just interacting
