@@ -7,9 +7,11 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 from ripozo.utilities import classproperty
 
 import logging
+import six
 logger = logging.getLogger(__name__)
 
 
+@six.add_metaclass(ABCMeta)
 class BaseManager(object):
     """
     The BaseManager implements some common methods that are valuable across all databases
@@ -37,13 +39,12 @@ class BaseManager(object):
         For any type of base class this should be None.
         However, it is required for actual implementations
     """
-    __metaclass__ = ABCMeta
     pagination_pk_query_arg = 'pagination_pk'
     pagination_count_query_arg = 'count'
     pagination_next = 'next'
     paginate_by = 10000
     order_by = None
-    fields = None
+    _fields = None
     model = None
     arg_parser = None
     _field_validators = None
@@ -154,6 +155,15 @@ class BaseManager(object):
         pass
 
     @classproperty
+    def fields(cls):
+        """
+        Simply makes sure that the _fields attribute is not
+        None.  Returns [] if cls._fields evaluates to None
+        or some equivalent.
+        """
+        return cls._fields or []
+
+    @classproperty
     def field_validators(cls):
         """
         Gets the BaseField instances for all of the
@@ -162,11 +172,11 @@ class BaseManager(object):
         :return:
         :rtype: list
         """
-        if cls._field_validators is None:
-            cls._field_validators = []
-            for f in cls.fields:
-                cls._field_validators.append(cls.get_field_type(f))
-        return cls._field_validators
+        cls._field_validators = cls._field_validators or {}
+        for field_name in cls.fields:
+            if field_name not in cls._field_validators:
+                cls._field_validators[field_name] = (cls.get_field_type(field_name))
+        return list(cls._field_validators.values())
 
     @abstractproperty
     def queryset(self):
