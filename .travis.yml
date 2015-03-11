@@ -7,6 +7,7 @@ python:
   - "pypy"
   - "pypy3"
 install:
+  - pip install python-coveralls
   - pip install -U ripozo-tests
   - python setup.py -q install
 script: python setup.py test
