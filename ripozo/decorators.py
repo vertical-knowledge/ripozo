@@ -68,10 +68,10 @@ class apimethod(object):
         """
         @wraps(f)
         def wrapped(cls, request, *args, **kwargs):
-            for proc in cls.preprocessors:  # TODO test
+            for proc in cls.preprocessors:
                 proc(cls, request, *args, **kwargs)
             resource = f(cls, request, *args, **kwargs)
-            for proc in cls.postprocessors:  # TODO test
+            for proc in cls.postprocessors:
                 proc(cls, request, resource, *args, **kwargs)
             return resource
 
@@ -123,11 +123,28 @@ class validate(object):
 
 
 class translate(object):
-    # TODO docs and test
+    """
+    A decorator designed to be used in
+    conjunction with an apimethod decorated
+    method (though this is not necessary).  It
+    calls request.translate before running the function.
+    """
     def __init__(self, fields=None):
+        """
+        Just sets the fields parameter
+        :param list fields: A list of BaseField (and its subclasses)
+            instances
+        """
         self.fields = fields or []
 
     def __call__(self, f):
+        """
+        The actual decorator portion
+
+        :param types.MethodType f: The method to be decorated
+        :return: The wrapped function
+        :rtype: type.MethodType
+        """
         @wraps(f)
         def action(cls, request, *args, **kwargs):
             request.translate(self.fields)
