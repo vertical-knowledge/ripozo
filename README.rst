@@ -23,6 +23,9 @@ ripozo
     :target: https://pypi.python.org/pypi/ripozo/
     :alt: Wheel Status
 
+.. image:: https://pypip.in/version/ripozo/badge.svg
+    :target: https://pypi.python.org/pypi/ripozo
+
 A pluggable tool for quickly and efficiently creating web apis.
 In the modern day, your server is no longer just interacting
 with a web browser.  Instead it's interfacing with desktop and mobile 
