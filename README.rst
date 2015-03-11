@@ -4,8 +4,8 @@ ripozo
 .. image:: https://travis-ci.org/vertical-knowledge/ripozo.svg?branch=master
     :target: https://travis-ci.org/vertical-knowledge/ripozos
 
-.. image:: https://coveralls.io/repos/z4r/ripozo/badge.png?branch=master
-    :target: https://coveralls.io/r/z4r/ripozo
+.. image:: https://coveralls.io/repos/vertical-knowledge/ripozo/badge.svg
+  :target: https://coveralls.io/r/vertical-knowledge/ripozo
 
 .. image:: https://readthedocs.org/projects/ripozo/badge/?version=latest
     :target: https://ripozo.readthedocs.org/
