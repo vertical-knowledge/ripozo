@@ -67,17 +67,6 @@ def convert_to_underscore(toconvert):
     return s2
 
 
-def make_json_serializable(value):
-    if isinstance(value, Decimal):
-        return float(value)
-    elif isinstance(value, datetime):
-        return value.strftime('%Y-%m-%d %H:%M:%S.%f')
-    elif isinstance(value, set):
-        return list(value)
-    else:
-        return value
-
-
 def serialize_fields(field_names, field_values):
     """
     Takes two lists and iterates through them to combine them into a dictionary
@@ -90,11 +79,7 @@ def serialize_fields(field_names, field_values):
     :return: A dictionary of the combined lists
     :rtype: dict
     """
-    dictified = {}
-    field_values = iter(field_values)
-    for i, name in enumerate(field_names):
-        dictified[name] = make_json_serializable(six.next(field_values))
-    return dictified
+    return dict(zip(field_names, field_values))
 
 
 def titlize_endpoint(endpoint):

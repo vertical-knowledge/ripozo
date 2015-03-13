@@ -7,7 +7,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from ripozo.utilities import convert_to_underscore, serialize_fields,\
-    titlize_endpoint, join_url_parts, classproperty, make_json_serializable
+    titlize_endpoint, join_url_parts, classproperty
 
 from ripozo_tests.python2base import TestBase
 from ripozo_tests.bases.manager import generate_random_name
@@ -101,16 +101,5 @@ class UtilitiesTestCase(TestBase, unittest.TestCase):
         self.assertEqual(f.hello, 'another')
         self.assertEqual(getattr(f, 'hello'), 'another')
         self.assertEqual(getattr(Fake, 'hello'), 'another')
-
-    def test_make_json_serializable(self):
-        x = make_json_serializable(Decimal('2.0'))
-        self.assertEqual(x, 2.0)
-
-        x = make_json_serializable(datetime(year=2000, month=1, day=1, hour=0, minute=0, second=0, microsecond=0))
-        self.assertEqual('2000-01-01 00:00:00.000000', x)
-
-        x = make_json_serializable(set((1, 2, 3)))
-        self.assertIsInstance(x, list)
-        self.assertEqual([1, 2, 3], x)
 
 
