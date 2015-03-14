@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.viewsets.fields.base import translate_fields, validate_fields, translate_and_validate_fields
+from ripozo.viewsets.fields.base import translate_fields, translate_and_validate_fields
 
 
 class RequestContainer(object):

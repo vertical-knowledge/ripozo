@@ -183,8 +183,4 @@ documentation).  We do have just a few requests:
 
 * Every method, function, and docstring should have a thorough docstring
 * There should be at least one unit test for each function and method
-* Keep your pull requests to one issue. (Preferably open an issue on github first
-for record keeping)
-
-
-.. _sentimental versioning: http://sentimentalversioning.org/
+* Keep your pull requests to one issue. (Preferably open an issue on github first for record keeping)
