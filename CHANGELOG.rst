@@ -1,7 +1,8 @@
 0.1.13 (unreleased)
 ===================
 
-- Nothing changed yet.
+- Added generic CRUD+L mixins.  These are included merely for convience
+- Required fields validation can be skipped.  In other words, you can now specify that a field does not need to be present when validating
 
 
 0.1.12 (2015-03-14)
