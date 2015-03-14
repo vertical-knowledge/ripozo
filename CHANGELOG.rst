@@ -1,4 +1,4 @@
-0.1.13 (unreleased)
+0.1.13 (2015-03-14)
 ===================
 
 - Added generic CRUD+L mixins.  These are included merely for convience
