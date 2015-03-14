@@ -27,7 +27,7 @@ class BaseField(object):
         self.arg_type = arg_type
         self.default = default
 
-    def translate_and_validate(self, obj):
+    def translate_and_validate(self, obj, skip_required=False):
         """
         A shortcut method to translate and validate the object
         that is being passed in.  It returns this object
@@ -39,16 +39,17 @@ class BaseField(object):
         :raises: ripozo.exceptions.ValidationsException
         :raises: ripozo.exceptions.TranslationException
         """
-        obj = self.translate(obj)
-        return self.validate(obj)
+        obj = self.translate(obj, skip_required=skip_required)
+        return self.validate(obj, skip_required=skip_required)
 
-    def translate(self, obj):
+    def translate(self, obj, skip_required=False):
         """
         This method is responsible for translating an input
         string or object.
 
         :param object obj: The input from the request
             that is being translated
+        :param bool skip_required: This is being ignored for now
         :return: The object in the appropriate form
         :rtype: object
         :raises: ripozo.exceptions.TranslationException
@@ -57,16 +58,23 @@ class BaseField(object):
             return self.default
         return obj
 
-    def validate(self, obj):
+    def validate(self, obj, skip_required=False):
         """
         An object to be validated
 
         :param object obj:
+        :param bool skip_required: If this is set to True
+            then the required statement will be skipped
+            regardless of whether the field is actually
+            required or not.  This is useful for circumstances
+            where you want validations to run and the field is
+            normally required but not in this case.  See the
+            restmixins.Update for an example.
         :return: The same exact object simple validated.
         :rtype: object
         :raises: ripozo.exceptions.ValidationException
         """
-        if self.required and obj is None:
+        if self.required and obj is None and skip_required is False:
             raise ValidationException('The object is required and cannot be None')
         obj = self._validate_type(obj)
         return obj
@@ -127,7 +135,7 @@ class BaseField(object):
         raise ValidationException(msg)
 
 
-def translate_and_validate_fields(url_params, query_args, body_args, fields=None):
+def translate_and_validate_fields(url_params, query_args, body_args, fields=None, skip_required=False):
     """
     Translates and validates the supplied parameters against the
     list of BaseField instances provided
@@ -148,7 +156,8 @@ def translate_and_validate_fields(url_params, query_args, body_args, fields=None
     :raises: TranslationException
     """
     return _translate_or_validate_helper(url_params, query_args, body_args,
-                                         fields=fields, action='translate_and_validate')
+                                         fields=fields, action='translate_and_validate',
+                                         skip_required=skip_required)
 
 
 def validate_fields(url_params, query_args, body_args, fields=None):
@@ -198,7 +207,7 @@ def translate_fields(url_params, query_args, body_args, fields=None):
     return _translate_or_validate_helper(url_params, query_args, body_args, fields=fields, action='translate')
 
 
-def _translate_or_validate_helper(url_params, query_args, body_args, fields=None, action=None):
+def _translate_or_validate_helper(url_params, query_args, body_args, fields=None, action=None, skip_required=False):
     """
     Performs the specified action on the field.  The action can be a string of
      either translate, validate, or translate_and_validate.
@@ -229,11 +238,11 @@ def _translate_or_validate_helper(url_params, query_args, body_args, fields=None
         action = getattr(field, action_name)
         # Translate and validate the inputs
         if field.arg_type == input_categories.URL_PARAMS:
-            updated_url_params[field.name] = action(url_params.get(field.name, None))
+            updated_url_params[field.name] = action(url_params.get(field.name, None), skip_required=skip_required)
         elif field.arg_type == input_categories.BODY_ARGS:
-            updated_body_args[field.name] = action(body_args.get(field.name, None))
+            updated_body_args[field.name] = action(body_args.get(field.name, None), skip_required=skip_required)
         elif field.arg_type == input_categories.QUERY_ARGS:
-            updated_query_args[field.name] = action(query_args.get(field.name, None))
+            updated_query_args[field.name] = action(query_args.get(field.name, None), skip_required=skip_required)
         else:
             raise RestException('Invalid arg_type, {0}, on Field {1}'.format(field.arg_type, field.name))
     return updated_url_params, updated_query_args, updated_body_args

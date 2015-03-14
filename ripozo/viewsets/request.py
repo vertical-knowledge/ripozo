@@ -108,11 +108,16 @@ class RequestContainer(object):
             self._url_params, self._query_args, self._body_args, fields=fields
         )
 
-    def validate(self, fields):
+    def validate(self, fields, skip_required=False):
         """
         TODO
         :param list fields:
+        :param bool skip_required: When this is set to False,
+            no fields will be required.  Instead even if they are
+            specified as required, they will be ignored if they are
+            not present
         """
         self._url_params, self._query_args, self._body_args = translate_and_validate_fields(
-            self._url_params, self._query_args, self._body_args, fields=fields
+            self._url_params, self._query_args, self._body_args,
+            fields=fields, skip_required=skip_required
         )

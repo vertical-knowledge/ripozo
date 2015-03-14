@@ -30,7 +30,7 @@ class StringField(BaseField):
                                           minimum=minimum, arg_type=arg_type, default=default)
         self.regex = regex
 
-    def translate(self, obj):
+    def translate(self, obj, skip_required=False):
         """
         Attempts to convert the object to a string type
 
@@ -43,13 +43,13 @@ class StringField(BaseField):
         if obj is None:
             return obj
 
-        obj = super(StringField, self).translate(obj)
+        obj = super(StringField, self).translate(obj, skip_required=skip_required)
         try:
             return six.text_type(obj)
         except ValueError:
             raise TranslationException('obj is not a valid unicode string: {0}'.format(obj))
 
-    def validate(self, obj):
+    def validate(self, obj, skip_required=False):
         """
         Validates the object.  It makes a call to super checking if the input
         can be None
@@ -59,7 +59,7 @@ class StringField(BaseField):
         :rtype: unicode
         :raises: ValidationException
         """
-        obj = super(StringField, self).validate(obj)
+        obj = super(StringField, self).validate(obj, skip_required=skip_required)
         if self._skip_validation(obj):
             return obj
         obj = self._validate_size(obj, len(obj))
@@ -77,19 +77,19 @@ class IntegerField(BaseField):
     """
     field_type = int
 
-    def translate(self, obj):
+    def translate(self, obj, skip_required=False):
         # A none input should be handled by the validator
         if obj is None:
             return obj
 
-        obj = super(IntegerField, self).translate(obj)
+        obj = super(IntegerField, self).translate(obj, skip_required=skip_required)
         try:
             return int(obj)
         except ValueError:
             raise TranslationException('Not a valid integer type: {0}'.format(obj))
 
-    def validate(self, obj):
-        obj = super(IntegerField, self).validate(obj)
+    def validate(self, obj, skip_required=False):
+        obj = super(IntegerField, self).validate(obj, skip_required=skip_required)
         if self._skip_validation(obj):
             return obj
         return self._validate_size(obj, obj)
@@ -101,12 +101,12 @@ class FloatField(IntegerField):
     """
     field_type = float
 
-    def translate(self, obj):
+    def translate(self, obj, skip_required=False):
         # A none input should be handled by the validator
         if obj is None:
             return obj
 
-        obj = super(IntegerField, self).translate(obj)
+        obj = super(IntegerField, self).translate(obj, skip_required=skip_required)
         try:
             return float(obj)
         except (ValueError, TypeError):
@@ -120,9 +120,9 @@ class BooleanField(BaseField):
     """
     field_type = bool
 
-    def translate(self, obj):
+    def translate(self, obj, skip_required=False):
         # A none input should be handled by the validator
-        obj = super(BooleanField, self).translate(obj)
+        obj = super(BooleanField, self).translate(obj, skip_required=skip_required)
         if obj is None:
             return obj
 
@@ -156,7 +156,7 @@ class DateTimeField(BaseField):
         if valid_formats is not None:
             self.valid_formats = valid_formats
 
-    def translate(self, obj):
+    def translate(self, obj, skip_required=False):
         """
         First checks if the obj is None or already a datetime object
         Returns that if true.  Otherwise assumes that it is a string
@@ -181,7 +181,7 @@ class DateTimeField(BaseField):
         raise TranslationException('The object ({0}) could not be parsed as a datetime '
                                    'string using the formats {1}'.format(obj, self.valid_formats))
 
-    def validate(self, obj):
+    def validate(self, obj, skip_required=False):
         """
         Just makes a size check on top of instance type check
 
@@ -190,5 +190,5 @@ class DateTimeField(BaseField):
         :rtype: datetime
         :raises: ValidationException
         """
-        obj = super(DateTimeField, self).validate(obj)
+        obj = super(DateTimeField, self).validate(obj, skip_required=skip_required)
         return self._validate_size(obj, obj)
