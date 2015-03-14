@@ -33,6 +33,10 @@ as an API to other developers.  Ripozo is designed to solve this problem.
 It allows you to easily build Hypermedia/HATEOAS/REST APIs quickly and 
 efficiently.
 
+**NOTE:**
+ripozo is under rapid development until version 1.0.0.  It is not considered
+stable until that point.
+
 Installation
 ------------
 
@@ -157,3 +161,30 @@ work on your part outside of installing the extra adapter packages.  This is ext
 useful because you can write your logic once and not have to worry about duplicating
 your code so that the front-end web team can use SIREN and the mobile team can use
 basic CRUD+L.
+
+Versioning
+==========
+
+Until version 1.0.0 ripozo is an unstable state and the version follows `sentimental
+versioning <http://sentimentalversioning.org/>`_.  After that the versioning will follow
+a standard *major.minor.patch* style.
+
+- patch: forwards and backwards compatible
+- minor: backwards compatible
+- major: No guarantees
+
+Contributing
+============
+
+Want to help out? We'd love it! Github will be the hub of development for ripozo.
+If you have any issues, comments, or complaints post them there.  Additionally, we
+are definitely accepting pull requests (hint: we almost always love more tests and
+documentation).  We do have just a few requests:
+
+* Every method, function, and docstring should have a thorough docstring
+* There should be at least one unit test for each function and method
+* Keep your pull requests to one issue. (Preferably open an issue on github first
+for record keeping)
+
+
+.. _sentimental versioning: http://sentimentalversioning.org/
