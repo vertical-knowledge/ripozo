@@ -158,6 +158,7 @@ class ResourceBase(object):
         return convert_to_underscore(cls.__name__)
 
 def _generate_endpoint_dict(cls):
+    # TODO test and doc string
     endpoint_dictionary = {}
     for name, method in _get_apimethods(cls):
         logger.debug('Found the apimethod {0} on the class {1}'.format(name, cls.__name__))

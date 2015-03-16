@@ -1,7 +1,7 @@
 0.1.19 (unreleased)
 ===================
 
-- Nothing changed yet.
+- Endpoint name
 
 
 0.1.18 (2015-03-16)
