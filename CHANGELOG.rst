@@ -3,6 +3,8 @@
 
 - Added method to RequestContainer object
 - Imported Relationship and ListRelationship into relationships.__init__.py module for more intuitive access
+- Imported HtmlAdapter to adapters.__init__.py for more intuitive imports.
+- Including html adapter templates in package
 
 
 0.1.13 (2015-03-14)
