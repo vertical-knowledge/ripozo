@@ -1,4 +1,4 @@
-0.1.18 (unreleased)
+0.1.18 (2015-03-16)
 ===================
 
 - Fixed bug with RetrieveList mixin
