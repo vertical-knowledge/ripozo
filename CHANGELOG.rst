@@ -1,4 +1,4 @@
-0.1.14 (unreleased)
+0.1.14 (2015-03-16)
 ===================
 
 - Added method to RequestContainer object
