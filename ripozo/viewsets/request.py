@@ -15,7 +15,7 @@ class RequestContainer(object):
     and no property is guaranteed.
     """
 
-    def __init__(self, url_params=None, query_args=None, body_args=None, headers=None):
+    def __init__(self, url_params=None, query_args=None, body_args=None, headers=None, method=None):
         """
         Safely generate a Request object.  There should be reasonable defaults
         for every parameter.  No parameter is guaranteed.
@@ -32,6 +32,7 @@ class RequestContainer(object):
         self._query_args = query_args or {}
         self._body_args = body_args or {}
         self._headers = headers or {}
+        self.method = method
 
     @property
     def url_params(self):

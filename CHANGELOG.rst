@@ -1,7 +1,8 @@
 0.1.14 (unreleased)
 ===================
 
-- Nothing changed yet.
+- Added method to RequestContainer object
+- Imported Relationship and ListRelationship into relationships.__init__.py module for more intuitive access
 
 
 0.1.13 (2015-03-14)
