@@ -1,7 +1,7 @@
 0.1.15 (unreleased)
 ===================
 
-- Nothing changed yet.
+- Fixed bug that resulted in multiple forward slashes in a row on a url
 
 
 0.1.14 (2015-03-16)

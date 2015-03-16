@@ -82,6 +82,46 @@ class TestResourceBase(TestBase, unittest.TestCase):
         for pk in T1.pks:
             self.assertIn(pk, T1.base_url)
 
+    def test_minimal_base_url(self):
+        """Tests the url when no resource name or namespace is specified"""
+        class SomeResource(ResourceBase):
+            pass
+
+        self.assertEqual('/some_resource', SomeResource.base_url)
+
+        class AnotherResource(ResourceBase):
+            _resource_name = 'another_resource'
+
+        self.assertEqual('/another_resource', AnotherResource.base_url)
+
+        class FinalResource(ResourceBase):
+            _namespace = '/api'
+
+        self.assertEqual('/api/final_resource', FinalResource.base_url)
+
+    def test_messed_up_slashes_on_base_url(self):
+        """Tests whether the ResourceBase always appropriately replaces
+        forward slashes on urls"""
+        class DoubleSlash(ResourceBase):
+            _namespace = '/'
+            _resource_name = '/'
+
+        self.assertEqual('/', DoubleSlash.base_url)
+        ResourceMetaClass.registered_resource_classes.clear()
+
+        class DoublSlash2(ResourceBase):
+            _namespace = '//'
+            _resource_name = '/double_slash'
+
+        self.assertEqual('/double_slash', DoublSlash2.base_url)
+        ResourceMetaClass.registered_resource_classes.clear()
+
+        class DoubleMiddleSlash(ResourceBase):
+            _namespace = 'api/'
+            _resource_name = '//another_resource/'
+
+        self.assertEqual('/api/another_resource/', DoubleMiddleSlash.base_url)
+
     def test_class_registered(self):
         """Tests whether an implement Resource is registered on the meta class"""
         class T1(TestResource):

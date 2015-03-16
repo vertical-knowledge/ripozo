@@ -9,7 +9,7 @@ import six
 from six.moves.urllib import parse
 from ripozo.viewsets.constructor import ResourceMetaClass
 from ripozo.viewsets.constants import status
-from ripozo.utilities import classproperty, convert_to_underscore
+from ripozo.utilities import classproperty, convert_to_underscore, join_url_parts
 
 import logging
 
@@ -120,8 +120,8 @@ class ResourceBase(object):
         pks = cls.pks or []
         parts = list(map(lambda pk: '<{0}>'.format(pk), pks))
         parts.insert(0, cls.resource_name)
-        parts.insert(0, re.search(r'(.*)/?$', cls.namespace.strip('/')).group(1))
-        base_url = '/'.join(parts)
+        parts.insert(0, cls.namespace)
+        base_url = join_url_parts(*parts).lstrip('/')
         return '/{0}'.format(base_url)
 
     @classproperty
