@@ -1,4 +1,4 @@
-0.1.15 (unreleased)
+0.1.15 (2015-03-16)
 ===================
 
 - Fixed bug that resulted in multiple forward slashes in a row on a url
