@@ -1,7 +1,7 @@
 0.1.18 (unreleased)
 ===================
 
-- Nothing changed yet.
+- Fixed bug with RetrieveList mixin
 
 
 0.1.17 (2015-03-16)
