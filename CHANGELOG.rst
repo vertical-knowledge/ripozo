@@ -1,4 +1,4 @@
-0.1.16 (unreleased)
+0.1.16 (2015-03-16)
 ===================
 
 - Fixed the bug where inheritance of abstract methods resulted in mutable common endpoint_dictionaries
