@@ -1,7 +1,8 @@
 0.1.16 (unreleased)
 ===================
 
-- Nothing changed yet.
+- Fixed the bug where inheritance of abstract methods resulted in mutable common endpoint_dictionaries
+- endpoint_dictionary is now a method and not a property
 
 
 0.1.15 (2015-03-16)

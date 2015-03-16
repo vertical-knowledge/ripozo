@@ -137,7 +137,7 @@ class TestResourceBase(TestBase, unittest.TestCase):
         # for python 3.3  Otherwise it never gets registered for some reason
         print(T1.__name__)
 
-        self.assertIn('my_api_method1', T1.endpoint_dictionary)
+        self.assertIn('my_api_method1', T1.endpoint_dictionary())
 
     def test_base_url_duplication_exception(self):
         """Tests whether an excption is raised if the base_url
@@ -168,3 +168,33 @@ class TestResourceBase(TestBase, unittest.TestCase):
 
         x = T1(properties={'pk': 1})
         self.assertEqual(x.url, '/api/my_resource/1')
+
+    def test_multiple_resources_endpoint_dictionaries(self):
+        """
+        Ran into a bug where the _endpoint_dictionary was getting
+        overridden and therefore all resources returned the same
+        endpoints
+        """
+
+        class T1(ResourceBase):
+            @apimethod(methods=['GET'])
+            def hello(cls, *args, **kwargs):
+                return cls(properties=dict(hello='world'))
+
+        endpoint = T1.endpoint_dictionary()['hello'][0]
+        self.assertEqual(endpoint['route'], '/t1')
+        self.assertListEqual(endpoint['methods'], ['GET'])
+
+        # The routes in this should be different
+        class T2(T1):
+            pass
+
+        # Ensure the T1 endpoint dictionary is the same as before
+        endpoint = T1.endpoint_dictionary()['hello'][0]
+        self.assertEqual(endpoint['route'], '/t1')
+        self.assertListEqual(endpoint['methods'], ['GET'])
+
+        # Make sure the T2 endpoint dictionary has a different route
+        endpoint = T2.endpoint_dictionary()['hello'][0]
+        self.assertEqual(endpoint['route'], '/t2')
+        self.assertListEqual(endpoint['methods'], ['GET'])

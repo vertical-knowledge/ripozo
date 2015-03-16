@@ -53,7 +53,7 @@ class SirenAdapter(AdapterBase):
         :rtype: list
         """
         actions = []
-        for endpoint, options in six.iteritems(self.resource.endpoint_dictionary):
+        for endpoint, options in six.iteritems(self.resource.endpoint_dictionary()):
             options = options[0]
             all_methods = options.get('methods', [])
             if len(all_methods) == 0:

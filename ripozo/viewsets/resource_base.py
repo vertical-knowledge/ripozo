@@ -11,6 +11,7 @@ from ripozo.viewsets.constructor import ResourceMetaClass
 from ripozo.viewsets.constants import status
 from ripozo.utilities import classproperty, convert_to_underscore, join_url_parts
 
+import inspect
 import logging
 
 logger = logging.getLogger(__name__)
@@ -86,27 +87,6 @@ class ResourceBase(object):
             pk_dict[pk] = self.properties.get(pk, None)
         return pk_dict
 
-    @classmethod
-    def register_endpoint(cls, name, function):
-        """
-        Registers a method as an exposed endpoint.
-        Any method decorated with @api_method will
-        be registered via this method.  Additionally,
-        There must be a parameter on the method call "routes"
-        This is a list that indicates which routes should point
-        to this method.  Typically only one route should point
-
-        :param function: The method to register as an endpoint
-        :type function: types.FunctionType
-        """
-        all_routes = []
-        for route, endpoint, options in function.routes:
-            route = route.lstrip('/')
-            route = parse.urljoin(cls.base_url, route)
-            all_routes.append(dict(route=route, endpoint_func=function, **options))
-        logger.info('Registering routes: {0} as key {1}'.format(all_routes, function.__name__))
-        cls.endpoint_dictionary[name] = all_routes
-
     @classproperty
     def base_url(cls):
         """
@@ -124,7 +104,7 @@ class ResourceBase(object):
         base_url = join_url_parts(*parts).lstrip('/')
         return '/{0}'.format(base_url)
 
-    @classproperty
+    @classmethod
     def endpoint_dictionary(cls):
         """
         A dictionary of the endpoints with the
@@ -134,9 +114,8 @@ class ResourceBase(object):
         :return: dictionary of endpoints
         :rtype: dict
         """
-        if cls._endpoint_dictionary is None:
-            cls._endpoint_dictionary = {}
-        return cls._endpoint_dictionary
+        # TODO update this documentation
+        return _generate_endpoint_dict(cls)
 
     @classproperty
     def manager(cls):
@@ -177,6 +156,25 @@ class ResourceBase(object):
         if cls._resource_name:
             return cls._resource_name
         return convert_to_underscore(cls.__name__)
+
+def _generate_endpoint_dict(cls):
+    endpoint_dictionary = {}
+    for name, method in _get_apimethods(cls):
+        logger.debug('Found the apimethod {0} on the class {1}'.format(name, cls.__name__))
+        all_routes = []
+        for route, endpoint, options in method.routes:
+            route = route.lstrip('/')
+            route = parse.urljoin(cls.base_url, route)
+            all_routes.append(dict(route=route, endpoint_func=method, **options))
+        logger.info('Registering routes: {0} as key {1}'.format(all_routes, name))
+        endpoint_dictionary[name] = all_routes
+    return endpoint_dictionary
+
+
+def _get_apimethods(cls):
+    for name, obj in inspect.getmembers(cls):
+        if getattr(obj, 'rest_route', False) or getattr(obj, '__rest_route__', False):
+            yield name, obj
 
 
 def create_url(base_url, **kwargs):

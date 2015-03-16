@@ -28,27 +28,10 @@ class ResourceMetaClass(type):
         if attrs.get('__abstract__', False):  # Don't register endpoints of abstract classes
             logger.debug('ResourceMetaClass "{0}" is abstract.  Not being registered'.format(name))
             return klass
-        mcs._register_endpoints(klass)
         mcs._register_class(klass)
 
         logger.debug('ResourceMetaClass "{0}" successfully registered'.format(name))
         return klass
-
-    @classmethod
-    def _register_endpoints(mcs, klass):
-        """
-        Finds all methods that have been marked with the
-        rest_route indicator.  It then uses the classes register_endpoint
-        method to register the endpoints appropriately.  This is done to
-        avoid accidentally registering methods that are not ripozo
-        endpoints.
-
-        :param klass: The class to register endpoints on.
-        """
-        for name, method in mcs.get_apimethods(klass):
-            logger.debug('Registering method {0} as a valid '
-                         'action on resource {1}'.format(method.__name__, klass.__name__))
-            klass.register_endpoint(name, method)
 
     @classmethod
     def _register_class(mcs, klass):
@@ -65,19 +48,3 @@ class ResourceMetaClass(type):
             raise BaseRestEndpointAlreadyExists
         mcs.registered_resource_classes[klass] = klass.base_url
         mcs.registered_names_map[klass.__name__] = klass
-
-    @staticmethod
-    def method_or_class_method(obj):
-        # return getattr(object, 'rest_route', False)
-        # success = getattr(obj, 'rest_route', False) or getattr(obj, '__rest_route__', False)
-        # success = isinstance(object, (types.MethodType, _apiclassmethod, apimethod, types.FunctionType))
-        success = isinstance(obj, _apiclassmethod) or getattr(obj, 'rest_route', False) or getattr(obj, '__rest_route__', False)
-        if success:
-            logger.debug('{0} {1}'.format(success, obj))
-        return success
-
-    @classmethod
-    def get_apimethods(mcs, klass):
-        for name, obj in inspect.getmembers(klass):
-            if mcs.method_or_class_method(obj):
-                yield name, obj
