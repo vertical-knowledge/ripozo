@@ -30,8 +30,7 @@ class RetrieveList(ResourceBase):
         logger.debug('Retrieving list of resources using manager {0}'.format(cls._manager))
         request.translate(cls.manager.field_validators)
         props, meta = cls.manager.retrieve_list(request.query_args)
-        props.update(meta)
-        return cls(properties=props)
+        return cls(properties={cls.resource_name: props}, meta=meta)
 
 
 class Retrieve(ResourceBase):
