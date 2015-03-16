@@ -22,20 +22,21 @@ class TestDispatchBase(TestBase, unittest.TestCase):
     def setUp(self):
         self.dispatcher = FakeDispatcher()
         self.mockKlass = Mock()
-        self.mockKlass.endpoint_dictionary = dict(
+
+        self.mockKlass.endpoint_dictionary = Mock(return_value=dict(
             first=[dict(route='/first', methods=['GET'])],
             second=[
                 dict(route='/second', methods=['GET'], other='something', andanother='skdfmsdkf'),
                 dict(route='/second', methods=['POST'])
             ]
-        )
+        ))
 
     def tearDown(self):
         self.dispatcher = None
 
     def test_register_class_routes(self):
         self.dispatcher.register_class_routes(self.mockKlass)
-        self.assertDictEqual(self.mockKlass.endpoint_dictionary, self.dispatcher.routes)
+        self.assertDictEqual(self.mockKlass.endpoint_dictionary(), self.dispatcher.routes)
 
     def test_dispatch(self):
         # TODO
