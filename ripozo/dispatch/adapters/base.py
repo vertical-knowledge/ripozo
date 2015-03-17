@@ -59,8 +59,8 @@ class AdapterBase(object):
         Headers that should be added to response.  For example it might be
         the response-type etc...
 
-        :return: A list of the headers to return.
-        :rtype: list
+        :return: A dictionary of the headers to return.
+        :rtype: dict
         """
         pass
 

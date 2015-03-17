@@ -24,9 +24,9 @@ class HalAdapter(AdapterBase):
     def extra_headers(self):
         """
         :return: Just returns a single header for the Content-Type
-        :rtype: list
+        :rtype: dict
         """
-        return [{'Content-Type': _content_type}]
+        return {'Content-Type': _content_type}
 
     @property
     def formatted_body(self):

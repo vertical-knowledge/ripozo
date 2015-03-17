@@ -39,7 +39,8 @@ class BoringJSONAdapter(AdapterBase):
 
     @property
     def extra_headers(self):
-        return [{'Content-Type': content_type}]
+        # TODO docs
+        return {'Content-Type': content_type}
 
     @property
     def formatted_body(self):

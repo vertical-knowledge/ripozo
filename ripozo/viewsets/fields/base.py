@@ -18,14 +18,13 @@ class BaseField(object):
     """
     field_type = object
 
-    def __init__(self, name, default=None, required=False, maximum=None,
+    def __init__(self, name, required=False, maximum=None,
                  minimum=None, arg_type=input_categories.QUERY_ARGS):
         self.name = name
         self.required = required
         self.maximum = maximum
         self.minimum = minimum
         self.arg_type = arg_type
-        self.default = default
 
     def translate_and_validate(self, obj, skip_required=False):
         """
@@ -54,8 +53,6 @@ class BaseField(object):
         :rtype: object
         :raises: ripozo.exceptions.TranslationException
         """
-        if obj is None:
-            return self.default
         return obj
 
     def validate(self, obj, skip_required=False):
@@ -238,10 +235,16 @@ def _translate_or_validate_helper(url_params, query_args, body_args, fields=None
         action = getattr(field, action_name)
         # Translate and validate the inputs
         if field.arg_type == input_categories.URL_PARAMS:
+            if field.name not in url_params:
+                continue
             updated_url_params[field.name] = action(url_params.get(field.name, None), skip_required=skip_required)
         elif field.arg_type == input_categories.BODY_ARGS:
+            if field.name not in url_params:
+                continue
             updated_body_args[field.name] = action(body_args.get(field.name, None), skip_required=skip_required)
         elif field.arg_type == input_categories.QUERY_ARGS:
+            if field.name not in url_params:
+                continue
             updated_query_args[field.name] = action(query_args.get(field.name, None), skip_required=skip_required)
         else:
             raise RestException('Invalid arg_type, {0}, on Field {1}'.format(field.arg_type, field.name))

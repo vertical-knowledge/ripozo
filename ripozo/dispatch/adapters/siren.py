@@ -111,8 +111,8 @@ class SirenAdapter(AdapterBase):
         """
         The headers that should be appended to the response
 
-        :return: a list of the headers to be set on the
+        :return: a dictionary of the headers to be set on the
             response
-        :rtype: list
+        :rtype: dict
         """
-        return [{'Content-Type': _content_type}]
+        return {'Content-Type': _content_type}

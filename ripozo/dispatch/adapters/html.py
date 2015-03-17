@@ -21,6 +21,7 @@ content_type = 'text/html'
 
 
 class HtmlAdapter(AdapterBase):
+    # TODO docs
     formats = ['html', content_type]
 
     @property
@@ -32,4 +33,4 @@ class HtmlAdapter(AdapterBase):
 
     @property
     def extra_headers(self):
-        return [{'Content-Type': content_type}]
+        return {'Content-Type': content_type}
