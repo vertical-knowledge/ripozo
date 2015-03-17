@@ -100,7 +100,7 @@ class SirenAdapter(AdapterBase):
                     ent['href'] = resource_url
                 else:
                     ent['properties'] = related_resource.properties
-                    ent['links'] = dict(rel=['self'], href=resource_url)
+                    ent['links'] = [dict(rel=['self'], href=resource_url)]
                 entities.append(ent)
             parent_properties = relationship.remove_child_resource_properties(parent_properties)
         return entities, parent_properties

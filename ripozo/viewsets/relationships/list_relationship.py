@@ -40,6 +40,7 @@ class ListRelationship(Relationship):
         :rtype: types.GeneratorType
         """
         objects = properties.get(self.list_name, [])
+        objects = objects or []
         for obj in objects:
             yield self.relation(properties=obj)
 
