@@ -124,6 +124,7 @@ class validate(object):
             return f(cls, request,  *args, **kwargs)
 
         action.fields = self.fields
+        action.original_fields = self.fields
         action.__manager_field_validators__ = self.manager_field_validators
         return action
 
