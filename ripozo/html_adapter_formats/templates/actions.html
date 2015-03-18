@@ -2,7 +2,7 @@
     {% for action in actions %}
         <div class="col-sm-6 col-md-4 col-lg-3">
             <h3>{{ action['title'] }}</h3>
-            <form role="form" method="{{ action['method'] }}" action="{{ action['href'] }}">
+            <form role="form" method="{{ action['method'].lower() }}" action="{{ action['href'] }}">
                 {% for field in action['fields'] %}
                     <div class="form-group">
                         <label>{{ field['name'] }}{% if field['required'] %}*{% endif %}:</label>

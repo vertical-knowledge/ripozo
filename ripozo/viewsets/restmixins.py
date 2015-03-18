@@ -28,10 +28,9 @@ class RetrieveList(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['GET'])
-    @translate(manager_field_validators=True)
     def retrieve_list(cls, request, *args, **kwargs):
         logger.debug('Retrieving list of resources using manager {0}'.format(cls._manager))
-        props, meta = cls.manager.retrieve_list(request.query_args)
+        props, meta = cls.manager.retrieve_list({})
         return cls(properties={cls.resource_name: props}, meta=meta)
 
 
@@ -76,5 +75,5 @@ class RetrieveUpdateDelete(Retrieve, Update, Delete):
     __abstract__ = True
 
 
-class CreateRetrieveList(Create, RetrieveList):
+class CreateRetrieveList(RetrieveList, Create):
     __abstract__ = True

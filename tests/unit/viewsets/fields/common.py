@@ -56,9 +56,6 @@ class TestBaseField(FieldTestBase2, unittest.TestCase):
         output = f.translate(False)
         self.assertIsNotNone(output)
         self.assertFalse(output)
-        output = f.translate([])
-        self.assertIsNotNone(output)
-        self.assertIsInstance(output, list)
 
 
 class StringFieldTest(FieldTestBase2, unittest.TestCase):

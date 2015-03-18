@@ -164,8 +164,7 @@ def _generate_endpoint_dict(cls):
         logger.debug('Found the apimethod {0} on the class {1}'.format(name, cls.__name__))
         all_routes = []
         for route, endpoint, options in method.routes:
-            route = route.lstrip('/')
-            route = parse.urljoin(cls.base_url, route)
+            route = join_url_parts(cls.base_url, route)
             all_routes.append(dict(route=route, endpoint_func=method, **options))
         logger.info('Registering routes: {0} as key {1}'.format(all_routes, name))
         endpoint_dictionary[name] = all_routes

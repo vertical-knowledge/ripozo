@@ -53,6 +53,11 @@ class BaseField(object):
         :rtype: object
         :raises: ripozo.exceptions.TranslationException
         """
+        if isinstance(obj, (list, set)):
+            if len(obj) > 0:
+                return obj[0]
+            else:
+                return None
         return obj
 
     def validate(self, obj, skip_required=False):
@@ -235,15 +240,15 @@ def _translate_or_validate_helper(url_params, query_args, body_args, fields=None
         action = getattr(field, action_name)
         # Translate and validate the inputs
         if field.arg_type == input_categories.URL_PARAMS:
-            if field.name not in url_params:
+            if field.name not in url_params and skip_required:
                 continue
             updated_url_params[field.name] = action(url_params.get(field.name, None), skip_required=skip_required)
         elif field.arg_type == input_categories.BODY_ARGS:
-            if field.name not in url_params:
+            if field.name not in body_args and skip_required:
                 continue
             updated_body_args[field.name] = action(body_args.get(field.name, None), skip_required=skip_required)
         elif field.arg_type == input_categories.QUERY_ARGS:
-            if field.name not in url_params:
+            if field.name not in query_args and skip_required:
                 continue
             updated_query_args[field.name] = action(query_args.get(field.name, None), skip_required=skip_required)
         else:

@@ -182,7 +182,7 @@ class TestResourceBase(TestBase, unittest.TestCase):
                 return cls(properties=dict(hello='world'))
 
         endpoint = T1.endpoint_dictionary()['hello'][0]
-        self.assertEqual(endpoint['route'], '/t1')
+        self.assertEqual(endpoint['route'], '/t1/')
         self.assertListEqual(endpoint['methods'], ['GET'])
 
         # The routes in this should be different
@@ -191,10 +191,10 @@ class TestResourceBase(TestBase, unittest.TestCase):
 
         # Ensure the T1 endpoint dictionary is the same as before
         endpoint = T1.endpoint_dictionary()['hello'][0]
-        self.assertEqual(endpoint['route'], '/t1')
+        self.assertEqual(endpoint['route'], '/t1/')
         self.assertListEqual(endpoint['methods'], ['GET'])
 
         # Make sure the T2 endpoint dictionary has a different route
         endpoint = T2.endpoint_dictionary()['hello'][0]
-        self.assertEqual(endpoint['route'], '/t2')
+        self.assertEqual(endpoint['route'], '/t2/')
         self.assertListEqual(endpoint['methods'], ['GET'])

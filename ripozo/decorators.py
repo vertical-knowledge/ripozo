@@ -28,7 +28,9 @@ class _apiclassmethod(object):
         method = self.f
         @wraps(method)
         def newfunc(*args):
-            return method(klass, *args)
+            if not isinstance(args[0], type):
+                return method(klass, *args)
+            return method(*args)
         newfunc.__rest_route__ = True
         newfunc.routes = getattr(self.f, 'routes', [])
         return newfunc
