@@ -48,3 +48,8 @@ class ResourceMetaClass(type):
             raise BaseRestEndpointAlreadyExists
         mcs.registered_resource_classes[klass] = klass.base_url
         mcs.registered_names_map[klass.__name__] = klass
+
+        # TODO test and doc this
+        for name, method in inspect.getmembers(klass):
+            if getattr(method, '__manager_field_validators__', False) is True:
+                method.fields = method.original_fields + klass.manager.field_validators

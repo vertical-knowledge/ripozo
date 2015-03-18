@@ -4,6 +4,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from functools import wraps
+
+import inspect
 import logging
 import six
 
@@ -89,7 +91,7 @@ class validate(object):
     an adapter if necessary.
     """
 
-    def __init__(self, fields=None):
+    def __init__(self, fields=None, manager_field_validators=False, skip_required=False):
         """
         Initializes the decorator with the necessary fields.
         the fields should be instances of FieldBase and should
@@ -99,7 +101,10 @@ class validate(object):
         :param list fields: A list of FieldBase instances (or subclasses
             of FieldBase).
         """
+        # TODO test and update docs for manager_field_validators
         self.fields = fields or []
+        self.manager_field_validators = manager_field_validators
+        self.skip_required = skip_required
 
     def __call__(self, f):
         """
@@ -115,10 +120,11 @@ class validate(object):
         """
         @wraps(f)
         def action(cls, request, *args, **kwargs):
-            request.validate(self.fields)
+            request.validate(self.fields, skip_required=self.skip_required)
             return f(cls, request,  *args, **kwargs)
 
         action.fields = self.fields
+        action.__manager_field_validators__ = self.manager_field_validators
         return action
 
 
@@ -129,13 +135,15 @@ class translate(object):
     method (though this is not necessary).  It
     calls request.translate before running the function.
     """
-    def __init__(self, fields=None):
+    def __init__(self, fields=None, manager_field_validators=False):
         """
         Just sets the fields parameter
         :param list fields: A list of BaseField (and its subclasses)
             instances
         """
+        # TODO test and update docs for manager_field_validators
         self.fields = fields or []
+        self.manager_field_validators = manager_field_validators
 
     def __call__(self, f):
         """
@@ -149,5 +157,8 @@ class translate(object):
         def action(cls, request, *args, **kwargs):
             request.translate(self.fields)
             return f(cls, request, *args, **kwargs)
+
         action.fields = self.fields
+        action.original_fields = self.fields
+        action.__manager_field_validators__ = self.manager_field_validators
         return action

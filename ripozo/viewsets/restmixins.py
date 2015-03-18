@@ -3,21 +3,23 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.decorators import apimethod
+from ripozo.decorators import apimethod, validate, translate
 from ripozo.viewsets.resource_base import ResourceBase
 
 import logging
 
 logger = logging.getLogger(__name__)
 
+# TODO need to test and doc all of this
+
 
 class Create(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['POST'])
+    @validate(manager_field_validators=True)
     def create(cls, request, *args, **kwargs):
         logger.debug('Creating a resource using manager {0}'.format(cls._manager))
-        request.validate(cls.manager.field_validators)
         props = cls.manager.create(request.body_args)
         return cls(properties=props)
 
@@ -26,9 +28,9 @@ class RetrieveList(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['GET'])
+    @translate(manager_field_validators=True)
     def retrieve_list(cls, request, *args, **kwargs):
         logger.debug('Retrieving list of resources using manager {0}'.format(cls._manager))
-        request.translate(cls.manager.field_validators)
         props, meta = cls.manager.retrieve_list(request.query_args)
         return cls(properties={cls.resource_name: props}, meta=meta)
 
@@ -37,9 +39,9 @@ class Retrieve(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['GET'])
+    @translate(manager_field_validators=True)
     def retrieve(cls, request, *args, **kwargs):
         logger.debug('Retrieving a resource using the manager {0}'.format(cls._manager))
-        request.translate(cls.manager.field_validators)
         props = cls.manager.retrieve(request.url_params)
         return cls(properties=props)
 
@@ -48,9 +50,9 @@ class Update(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['PATCH'])
+    @validate(manager_field_validators=True, skip_required=True)
     def update(cls, request, *args, **kwargs):
         logger.debug('Updating a resource using the manager {0}'.format(cls._manager))
-        request.validate(cls.manager.field_validators, skip_required=True)
         props = cls.manager.update(request.url_params, request.body_args)
         return cls(properties=props)
 
@@ -59,9 +61,9 @@ class Delete(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['DELETE'])
+    @translate(manager_field_validators=True)
     def delete(cls, request, *args, **kwargs):
         logger.debug('Deleting the resource using manager {0}'.format(cls._manager))
-        request.translate(cls.manager.field_validators)
         props = cls.manager.delete(request.url_params)
         return cls(properties=props)
 
