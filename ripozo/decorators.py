@@ -71,10 +71,11 @@ class apimethod(object):
         @wraps(f)
         def wrapped(cls, request, *args, **kwargs):
             for proc in cls.preprocessors:
-                proc(cls, request, *args, **kwargs)
+                # TODO update docs for preprocessors and post processors
+                proc(cls, f.__name__, request, *args, **kwargs)
             resource = f(cls, request, *args, **kwargs)
             for proc in cls.postprocessors:
-                proc(cls, request, resource, *args, **kwargs)
+                proc(cls, f.__name__, request, resource, *args, **kwargs)
             return resource
 
         wrapped.__rest_route__ = True

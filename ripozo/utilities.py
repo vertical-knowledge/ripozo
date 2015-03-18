@@ -3,8 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from datetime import datetime
-from decimal import Decimal
+from functools import wraps
 
 import re
 import six
@@ -122,3 +121,29 @@ def join_url_parts(*parts):
         part = part.lstrip('/')
         url = '{0}/{1}'.format(url, part)
     return url
+
+
+def picky_processor(processor, include=None, exclude=None):
+    """
+
+    :param method processor: A pre or post processor on a ResourceBase subclass.
+        This is the function that will be run if the it passes the include
+        and exclude parameters
+    :param list include: A list of name strings that are methods on the class that
+        for which this processor will be run.
+    :param list exclude:
+    :return: The wrapped function that only runs if the include and
+        exclude parameters are fulfilled.
+    :rtype: method
+    """
+    # TODO and finish docs
+    @wraps(processor)
+    def wrapped(cls, function_name, *args, **kwargs):
+        run = True
+        if include and function_name not in include:
+            run = False
+        elif exclude and function_name in exclude:
+            run = False
+        if run:
+            return processor(cls, function_name, *args, **kwargs)
+    return wrapped

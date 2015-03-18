@@ -25,7 +25,7 @@ class ResourceMetaClass(type):
     def __new__(mcs, name, bases, attrs):
         logger.debug('ResourceMetaClass "{0}" class being created'.format(name))
         klass = super(ResourceMetaClass, mcs).__new__(mcs, name, bases, attrs)
-        if attrs.get('__abstract__', False):  # Don't register endpoints of abstract classes
+        if attrs.get('__abstract__', False) is True:  # Don't register endpoints of abstract classes
             logger.debug('ResourceMetaClass "{0}" is abstract.  Not being registered'.format(name))
             return klass
         mcs._register_class(klass)
