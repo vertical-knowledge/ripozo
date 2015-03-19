@@ -6,8 +6,7 @@ from __future__ import unicode_literals
 from ripozo.dispatch.adapters.hal import HalAdapter
 from ripozo.viewsets.request import RequestContainer
 from ripozo_tests.python2base import TestBase
-from ripozo.viewsets.constructor import ResourceMetaClass
-from ripozo_tests.helpers.hello_world_viewset import get_helloworld_viewset, get_complementary_viewset
+from ripozo_tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
 
 import json
 import six
@@ -21,10 +20,7 @@ class TestHalAdapter(TestBase, unittest.TestCase):
     """
 
     def setUp(self):
-        ResourceMetaClass.registered_names_map = {}
-        ResourceMetaClass.registered_resource_classes = {}
-        HelloWorldViewset = get_helloworld_viewset()
-        ComplimentaryViewset = get_complementary_viewset()
+        HelloWorldViewset = get_refreshed_helloworld_viewset()
 
         self.properties = {'content': 'hello'}
         self.resource = HelloWorldViewset.hello(RequestContainer(query_args=dict(content='hello',

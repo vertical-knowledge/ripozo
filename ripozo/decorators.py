@@ -5,7 +5,6 @@ from __future__ import unicode_literals
 
 from functools import wraps
 
-import inspect
 import logging
 import six
 
