@@ -125,6 +125,14 @@ def join_url_parts(*parts):
 
 def picky_processor(processor, include=None, exclude=None):
     """
+    A wrapper for pre and post processors that selectively runs
+    pre and post processors.  If the include keyword argument is set,
+    then any method on the Resource that has the same name as the
+    processor will be run.  Otherwise it will not be run.  On the
+    other hand, if the exclude keyword argument is set then any
+    method on then this preprocessor will not be run for any method on
+    the resource that does have the same name as the strings in the
+    exclude list
 
     :param method processor: A pre or post processor on a ResourceBase subclass.
         This is the function that will be run if the it passes the include
@@ -136,7 +144,6 @@ def picky_processor(processor, include=None, exclude=None):
         exclude parameters are fulfilled.
     :rtype: method
     """
-    # TODO and finish docs
     @wraps(processor)
     def wrapped(cls, function_name, *args, **kwargs):
         run = True
