@@ -3,15 +3,13 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from datetime import datetime
-from decimal import Decimal
-
 from ripozo.utilities import convert_to_underscore, serialize_fields,\
-    titlize_endpoint, join_url_parts, classproperty
+    titlize_endpoint, join_url_parts, classproperty, picky_processor
 
 from ripozo_tests.python2base import TestBase
 from ripozo_tests.bases.manager import generate_random_name
 
+import mock
 import six
 import unittest
 
@@ -102,4 +100,32 @@ class UtilitiesTestCase(TestBase, unittest.TestCase):
         self.assertEqual(getattr(f, 'hello'), 'another')
         self.assertEqual(getattr(Fake, 'hello'), 'another')
 
+    def test_picky_processor(self):
+        processor = mock.Mock()
+        if six.PY2:
+            processor.__name__ = six.binary_type('FAKE')
+        else:
+            processor.__name__ = six.text_type('FAKE')
+        does_run = picky_processor(processor)
+        does_run(mock.Mock(), 'runs')
+        self.assertEqual(processor.call_count, 1)
 
+        does_run = picky_processor(processor, include=['runs'])
+        does_run(mock.Mock(), 'runs')
+        self.assertEqual(processor.call_count, 2)
+
+        does_run = picky_processor(processor, exclude=['nope'])
+        does_run(mock.Mock(), 'runs')
+        self.assertEqual(processor.call_count, 3)
+
+        does_run = picky_processor(processor, include=['runs'], exclude=['nope'])
+        does_run(mock.Mock(), 'runs')
+        self.assertEqual(processor.call_count, 4)
+
+        doesnt_run = picky_processor(processor, include=['nope'])
+        doesnt_run(mock.MagicMock(), 'runs')
+        self.assertEqual(processor.call_count, 4)
+
+        doesnt_run = picky_processor(processor, exclude=['runs'])
+        doesnt_run(mock.MagicMock(), 'runs')
+        self.assertEqual(processor.call_count, 4)
