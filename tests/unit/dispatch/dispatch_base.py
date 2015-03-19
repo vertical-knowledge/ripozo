@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from mock import Mock
+from mock import Mock, MagicMock
 from ripozo.dispatch.adapters import BoringJSONAdapter, HalAdapter, SirenAdapter
 from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
 from ripozo_tests.python2base import TestBase
@@ -42,8 +42,15 @@ class TestDispatchBase(TestBase, unittest.TestCase):
         # self.assertDictEqual(self.mockKlass.endpoint_dictionary(), self.dispatcher.routes)
 
     def test_dispatch(self):
-        # TODO
-        pass
+        endpoint_func = MagicMock()
+        self.assertRaises(TypeError, self.dispatcher.dispatch, endpoint_func, 'fake')
+        self.assertEqual(endpoint_func.call_count, 1)
+        adapter = MagicMock()
+        adapter.formats = ['fake']
+        self.dispatcher.register_adapters(adapter)
+        self.dispatcher.dispatch(endpoint_func, 'fake')
+        self.assertEqual(adapter.call_count, 1)
+        self.assertEqual(endpoint_func.call_count, 2)
 
     def test_register_adapters(self):
         """Tests whether adapters are properly registered"""

@@ -76,9 +76,6 @@ class DispatcherBase(object):
         :param type adapter_class: the class to use as the default
             adapter class
         """
-        if not issubclass(adapter_class, AdapterBase):
-            raise ValueError('The default adapter must be an subclass of an'
-                             ' AdapterBase class. Type provided: {0}'.format(adapter_class))
         logger.info('Setting the default adapter for a Dispatcher as {0}'.format(adapter_class))
         self._default_adapter = adapter_class
 
