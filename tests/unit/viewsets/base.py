@@ -13,6 +13,7 @@ from ripozo.viewsets.resource_base import ResourceBase
 from ripozo_tests.helpers.inmemory_manager import InMemoryManager
 from ripozo_tests.python2base import TestBase
 
+import mock
 import unittest
 
 
@@ -198,3 +199,50 @@ class TestResourceBase(TestBase, unittest.TestCase):
         endpoint = T2.endpoint_dictionary()['hello'][0]
         self.assertEqual(endpoint['route'], '/t2/')
         self.assertListEqual(endpoint['methods'], ['GET'])
+
+    def test_multiple_subclasses(self):
+        """
+        tests whether multiple classes can inherit from the same
+        abstract class
+        """
+        props = dict(hello='world')
+        class T1(ResourceBase):
+            @apimethod(methods=['GET'])
+            def hello(cls, *args, **kwargs):
+                return cls(properties=dict(hello='world'))
+
+        endpoint = T1.endpoint_dictionary()['hello'][0]
+        self.assertEqual(endpoint['route'], '/t1/')
+        self.assertListEqual(endpoint['methods'], ['GET'])
+        self.assertDictEqual(props, T1.hello(mock.MagicMock()).properties)
+
+        class T2(T1):
+            pass
+
+        class T3(T1):
+            pass
+
+        class T4(T2):
+            pass
+
+        endpoint = T1.endpoint_dictionary()['hello'][0]
+        self.assertEqual(endpoint['route'], '/t1/')
+        self.assertListEqual(endpoint['methods'], ['GET'])
+        self.assertDictEqual(props, T1.hello(mock.MagicMock()).properties)
+
+        endpoint = T2.endpoint_dictionary()['hello'][0]
+        self.assertEqual(endpoint['route'], '/t2/')
+        self.assertListEqual(endpoint['methods'], ['GET'])
+        self.assertDictEqual(props, T1.hello(mock.MagicMock()).properties)
+
+        endpoint = T3.endpoint_dictionary()['hello'][0]
+        self.assertEqual(endpoint['route'], '/t3/')
+        self.assertListEqual(endpoint['methods'], ['GET'])
+        self.assertDictEqual(props, T1.hello(mock.MagicMock()).properties)
+
+        endpoint = T4.endpoint_dictionary()['hello'][0]
+        self.assertEqual(endpoint['route'], '/t4/')
+        self.assertListEqual(endpoint['methods'], ['GET'])
+        self.assertDictEqual(props, T1.hello(mock.MagicMock()).properties)
+
+
