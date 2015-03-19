@@ -13,7 +13,6 @@ import six
 logger = logging.getLogger(__name__)
 
 
-# TODO the metaclass requires knowledge of the class... Maybe this shouldn't be so?
 # TODO documentation on class and __new__
 class ResourceMetaClass(type):
     """
