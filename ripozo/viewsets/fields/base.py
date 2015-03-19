@@ -19,7 +19,7 @@ class BaseField(object):
     field_type = object
 
     def __init__(self, name, required=False, maximum=None,
-                 minimum=None, arg_type=input_categories.QUERY_ARGS):
+                 minimum=None, arg_type=input_categories.BODY_ARGS):
         self.name = name
         self.required = required
         self.maximum = maximum
@@ -242,15 +242,21 @@ def _translate_or_validate_helper(url_params, query_args, body_args, fields=None
         if field.arg_type == input_categories.URL_PARAMS:
             if field.name not in url_params and skip_required:
                 continue
-            updated_url_params[field.name] = action(url_params.get(field.name, None), skip_required=skip_required)
+            field_value = action(url_params.get(field.name, None), skip_required=skip_required)
+            if field.name in updated_url_params:
+                updated_url_params[field.name] = field_value
         elif field.arg_type == input_categories.BODY_ARGS:
             if field.name not in body_args and skip_required:
                 continue
-            updated_body_args[field.name] = action(body_args.get(field.name, None), skip_required=skip_required)
+            field_value = action(body_args.get(field.name, None), skip_required=skip_required)
+            if field.name in updated_body_args:
+                updated_body_args[field.name] = field_value
         elif field.arg_type == input_categories.QUERY_ARGS:
             if field.name not in query_args and skip_required:
                 continue
-            updated_query_args[field.name] = action(query_args.get(field.name, None), skip_required=skip_required)
+            field_value = action(query_args.get(field.name, None), skip_required=skip_required)
+            if field.name in updated_query_args:
+                updated_query_args[field.name] = field_value
         else:
             raise RestException('Invalid arg_type, {0}, on Field {1}'.format(field.arg_type, field.name))
     return updated_url_params, updated_query_args, updated_body_args

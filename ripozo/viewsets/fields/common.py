@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 
 from datetime import datetime
 from ripozo.exceptions import ValidationException, TranslationException
-from ripozo.viewsets.constants.input_categories import QUERY_ARGS
+from ripozo.viewsets.constants.input_categories import BODY_ARGS
 from ripozo.viewsets.fields.base import BaseField
 
 import six
@@ -17,7 +17,7 @@ class StringField(BaseField):
     """
     field_type = six.text_type
 
-    def __init__(self, name, required=False, maximum=None, minimum=None, arg_type=QUERY_ARGS, regex=None):
+    def __init__(self, name, required=False, maximum=None, minimum=None, arg_type=BODY_ARGS, regex=None):
         """
         A field class for validating string inputs.
 
@@ -150,7 +150,7 @@ class DateTimeField(BaseField):
     field_type = datetime
     valid_formats = ['%Y-%m-%dT%H:%M:%S.%fZ']
 
-    def __init__(self, name, required=False, maximum=None, minimum=None, arg_type=QUERY_ARGS, valid_formats=None):
+    def __init__(self, name, required=False, maximum=None, minimum=None, arg_type=BODY_ARGS, valid_formats=None):
         super(DateTimeField, self).__init__(name, required=required, maximum=maximum,
                                             minimum=minimum, arg_type=arg_type)
         if valid_formats is not None:

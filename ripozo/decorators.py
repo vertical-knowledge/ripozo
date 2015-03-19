@@ -122,11 +122,17 @@ class validate(object):
         """
         @wraps(f)
         def action(cls, request, *args, **kwargs):
-            request.validate(self.fields, skip_required=self.skip_required)
+            # TODO This is so terrible.  I really need to fix this.
+            if self.manager_field_validators:
+                self.fields = self.original_fields + cls.manager.field_validators
+                request.validate(action.original_fields + cls.manager.field_validators, skip_required=self.skip_required)
+            else:
+                request.validate(action.original_fields, skip_required=self.skip_required)
             return f(cls, request,  *args, **kwargs)
 
         action.fields = self.fields
-        action.original_fields = self.fields
+        self.original_fields = self.fields
+        action.original_fields = self.original_fields
         action.__manager_field_validators__ = self.manager_field_validators
         return action
 
@@ -158,7 +164,10 @@ class translate(object):
         """
         @wraps(f)
         def action(cls, request, *args, **kwargs):
-            request.translate(self.fields)
+            if self.manager_field_validators:
+                request.translate(action.original_fields + cls.manager.field_validators)
+            else:
+                request.translate(action.original_fields)
             return f(cls, request, *args, **kwargs)
 
         action.fields = self.fields
