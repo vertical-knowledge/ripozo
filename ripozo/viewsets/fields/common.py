@@ -209,6 +209,8 @@ class ListField(BaseField):
     results can also be provided.  This would be run against
     every individual item in the list that is provided.
     """
+    field_type = list
+
     # TODO test and finish docs
     def __init__(self, name, required=False, maximum=None,
                  minimum=None, arg_type=BODY_ARGS,
@@ -219,9 +221,22 @@ class ListField(BaseField):
                                         error_message=error_message)
 
     def translate(self, obj, skip_required=False, validate=False):
-        if validate:
-            obj = self._validate_size(obj, len(obj), msg=self.error_message)
+        obj = super(ListField, self).translate(obj, skip_required=skip_required, validate=validate)
         translated_list = []
         for f in obj:
             translated_list.append(self.indv_field.translate(f, skip_required=skip_required, validate=validate))
         return translated_list
+
+    def _translate(self, obj, skip_required=False):
+        if not obj:
+            obj = []
+        if not isinstance(obj, (list, set, tuple,)):
+            raise TranslationException(self.error_message or 'A list field must be an instance of a list, '
+                                                             'tuple, or set')
+        return obj
+
+    def _validate(self, obj, skip_required=False):
+        obj = super(ListField, self)._validate(obj, skip_required=skip_required)
+        if not obj:
+            obj = []
+        return self._validate_size(obj, len(obj), msg=self.error_message)

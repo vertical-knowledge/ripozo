@@ -4,7 +4,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.exceptions import ValidationException, TranslationException
-from ripozo.viewsets.fields.common import StringField, BooleanField, FloatField, DateTimeField, IntegerField, BaseField
+from ripozo.viewsets.fields.common import StringField, BooleanField, FloatField,\
+    DateTimeField, IntegerField, BaseField, ListField
 from ripozo_tests.bases.field import FieldTestBase
 
 import datetime
@@ -127,3 +128,23 @@ class DatetimeFieldTest(FieldTestBase2, unittest.TestCase):
         self.assertIsInstance(inst, datetime.datetime)
 
         self.assertRaises(TranslationException, f._translate, '15/12/2015')
+
+
+class TestListField(FieldTestBase2, unittest.TestCase):
+    field_type = ListField
+    instance_type = list
+    translation_success = [(1, 2,), [1, 2]]
+    translation_failures = [12]
+
+    def test_not_required(self):
+        pass
+        # This will always return a list
+        # TODO write this test
+
+    def test_required(self):
+        pass
+        # TODO write this
+
+    def test_translate_none(self):
+        pass
+        # TODO write this
