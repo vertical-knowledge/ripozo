@@ -78,7 +78,11 @@ class SirenAdapter(AdapterBase):
         :rtype: dict
         """
         fields = []
-        for field in getattr(endpoint_func, 'fields', []):
+        fields_method = getattr(endpoint_func, 'fields', None)
+        if not fields:
+            return []
+
+        for field in fields_method(self.resource.manager):
             if field.arg_type is input_categories.URL_PARAMS:
                 continue
             fields.append(dict(name=field.name, type=field.field_type.__name__,
