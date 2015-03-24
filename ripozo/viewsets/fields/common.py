@@ -201,3 +201,25 @@ class DateTimeField(BaseField):
         """
         obj = super(DateTimeField, self)._validate(obj, skip_required=skip_required)
         return self._validate_size(obj, obj)
+
+
+class ListField(BaseField):
+    """
+    A field for a list of objects.  A field for the individual
+    results can also be provided.  This would be run against
+    every individual item in the list that is provided.
+    """
+    # TODO test and finish docs
+    def __init__(self, name, required=False, maximum=None,
+                 minimum=None, arg_type=BODY_ARGS,
+                 error_message=None, indv_field=BaseField('list')):
+        self.indv_field = indv_field
+        super(ListField, self).__init__(name, required=required, maximum=maximum,
+                                        minimum=minimum, arg_type=arg_type,
+                                        error_message=error_message)
+
+    def translate(self, obj, skip_required=False, validate=False):
+        translated_list = []
+        for f in obj:
+            translated_list.append(self.indv_field.translate(f, skip_required=skip_required, validate=validate))
+        return translated_list

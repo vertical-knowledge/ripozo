@@ -3,6 +3,7 @@
 
 - Fields no longer have a default.
 - Adapter.extra_headers returns a dictionary instead of a list
+- Fields can specify an error message.
 
 
 0.1.19 (2015-03-16)
@@ -17,7 +18,6 @@
 - Fixed bug with RetrieveList mixin
 - Added ``picky_processor`` which specifically includes processors to include or exclude.
 - pre and post processors now get the name of the function being called. before running
-- Fields can specify an error message.
 
 
 0.1.17 (2015-03-16)
