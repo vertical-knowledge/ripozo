@@ -6,4 +6,4 @@ logging.basicConfig(level=logging.DEBUG,
                            '- %(lineno)d - %(levelname)s]: %(message)s')
 logger = logging.getLogger(__name__)
 
-from tests import unit
+from tests import unit, integration

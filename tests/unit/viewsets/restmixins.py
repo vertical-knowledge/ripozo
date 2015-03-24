@@ -27,7 +27,7 @@ class TestMixins(TestBase, unittest.TestCase):
 
         request = mock.MagicMock()
         response = T1.create(request)
-        self.assertEqual(request.validate.call_count, 1)
+        self.assertEqual(request.translate.call_count, 1)
         self.assertEqual(manager2.create.call_count, 1)
         self.assertIsInstance(response, T1)
 
@@ -63,7 +63,7 @@ class TestMixins(TestBase, unittest.TestCase):
 
         request = mock.MagicMock()
         response = T1.update(request)
-        self.assertEqual(request.validate.call_count, 1)
+        self.assertEqual(request.translate.call_count, 1)
         self.assertEqual(manager2.update.call_count, 1)
         self.assertIsInstance(response, T1)
 

@@ -27,15 +27,15 @@ class TestBaseField(FieldTestBase2, unittest.TestCase):
 
     def required_helper(self, f):
         original = object()
-        new = f.translate_and_validate(original)
-        self.assertEqual(original, new)
-
-        original = object()
         new = f.translate(original)
         self.assertEqual(original, new)
 
         original = object()
-        new = f.validate(original)
+        new = f._translate(original)
+        self.assertEqual(original, new)
+
+        original = object()
+        new = f._validate(original)
         self.assertEqual(original, new)
 
     def test_validate_type(self):
@@ -53,7 +53,7 @@ class TestBaseField(FieldTestBase2, unittest.TestCase):
 
     def test_translate_none_like(self):
         f = BaseField('field')
-        output = f.translate(False)
+        output = f._translate(False)
         self.assertIsNotNone(output)
         self.assertFalse(output)
 
@@ -69,9 +69,9 @@ class StringFieldTest(FieldTestBase2, unittest.TestCase):
 
     def test_validate_regex(self):
         f = StringField('field', regex=re.compile(r'^something$'))
-        self.assertRaises(ValidationException, f.validate, 'notsomething')
+        self.assertRaises(ValidationException, f._validate, 'notsomething')
         original = 'something'
-        new = f.validate(original)
+        new = f._validate(original)
         self.assertEqual(original, new)
 
 
@@ -120,10 +120,10 @@ class DatetimeFieldTest(FieldTestBase2, unittest.TestCase):
         d = '12/15/2015'
         valid_formats = ['%Y-%m-%dT%H:%M:%S.%fZ', '%m/%d/%Y']
         f = DateTimeField('field', valid_formats=valid_formats)
-        inst = f.translate(d)
+        inst = f._translate(d)
         self.assertIsInstance(inst, datetime.datetime)
         d = '2015-02-10T18:15:15.123456Z'
-        inst = f.translate(d)
+        inst = f._translate(d)
         self.assertIsInstance(inst, datetime.datetime)
 
-        self.assertRaises(TranslationException, f.translate, '15/12/2015')
+        self.assertRaises(TranslationException, f._translate, '15/12/2015')

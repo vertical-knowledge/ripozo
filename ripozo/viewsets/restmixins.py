@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.decorators import apimethod, validate, translate
+from ripozo.decorators import apimethod, translate
 from ripozo.viewsets.resource_base import ResourceBase
 
 import logging
@@ -17,7 +17,7 @@ class Create(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['POST'])
-    @validate(manager_field_validators=True)
+    @translate(manager_field_validators=True, validate=True)
     def create(cls, request, *args, **kwargs):
         logger.debug('Creating a resource using manager {0}'.format(cls._manager))
         props = cls.manager.create(request.body_args)
@@ -49,7 +49,7 @@ class Update(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['PATCH'])
-    @validate(manager_field_validators=True, skip_required=True)
+    @translate(manager_field_validators=True, skip_required=True, validate=True)
     def update(cls, request, *args, **kwargs):
         logger.debug('Updating a resource using the manager {0}'.format(cls._manager))
         props = cls.manager.update(request.url_params, request.body_args)

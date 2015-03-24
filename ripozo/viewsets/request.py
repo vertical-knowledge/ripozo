@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.viewsets.fields.base import translate_fields, translate_and_validate_fields
+from ripozo.viewsets.fields.base import translate_fields
 
 
 class RequestContainer(object):
@@ -100,25 +100,12 @@ class RequestContainer(object):
         # TODO
         self._headers['Content-Type'] = value
 
-    def translate(self, fields):
+    def translate(self, fields, skip_required=False, validate=False):
         """
         TODO
         :param list fields:
         """
         self._url_params, self._query_args, self._body_args = translate_fields(
-            self._url_params, self._query_args, self._body_args, fields=fields
-        )
-
-    def validate(self, fields, skip_required=False):
-        """
-        TODO
-        :param list fields:
-        :param bool skip_required: When this is set to False,
-            no fields will be required.  Instead even if they are
-            specified as required, they will be ignored if they are
-            not present
-        """
-        self._url_params, self._query_args, self._body_args = translate_and_validate_fields(
             self._url_params, self._query_args, self._body_args,
-            fields=fields, skip_required=skip_required
+            fields=fields, validate=validate, skip_required=skip_required
         )

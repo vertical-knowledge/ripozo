@@ -79,7 +79,7 @@ class SirenAdapter(AdapterBase):
         """
         fields = []
         fields_method = getattr(endpoint_func, 'fields', None)
-        if not fields:
+        if not fields_method:
             return []
 
         for field in fields_method(self.resource.manager):

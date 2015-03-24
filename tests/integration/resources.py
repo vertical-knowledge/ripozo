@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.decorators import validate, translate, apimethod
+from ripozo.decorators import translate, apimethod
 from ripozo.exceptions import ValidationException
 from ripozo.viewsets.fields import BaseField
 from ripozo.viewsets.request import RequestContainer
@@ -25,7 +25,7 @@ class TestResourceIntegration(TestBase, unittest.TestCase):
             manager = fake_manager
 
             @apimethod(methods=['GET'])
-            @validate(manager_field_validators=True)
+            @translate(manager_field_validators=True, validate=True)
             def hello(cls, request, *args, **kwargs):
                 return cls(properties=request.body_args)
 

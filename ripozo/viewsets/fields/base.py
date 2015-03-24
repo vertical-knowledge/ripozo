@@ -26,9 +26,9 @@ class BaseField(object):
         self.minimum = minimum
         self.arg_type = arg_type
 
-    def translate_and_validate(self, obj, skip_required=False):
+    def translate(self, obj, skip_required=False, validate=False):
         """
-        A shortcut method to translate and validate the object
+        A shortcut method to _translate and _validate the object
         that is being passed in.  It returns this object
         or raises a ValueError.
 
@@ -38,10 +38,12 @@ class BaseField(object):
         :raises: ripozo.exceptions.ValidationsException
         :raises: ripozo.exceptions.TranslationException
         """
-        obj = self.translate(obj, skip_required=skip_required)
-        return self.validate(obj, skip_required=skip_required)
+        obj = self._translate(obj, skip_required=skip_required)
+        if validate:
+            obj = self._validate(obj, skip_required=skip_required)
+        return obj
 
-    def translate(self, obj, skip_required=False):
+    def _translate(self, obj, skip_required=False):
         """
         This method is responsible for translating an input
         string or object.
@@ -49,6 +51,7 @@ class BaseField(object):
         :param object obj: The input from the request
             that is being translated
         :param bool skip_required: This is being ignored for now
+        :param bool _validate:
         :return: The object in the appropriate form
         :rtype: object
         :raises: ripozo.exceptions.TranslationException
@@ -60,7 +63,7 @@ class BaseField(object):
                 return None
         return obj
 
-    def validate(self, obj, skip_required=False):
+    def _validate(self, obj, skip_required=False):
         """
         An object to be validated
 
@@ -137,82 +140,10 @@ class BaseField(object):
         raise ValidationException(msg)
 
 
-def translate_and_validate_fields(url_params, query_args, body_args, fields=None, skip_required=False):
-    """
-    Translates and validates the supplied parameters against the
-    list of BaseField instances provided
-
-    :param dict url_params: The url parameters.  Typically this is going
-        to be things like primary keys and such
-    :param dict query_args: The query args.  Typically these are going to be
-        filters on lists and such
-    :param dict body_args: The arguments in the body.  This may be for
-        updates and creations
-    :param list fields: The list of BaseField instances that are supposed
-        to be validated.  Only items in this list will be translated
-        and validated
-    :return: Returns the translated url_params, query_args and body_args
-    :rtype: tuple
-    :raises: RestException
-    :raises: ValidationException
-    :raises: TranslationException
-    """
-    return _translate_or_validate_helper(url_params, query_args, body_args,
-                                         fields=fields, action='translate_and_validate',
-                                         skip_required=skip_required)
-
-
-def validate_fields(url_params, query_args, body_args, fields=None):
-    """
-    Validates the supplied parameters against the
-    list of BaseField instances provided
-
-    :param dict url_params: The url parameters.  Typically this is going
-        to be things like primary keys and such
-    :param dict query_args: The query args.  Typically these are going to be
-        filters on lists and such
-    :param dict body_args: The arguments in the body.  This may be for
-        updates and creations
-    :param list fields: The list of BaseField instances that are supposed
-        to be validated.  Only items in this list will be translated
-        and validated
-    :return: Returns the translated url_params, query_args and body_args
-    :rtype: tuple
-    :raises: RestException
-    :raises: ValidationException
-    :raises: TranslationException
-    """
-    return _translate_or_validate_helper(url_params, query_args, body_args,
-                                         fields=fields, action='validate')
-
-
-def translate_fields(url_params, query_args, body_args, fields=None):
-    """
-    Translates and validates the supplied parameters against the
-    list of BaseField instances provided
-
-    :param dict url_params: The url parameters.  Typically this is going
-        to be things like primary keys and such
-    :param dict query_args: The query args.  Typically these are going to be
-        filters on lists and such
-    :param dict body_args: The arguments in the body.  This may be for
-        updates and creations
-    :param list fields: The list of BaseField instances that are supposed
-        to be validated.  Only items in this list will be translated
-        and validated
-    :return: Returns the translated url_params, query_args and body_args
-    :rtype: tuple
-    :raises: RestException
-    :raises: ValidationException
-    :raises: TranslationException
-    """
-    return _translate_or_validate_helper(url_params, query_args, body_args, fields=fields, action='translate')
-
-
-def _translate_or_validate_helper(url_params, query_args, body_args, fields=None, action=None, skip_required=False):
+def translate_fields(url_params, query_args, body_args, fields=None, skip_required=False, validate=False):
     """
     Performs the specified action on the field.  The action can be a string of
-     either translate, validate, or translate_and_validate.
+     either _translate, _validate, or translate.
 
     :param dict url_params: The url parameters.  Typically this is going
         to be things like primary keys and such
@@ -235,26 +166,27 @@ def _translate_or_validate_helper(url_params, query_args, body_args, fields=None
     updated_query_args = query_args.copy()
     updated_body_args = body_args.copy()
     fields = fields or []
-    action_name = action
     for field in fields:
-        action = getattr(field, action_name)
-        # Translate and validate the inputs
+        # Translate and _validate the inputs
         if field.arg_type == input_categories.URL_PARAMS:
             if field.name not in url_params and skip_required:
                 continue
-            field_value = action(url_params.get(field.name, None), skip_required=skip_required)
+            field_value = field.translate(url_params.get(field.name, None),
+                                          skip_required=skip_required, validate=validate)
             if field.name in updated_url_params:
                 updated_url_params[field.name] = field_value
         elif field.arg_type == input_categories.BODY_ARGS:
             if field.name not in body_args and skip_required:
                 continue
-            field_value = action(body_args.get(field.name, None), skip_required=skip_required)
+            field_value = field.translate(body_args.get(field.name, None),
+                                          skip_required=skip_required, validate=validate)
             if field.name in updated_body_args:
                 updated_body_args[field.name] = field_value
         elif field.arg_type == input_categories.QUERY_ARGS:
             if field.name not in query_args and skip_required:
                 continue
-            field_value = action(query_args.get(field.name, None), skip_required=skip_required)
+            field_value = field.translate(query_args.get(field.name, None),
+                                          skip_required=skip_required, validate=validate)
             if field.name in updated_query_args:
                 updated_query_args[field.name] = field_value
         else:

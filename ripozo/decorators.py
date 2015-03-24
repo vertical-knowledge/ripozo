@@ -86,14 +86,14 @@ class apimethod(object):
         return _apiclassmethod(wrapped)
 
 
-class validate(object):
+class translate(object):
     """
     Decorator for validating the inputs to an apimethod
     and describing what is allowed for that apimethod to
     an adapter if necessary.
     """
 
-    def __init__(self, fields=None, manager_field_validators=False, skip_required=False):
+    def __init__(self, fields=None, manager_field_validators=False, skip_required=False, validate=False):
         """
         Initializes the decorator with the necessary fields.
         the fields should be instances of FieldBase and should
@@ -107,6 +107,7 @@ class validate(object):
         self.original_fields = fields or []
         self.manager_field_validators = manager_field_validators
         self.skip_required = skip_required
+        self.validate = validate
         self.cls = None
 
     def __call__(self, f):
@@ -124,54 +125,14 @@ class validate(object):
         @wraps(f)
         def action(cls, request, *args, **kwargs):
             # TODO This is so terrible.  I really need to fix this.
-            request.validate(self.fields(cls.manager), skip_required=self.skip_required)
+            request.translate(self.fields(cls.manager), skip_required=self.skip_required, validate=self.validate)
             return f(cls, request,  *args, **kwargs)
 
         action.__manager_field_validators__ = self.manager_field_validators
         action.fields = self.fields
-        self.action = action
         return action
 
     def fields(self, manager):
         if self.manager_field_validators:
             return self.original_fields + manager.field_validators
         return self.original_fields
-
-
-class translate(object):
-    """
-    A decorator designed to be used in
-    conjunction with an apimethod decorated
-    method (though this is not necessary).  It
-    calls request.translate before running the function.
-    """
-    def __init__(self, fields=None, manager_field_validators=False):
-        """
-        Just sets the fields parameter
-        :param list fields: A list of BaseField (and its subclasses)
-            instances
-        """
-        # TODO test and update docs for manager_field_validators
-        self.fields = fields or []
-        self.manager_field_validators = manager_field_validators
-
-    def __call__(self, f):
-        """
-        The actual decorator portion
-
-        :param types.MethodType f: The method to be decorated
-        :return: The wrapped function
-        :rtype: type.MethodType
-        """
-        @wraps(f)
-        def action(cls, request, *args, **kwargs):
-            if self.manager_field_validators:
-                request.translate(action.original_fields + cls.manager.field_validators)
-            else:
-                request.translate(action.original_fields)
-            return f(cls, request, *args, **kwargs)
-
-        action.fields = self.fields
-        action.original_fields = self.fields
-        action.__manager_field_validators__ = self.manager_field_validators
-        return action
