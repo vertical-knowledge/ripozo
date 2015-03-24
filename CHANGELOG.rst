@@ -8,6 +8,8 @@ CHANGELOG
 - Adapter.extra_headers returns a dictionary instead of a list
 - Fields can specify an error message.
 - ListField added
+- Fixed deep inheritance issue with translate decorator.
+- Added the name of the relationship as an item in the rel list in the SIREN adapter.
 
 
 0.1.19 (2015-03-16)
