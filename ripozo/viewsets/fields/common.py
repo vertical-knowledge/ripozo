@@ -219,6 +219,8 @@ class ListField(BaseField):
                                         error_message=error_message)
 
     def translate(self, obj, skip_required=False, validate=False):
+        if validate:
+            obj = self._validate_size(obj, len(obj), msg=self.error_message)
         translated_list = []
         for f in obj:
             translated_list.append(self.indv_field.translate(f, skip_required=skip_required, validate=validate))
