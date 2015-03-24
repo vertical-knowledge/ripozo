@@ -52,6 +52,7 @@ class ResourceMetaClass(type):
         for name, method in inspect.getmembers(klass):
             if getattr(method, '__manager_field_validators__', False) is True \
                     or getattr(method, 'manager_field_validators', False) is True:
-                method.cls = klass
-                method = classmethod(method)
-                setattr(klass, name, method)
+                if not hasattr(method, 'cls'):
+                    setattr(method, 'cls', klass)
+                    method = classmethod(method)
+                    setattr(klass, name, method)
