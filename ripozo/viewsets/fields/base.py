@@ -19,12 +19,14 @@ class BaseField(object):
     field_type = object
 
     def __init__(self, name, required=False, maximum=None,
-                 minimum=None, arg_type=input_categories.BODY_ARGS):
+                 minimum=None, arg_type=input_categories.BODY_ARGS,
+                 error_message=None):
         self.name = name
         self.required = required
         self.maximum = maximum
         self.minimum = minimum
         self.arg_type = arg_type
+        self.error_message = error_message
 
     def translate(self, obj, skip_required=False, validate=False):
         """
@@ -80,7 +82,7 @@ class BaseField(object):
         :raises: ripozo.exceptions.ValidationException
         """
         if self.required and obj is None and skip_required is False:
-            raise ValidationException('The object is required and cannot be None')
+            raise ValidationException(self.error_message or 'The object is required and cannot be None')
         obj = self._validate_type(obj)
         return obj
 
@@ -115,12 +117,12 @@ class BaseField(object):
             if not msg:
                 msg = ('The input was too small for the field {2}: '
                        '{0} < {1}'.format(obj_size, self.minimum, self.name))
-            raise ValidationException(msg)
+            raise ValidationException(self.error_message or msg)
         if self.maximum and obj_size > self.maximum:
             if not msg:
                 msg = ('The input was too large for the field {2}: '
                        '{0} > {1}'.format(obj_size, self.maximum, self.name))
-            raise ValidationException(msg)
+            raise ValidationException(self.error_message or msg)
         return obj
 
     def _validate_type(self, obj, msg=None):
@@ -137,7 +139,7 @@ class BaseField(object):
             return obj
         if msg is None:
             msg = "obj is not a valid type for field {0}. A type of {1} is required.".format(self.name, self.field_type)
-        raise ValidationException(msg)
+        raise ValidationException(self.error_message or msg)
 
 
 def translate_fields(url_params, query_args, body_args, fields=None, skip_required=False, validate=False):

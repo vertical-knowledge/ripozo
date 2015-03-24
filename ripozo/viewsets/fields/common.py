@@ -17,7 +17,8 @@ class StringField(BaseField):
     """
     field_type = six.text_type
 
-    def __init__(self, name, required=False, maximum=None, minimum=None, arg_type=BODY_ARGS, regex=None):
+    def __init__(self, name, required=False, maximum=None, minimum=None,
+                 arg_type=BODY_ARGS, regex=None, error_message=None):
         """
         A field class for validating string inputs.
 
@@ -27,7 +28,8 @@ class StringField(BaseField):
             match at least once.
         """
         super(StringField, self).__init__(name, required=required, maximum=maximum,
-                                          minimum=minimum, arg_type=arg_type)
+                                          minimum=minimum, arg_type=arg_type,
+                                          error_message=error_message)
         self.regex = regex
 
     def _translate(self, obj, skip_required=False):
@@ -47,7 +49,7 @@ class StringField(BaseField):
         try:
             return six.text_type(obj)
         except ValueError:
-            raise TranslationException('obj is not a valid unicode string: {0}'.format(obj))
+            raise TranslationException(self.error_message or 'obj is not a valid unicode string: {0}'.format(obj))
 
     def _validate(self, obj, skip_required=False):
         """
@@ -64,7 +66,7 @@ class StringField(BaseField):
             return obj
         obj = self._validate_size(obj, len(obj))
         if self.regex and not self.regex.match(obj):
-            raise ValidationException('The input string did not match the'
+            raise ValidationException(self.error_message or 'The input string did not match the'
                                       ' required regex: {0} != {1}'.format(obj, self.regex))
 
         # passed validation
@@ -86,7 +88,8 @@ class IntegerField(BaseField):
         try:
             return int(obj)
         except ValueError:
-            raise TranslationException('Not a valid integer type: {0}'.format(obj))
+            raise TranslationException(self.error_message or
+                                       'Not a valid integer type: {0}'.format(obj))
 
     def _validate(self, obj, skip_required=False):
         obj = super(IntegerField, self)._validate(obj, skip_required=skip_required)
@@ -110,7 +113,8 @@ class FloatField(IntegerField):
         try:
             return float(obj)
         except (ValueError, TypeError):
-            raise TranslationException('obj is not castable to float: {0}'.format(obj))
+            raise TranslationException(self.error_message or
+                                       'obj is not castable to float: {0}'.format(obj))
 
 
 class BooleanField(BaseField):
@@ -133,8 +137,9 @@ class BooleanField(BaseField):
                 return False
             elif obj.lower() == 'true':
                 return True
-        raise TranslationException('{0} is not a valid boolean.  Either'
-                                  ' "true" or "false" is required (case insensitive)'.format(obj))
+        raise TranslationException(self.error_message or
+                                   '{0} is not a valid boolean.  Either'
+                                   ' "true" or "false" is required (case insensitive)'.format(obj))
 
 
 class DateTimeField(BaseField):
@@ -150,9 +155,12 @@ class DateTimeField(BaseField):
     field_type = datetime
     valid_formats = ['%Y-%m-%dT%H:%M:%S.%fZ']
 
-    def __init__(self, name, required=False, maximum=None, minimum=None, arg_type=BODY_ARGS, valid_formats=None):
+    def __init__(self, name, required=False, maximum=None, minimum=None, arg_type=BODY_ARGS,
+                 valid_formats=None, error_message=None):
+        # TODO docs
         super(DateTimeField, self).__init__(name, required=required, maximum=maximum,
-                                            minimum=minimum, arg_type=arg_type)
+                                            minimum=minimum, arg_type=arg_type,
+                                            error_message=error_message)
         if valid_formats is not None:
             self.valid_formats = valid_formats
 
@@ -178,7 +186,8 @@ class DateTimeField(BaseField):
                 return datetime.strptime(obj, f)
             except ValueError:
                 continue
-        raise TranslationException('The object ({0}) could not be parsed as a datetime '
+        raise TranslationException(self.error_message or
+                                   'The object ({0}) could not be parsed as a datetime '
                                    'string using the formats {1}'.format(obj, self.valid_formats))
 
     def _validate(self, obj, skip_required=False):
