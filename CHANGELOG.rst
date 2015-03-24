@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-0.1.20 (unreleased)
+0.1.20 (2015-03-24)
 ===================
 
 - Fields no longer have a default.
