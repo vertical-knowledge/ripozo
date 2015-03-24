@@ -1,9 +1,13 @@
+CHANGELOG
+=========
+
 0.1.20 (unreleased)
 ===================
 
 - Fields no longer have a default.
 - Adapter.extra_headers returns a dictionary instead of a list
 - Fields can specify an error message.
+- ListField added
 
 
 0.1.19 (2015-03-16)
