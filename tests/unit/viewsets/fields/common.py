@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 
 from ripozo.exceptions import ValidationException, TranslationException
 from ripozo.viewsets.fields.common import StringField, BooleanField, FloatField,\
-    DateTimeField, IntegerField, BaseField, ListField
+    DateTimeField, IntegerField, ListField
 from ripozo_tests.bases.field import FieldTestBase
 
 import datetime
@@ -22,41 +22,7 @@ class FieldTestBase2(FieldTestBase):
     translation_exception = TranslationException
 
 
-class TestBaseField(FieldTestBase2, unittest.TestCase):
-    field_type = BaseField
-    instance_type = object
 
-    def required_helper(self, f):
-        original = object()
-        new = f.translate(original)
-        self.assertEqual(original, new)
-
-        original = object()
-        new = f._translate(original)
-        self.assertEqual(original, new)
-
-        original = object()
-        new = f._validate(original)
-        self.assertEqual(original, new)
-
-    def test_validate_type(self):
-        f = BaseField('field', required=False)
-        original = object()
-
-        # test doesn't raise when valid
-        new = f._validate_type(None)
-        self.assertIsNone(new)
-        new = f._validate_type(original)
-        self.assertEqual(new, original)
-
-        f.field_type = int
-        self.assertRaises(ValidationException, f._validate_type, 'something')
-
-    def test_translate_none_like(self):
-        f = BaseField('field')
-        output = f._translate(False)
-        self.assertIsNotNone(output)
-        self.assertFalse(output)
 
 
 class StringFieldTest(FieldTestBase2, unittest.TestCase):

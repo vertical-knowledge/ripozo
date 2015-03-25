@@ -46,10 +46,7 @@ class StringField(BaseField):
             return obj
 
         obj = super(StringField, self)._translate(obj, skip_required=skip_required)
-        try:
-            return six.text_type(obj)
-        except ValueError:
-            raise TranslationException(self.error_message or 'obj is not a valid unicode string: {0}'.format(obj))
+        return six.text_type(obj)
 
     def _validate(self, obj, skip_required=False):
         """

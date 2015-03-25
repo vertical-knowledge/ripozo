@@ -21,7 +21,7 @@ class TestRequestContainer(TestBase, unittest.TestCase):
     def test_query_args(self):
         self.dict_helper('query_args')
 
-    def tyest_body_args(self):
+    def test_body_args(self):
         self.dict_helper('body_args')
 
     def test_headers(self):
@@ -35,10 +35,24 @@ class TestRequestContainer(TestBase, unittest.TestCase):
         r = RequestContainer()
         self.assertIsNone(r.content_type)
 
+        # set the content type
+        r.content_type = 'blah'
+        self.assertEqual(r.content_type, 'blah')
+
+
     def dict_helper(self, name):
         d = dict(some='object')
         r = RequestContainer(**{name: d})
         self.assertDictEqual(d, getattr(r, name))
         self.assertNotEqual(id(d), id(getattr(r, name)))
+
+        # Test setting the dict
+        d2 = dict(another='object')
+        setattr(r, name, d2)
+        self.assertNotEqual(d, getattr(r, name))
+        self.assertDictEqual(d2, getattr(r, name))
+        self.assertNotEqual(id(d2), id(getattr(r, name)))
+
+        # Test empty dict
         r = RequestContainer()
         self.assertIsInstance(getattr(r, name), dict)

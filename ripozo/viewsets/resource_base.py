@@ -42,12 +42,9 @@ class ResourceBase(object):
         :param list errors:
         :param dict meta:
         """
-        if not properties:
-            properties = {}
-        if not errors:
-            errors = []
-        if not meta:
-            meta = {}
+        properties = properties or {}
+        errors = errors or []
+        meta = meta or {}
         self.properties = properties
         self.status = status
         self.errors = errors

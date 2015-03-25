@@ -8,6 +8,7 @@ import six
 
 from ripozo.decorators import apimethod
 from ripozo.exceptions import BaseRestEndpointAlreadyExists
+from ripozo.viewsets.constants import status
 from ripozo.viewsets.constructor import ResourceMetaClass
 from ripozo.viewsets.resource_base import ResourceBase
 from ripozo_tests.helpers.inmemory_manager import InMemoryManager
@@ -245,4 +246,17 @@ class TestResourceBase(TestBase, unittest.TestCase):
         self.assertListEqual(endpoint['methods'], ['GET'])
         self.assertDictEqual(props, T1.hello(mock.MagicMock()).properties)
 
+    def test_has_error(self):
+        """
+        Test the has_error property
+        """
+        class T1(ResourceBase):
+            pass
+
+        r = T1(errors=[])
+        self.assertFalse(r.has_error)
+        r = T1(errors=[1])
+        self.assertTrue(r.has_error)
+        r = T1(status=status.ERRORED)
+        self.assertTrue(r.has_error)
 
