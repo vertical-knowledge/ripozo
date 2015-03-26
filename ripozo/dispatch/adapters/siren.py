@@ -100,6 +100,8 @@ class SirenAdapter(AdapterBase):
         parent_properties = self.resource.properties.copy()
         for field_name, relationship in six.iteritems(self.resource.relationships):
             for related_resource in relationship.construct_resource(self.resource.properties):
+                if not related_resource.has_all_pks:  # Don't include blank resources
+                    continue
                 ent = {'class': [relationship.relation.resource_name], 'rel': [field_name]}
                 resource_url = self.combine_base_url_with_resource_url(related_resource.url)
                 if not relationship.embedded:

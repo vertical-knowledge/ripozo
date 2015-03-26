@@ -18,7 +18,7 @@ class Relationship(object):
     """
     _resource_meta_class = ResourceMetaClass
 
-    def __init__(self, property_map=None, relation=None, embedded=False, required=False):
+    def __init__(self, name=None, property_map=None, relation=None, embedded=False, required=False):
         """
         :param dict property_map: A map of the parent's property name
             to the corresponding related fields properties.  For example,
@@ -38,6 +38,7 @@ class Relationship(object):
         self._relation = relation
         self.embedded = embedded
         self.required = required
+        self.name = name
 
     @property
     def relation(self):
@@ -115,7 +116,7 @@ class Relationship(object):
         :rtype: :py:class:`dict`
         :raises: KeyError
         """
-        properties = {}
+        properties = parent_properties.get(self.name, {})
         for parent_prop, prop in six.iteritems(self.property_map):
             properties[prop] = parent_properties[parent_prop]
         return properties

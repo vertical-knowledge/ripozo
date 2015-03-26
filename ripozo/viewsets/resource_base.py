@@ -56,6 +56,14 @@ class ResourceBase(object):
         return len(self.errors) > 0 or self.status == status.ERRORED
 
     @property
+    def has_all_pks(self):
+        # TODO doc and test
+        for pk in self.pks:
+            if not pk in self.properties:
+                return False
+        return True
+
+    @property
     def url(self):
         """
         Lazily constructs the url for this specific resource using the specific
