@@ -7,6 +7,7 @@ from abc import ABCMeta, abstractproperty
 
 from ripozo.utilities import join_url_parts
 
+import json
 import six
 
 
@@ -73,3 +74,20 @@ class AdapterBase(object):
         """
         # TODO this needs documentation and it's rather naive in implementation
         return join_url_parts(self.base_url, resource_url)
+
+    @classmethod
+    def format_exception(cls, exc):
+        """
+        Takes an exception and appropriately formats
+        the response.  By default it just returns a json dump
+        of the status code and the exception message.
+        Any exception that does not have a status_code attribute
+        will have a status_code of 500.
+
+        :param Exception exc: The exception to format.
+        :return: A tuple containing: response body, format, http response code
+        :rtype: tuple
+        """
+        # TODO test
+        status_code = getattr(exc, 'status_code', 500)
+        return json.dumps(dict(status=status_code, message=exc.msg)), cls.formats[0], status_code
