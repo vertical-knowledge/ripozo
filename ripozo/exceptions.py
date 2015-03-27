@@ -58,7 +58,7 @@ class FieldException(RestException, ValueError):
     when validation or casting fail.
     """
     def __init__(self, status_code=400, *args, **kwargs):
-        super(RestException, self).__init__(status_code=status_code, *args, **kwargs)
+        super(FieldException, self).__init__(status_code=status_code, *args, **kwargs)
 
 
 class ValidationException(FieldException):

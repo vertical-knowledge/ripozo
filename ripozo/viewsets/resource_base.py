@@ -33,7 +33,7 @@ class ResourceBase(object):
     _preprocessors = None
     _postprocessors = None
 
-    def __init__(self, properties=None, errors=None, meta=None, status=None):
+    def __init__(self, properties=None, errors=None, meta=None, status_code=200):
         """
         Initializes a response
 
@@ -46,14 +46,14 @@ class ResourceBase(object):
         errors = errors or []
         meta = meta or {}
         self.properties = properties
-        self.status = status
+        self.status_code = status_code
         self.errors = errors
         self.meta = meta
         self._url = None
 
     @property
     def has_error(self):
-        return len(self.errors) > 0 or self.status == status.ERRORED
+        return len(self.errors) > 0 or self.status_code >= 400
 
     @property
     def has_all_pks(self):

@@ -257,6 +257,6 @@ class TestResourceBase(TestBase, unittest.TestCase):
         self.assertFalse(r.has_error)
         r = T1(errors=[1])
         self.assertTrue(r.has_error)
-        r = T1(status=status.ERRORED)
+        r = T1(status_code=400)
         self.assertTrue(r.has_error)
 

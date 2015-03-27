@@ -85,7 +85,8 @@ class AdapterBase(object):
         will have a status_code of 500.
 
         :param Exception exc: The exception to format.
-        :return: A tuple containing: response body, format, http response code
+        :return: A tuple containing: response body, format,
+            http response code
         :rtype: tuple
         """
         # TODO test

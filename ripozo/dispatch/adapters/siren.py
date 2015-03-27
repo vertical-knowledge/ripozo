@@ -31,7 +31,7 @@ class SirenAdapter(AdapterBase):
         :return: The siren formatted response body
         :rtype: unicode
         """
-        if self.resource.status == status.DELETED:
+        if self.resource.status_code == 204:
             return ''  # TODO write test to prevent regressions here
 
         links = [dict(rel=['self'], href=self.combine_base_url_with_resource_url(self.resource.url))]
