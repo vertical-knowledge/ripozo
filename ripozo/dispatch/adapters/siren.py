@@ -34,7 +34,7 @@ class SirenAdapter(AdapterBase):
         if self.resource.status_code == 204:
             return ''  # TODO write test to prevent regressions here
 
-        links = [dict(rel=['self'], href=self.combine_base_url_with_resource_url(self.resource.url))]
+        links = self.generate_links()
 
         entities, updated_properties = self.get_entities_and_remove_related_properties()
         response = dict(properties=updated_properties, actions=self._actions,
@@ -88,6 +88,13 @@ class SirenAdapter(AdapterBase):
             fields.append(dict(name=field.name, type=field.field_type.__name__,
                                location=field.arg_type, required=field.required))
         return fields
+
+    def generate_links(self):
+        links = [dict(rel=['self'], href=self.combine_base_url_with_resource_url(self.resource.url))]
+        for link in self.resource.links:
+            for url in link.construct_urls(self.resource.properties):
+                links.append(dict(rel=[link.name], href=url))
+        return links
 
     def get_entities_and_remove_related_properties(self):
         """
