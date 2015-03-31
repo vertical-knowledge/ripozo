@@ -8,7 +8,7 @@ import six
 
 from six.moves.urllib import parse
 from ripozo.viewsets.constructor import ResourceMetaClass
-from ripozo.viewsets.constants import status
+from ripozo.viewsets.relationships import Relationship, LinksMixin, ListRelationship
 from ripozo.utilities import classproperty, convert_to_underscore, join_url_parts
 
 import inspect
@@ -62,6 +62,25 @@ class ResourceBase(object):
             if not pk in self.properties:
                 return False
         return True
+
+    @property
+    def links(self):
+        """
+        Takes the ``.meta['links']`` attribute and
+        constructs links from all of them. Returns a
+        generator for iterating through the links
+
+        :return:
+        :rtype:
+        """
+        # TODO test
+        links = self.meta.get('links', {})
+        for name, value in six.iteritems(links):
+            if isinstance(value, list):
+                relationship = ListRelationship(name, relation=self.__name__)
+            else:
+                relationship = Relationship(name=name, relation=self.__name__)
+            yield LinksMixin(name, relationship)
 
     @property
     def url(self):

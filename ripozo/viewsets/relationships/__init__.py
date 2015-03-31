@@ -5,3 +5,4 @@ from __future__ import unicode_literals
 
 from ripozo.viewsets.relationships.list_relationship import ListRelationship
 from ripozo.viewsets.relationships.relationship import Relationship
+from ripozo.viewsets.relationships.link import LinksMixin

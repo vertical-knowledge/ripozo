@@ -27,6 +27,10 @@ class LinksMixin(object):
     a Relation class or subclass.
     """
 
+    def __init__(self, name, relationship):
+        self.relationship = relationship
+        self.name = name
+
     def construct_urls(self, properties):
         """
         A generator that returns the unicode urls
@@ -45,7 +49,7 @@ class LinksMixin(object):
         :rtype:
         :raises: KeyError
         """
-        for relationship in self.construct_resource(properties):
+        for relationship in self.relationship.construct_resource(properties):
             path = relationship.url
             query_parts = []
             for name, value in six.iteritems(relationship.properties):
@@ -53,19 +57,3 @@ class LinksMixin(object):
                     query_parts.append('{0}&{1}'.format(name, value))
             query_string = '&'.join(query_parts)
             yield '{0}?{1}'.format(path, query_string)
-
-
-class Link(Relationship, LinksMixin):
-    """
-    A builtin case for Links subclassed
-    from the Relationship class
-    """
-    pass
-
-
-class ListLink(ListRelationship, LinksMixin):
-    """
-    A builtin case for a list of links subclassed
-     from the ListRelationship class
-    """
-    pass
