@@ -49,7 +49,7 @@ class NotFoundException(ManagerException):
     find a model that was requested.
     """
     def __init__(self, status_code=404, *args, **kwargs):
-        super(RestException, self).__init__(status_code=status_code, *args, **kwargs)
+        super(ManagerException, self).__init__(status_code=status_code, *args, **kwargs)
 
 
 class FieldException(RestException, ValueError):

@@ -4,7 +4,7 @@ CHANGELOG
 0.1.21 (unreleased)
 ===================
 
-- Nothing changed yet.
+- Added links
 
 
 0.1.20 (2015-03-24)

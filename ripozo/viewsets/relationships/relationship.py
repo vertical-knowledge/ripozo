@@ -20,6 +20,7 @@ class Relationship(object):
 
     def __init__(self, name=None, property_map=None, relation=None, embedded=False, required=False):
         """
+        :param unicode name:
         :param dict property_map: A map of the parent's property name
             to the corresponding related fields properties.  For example,
             it may be called "child" on the parent but it corresponds to
