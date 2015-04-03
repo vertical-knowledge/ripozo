@@ -39,7 +39,6 @@ class HalAdapter(AdapterBase):
         parent_properties = self.resource.properties.copy()
         for field_name, relationship in six.iteritems(self.resource.relationships):
             embedded[field_name] = self.generate_embedded_relationship(relationship)
-            parent_properties = relationship.remove_child_resource_properties(parent_properties)
         response = dict(_links=links, _embedded=embedded)
         response.update(parent_properties)
         return json.dumps(response)
@@ -57,7 +56,7 @@ class HalAdapter(AdapterBase):
         :rtype: list|dict
         """
         embedded = list()
-        for related_resource in relationship.construct_resource(self.resource.properties):
+        for related_resource, is_embedded in relationship:
             indv = dict(_links=self.generate_links_for_resource(related_resource))
             indv.update(related_resource.properties)
             embedded.append(indv)

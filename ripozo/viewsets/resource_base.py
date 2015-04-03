@@ -8,7 +8,7 @@ import six
 
 from six.moves.urllib import parse
 from ripozo.viewsets.constructor import ResourceMetaClass
-from ripozo.viewsets.relationships import Relationship, LinksMixin, ListRelationship
+from ripozo.viewsets.relationships import Relationship, ListRelationship
 from ripozo.utilities import classproperty, convert_to_underscore, join_url_parts
 
 import inspect
@@ -34,7 +34,7 @@ class ResourceBase(object):
     _postprocessors = None
     _links = None
 
-    def __init__(self, properties=None, errors=None, meta=None, status_code=200, query_args=None):
+    def __init__(self, properties=None, errors=None, meta=None, status_code=200, query_args=None, embedded=False):
         """
         Initializes a response
 
@@ -52,6 +52,16 @@ class ResourceBase(object):
         self.meta = meta
         self.query_args = query_args or {}
         self._url = None
+        self._relationships = self._relationships or {}
+
+        relationships = {}
+        for field_name, relationship in six.iteritems(self._relationships):
+            relationship_list = []
+            for related_resource in relationship.construct_resource(self.properties):
+                relationship_list.append((related_resource, relationship.embedded,))
+            self.properties = relationship.remove_child_resource_properties(self.properties)
+            relationships[field_name] = relationship_list
+        self.relationships = relationships
 
     @property
     def has_error(self):
@@ -78,8 +88,9 @@ class ResourceBase(object):
         # TODO test
         links = self.meta.get('links', {})
         for name, value in six.iteritems(links):
-            if name in self._links:
-                yield self._links[name]
+            existing_links = self._links or {}
+            if name in existing_links:
+                yield existing_links
             elif isinstance(value, list):
                 yield ListRelationship(name, relation=self.__class__.__name__)
             else:
@@ -169,10 +180,6 @@ class ResourceBase(object):
     @classproperty
     def preprocessors(cls):
         return cls._preprocessors or []
-
-    @classproperty
-    def relationships(cls):
-        return cls._relationships or {}
 
     @classproperty
     def resource_name(cls):

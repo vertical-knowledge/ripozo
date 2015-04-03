@@ -48,13 +48,12 @@ class BoringJSONAdapter(AdapterBase):
         parent_properties = self.resource.properties.copy()
         for field_name, relationship in six.iteritems(self.resource.relationships):
             response[field_name] = self.generate_relationship(relationship)
-            parent_properties = relationship.remove_child_resource_properties(parent_properties)
         response.update(parent_properties)
         return json.dumps({self.resource.resource_name: response})
 
     def generate_relationship(self, relationship):
         embedded = list()
-        for related_resource in relationship.construct_resource(self.resource.properties):
+        for related_resource, is_embedded in relationship:
             embedded.append(related_resource.properties)
         if not isinstance(relationship, ListRelationship):
             return embedded[0]

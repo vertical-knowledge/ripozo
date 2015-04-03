@@ -259,3 +259,16 @@ class TestResourceBase(TestBase, unittest.TestCase):
         self.assertTrue(r.has_error)
         r = T1(status_code=400)
         self.assertTrue(r.has_error)
+
+    def test_links_property(self):
+        """
+        Tests that the links property appropriately creates link relationships.
+        """
+        class T1(ResourceBase):
+            _resource_name = 'resource'
+            _pks = ['id']
+
+        meta = dict(links=dict(link=dict(id='a')))
+        resource = T1(meta=meta)
+        link = resource.links.next()
+
