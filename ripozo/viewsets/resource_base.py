@@ -63,6 +63,21 @@ class ResourceBase(object):
             relationships[field_name] = relationship_list
         self.relationships = relationships
 
+        links = []
+        meta_links = self.meta.get('links', {}).copy()
+        for name, value in six.iteritems(self.meta.get('links', {})):
+            existing_links = self._links or {}
+            if name in existing_links:
+                link = existing_links[name]
+            elif isinstance(value, list):
+                link = ListRelationship(name, relation=self.__class__.__name__)
+            else:
+                link = Relationship(name=name, relation=self.__class__.__name__)
+            query_args = meta_links.get(link.name, {}).pop('query_args', {})
+            for res in link.construct_resource(meta_links, query_args=query_args):
+                links.append((link.name, res,))
+        self.links = links
+
     @property
     def has_error(self):
         return len(self.errors) > 0 or self.status_code >= 400
@@ -74,27 +89,6 @@ class ResourceBase(object):
             if pk not in self.properties:
                 return False
         return True
-
-    @property
-    def links(self):
-        """
-        Takes the ``.meta['links']`` attribute and
-        constructs links from all of them. Returns a
-        generator for iterating through the links
-
-        :return:
-        :rtype:
-        """
-        # TODO test
-        links = self.meta.get('links', {})
-        for name, value in six.iteritems(links):
-            existing_links = self._links or {}
-            if name in existing_links:
-                yield existing_links
-            elif isinstance(value, list):
-                yield ListRelationship(name, relation=self.__class__.__name__)
-            else:
-                yield Relationship(name=name, relation=self.__class__.__name__)
 
     @property
     def url(self):

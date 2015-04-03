@@ -270,5 +270,3 @@ class TestResourceBase(TestBase, unittest.TestCase):
 
         meta = dict(links=dict(link=dict(id='a')))
         resource = T1(meta=meta)
-        link = resource.links.next()
-

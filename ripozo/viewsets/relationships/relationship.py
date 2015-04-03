@@ -59,7 +59,7 @@ class Relationship(object):
         """
         return self._resource_meta_class.registered_names_map[self._relation]
 
-    def construct_resource(self, properties):
+    def construct_resource(self, properties, query_args=None):
         """
         Takes the properties from the parent and
         and maps them to the named properties for the
@@ -78,7 +78,7 @@ class Relationship(object):
                 return
             else:
                 raise
-        yield self.relation(properties=related_properties)
+        yield self.relation(properties=related_properties, query_args=query_args)
 
     def remove_child_resource_properties(self, properties):
         """

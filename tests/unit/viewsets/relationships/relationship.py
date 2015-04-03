@@ -60,7 +60,7 @@ class TestRelationship(TestBase, unittest.TestCase):
             self.assertIsInstance(rsrc, mock.MagicMock)
         self.assertIsInstance(resource, types.GeneratorType)
         self.assertEqual(mck.call_count, 1)
-        mck.assert_called_with(properties=dict(child='value'))
+        mck.assert_called_with(query_args=None, properties=dict(child='value'))
 
         r.required = False
         resource = r.construct_resource({})

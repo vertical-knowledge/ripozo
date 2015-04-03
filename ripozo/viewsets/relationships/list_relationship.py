@@ -24,7 +24,7 @@ class ListRelationship(Relationship):
         super(ListRelationship, self).__init__(relation=relation, embedded=embedded)
         self.list_name = list_name
 
-    def construct_resource(self, properties):
+    def construct_resource(self, properties, query_args=None):
         """
         Takes a list of properties and returns a generator that
         yields Resource instances.  These related ResourceBase subclass
@@ -42,7 +42,7 @@ class ListRelationship(Relationship):
         objects = properties.get(self.list_name, [])
         objects = objects or []
         for obj in objects:
-            yield self.relation(properties=obj)
+            yield self.relation(properties=obj, query_args=query_args)
 
     def remove_child_resource_properties(self, properties):
         """
