@@ -7,6 +7,7 @@ from ripozo.decorators import apimethod, translate
 from ripozo.viewsets.resource_base import ResourceBase
 
 import logging
+import six
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +22,8 @@ class Create(ResourceBase):
     def create(cls, request, *args, **kwargs):
         logger.debug('Creating a resource using manager {0}'.format(cls._manager))
         props = cls.manager.create(request.body_args)
-        return cls(properties=props)
+        meta = dict(links=dict(created=props))
+        return cls(meta=meta)
 
 
 class RetrieveList(ResourceBase):

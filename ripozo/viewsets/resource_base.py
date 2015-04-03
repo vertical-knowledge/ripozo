@@ -32,8 +32,9 @@ class ResourceBase(object):
     _resource_name = None
     _preprocessors = None
     _postprocessors = None
+    _links = None
 
-    def __init__(self, properties=None, errors=None, meta=None, status_code=200):
+    def __init__(self, properties=None, errors=None, meta=None, status_code=200, query_args=None):
         """
         Initializes a response
 
@@ -49,6 +50,7 @@ class ResourceBase(object):
         self.status_code = status_code
         self.errors = errors
         self.meta = meta
+        self.query_args = query_args or {}
         self._url = None
 
     @property
@@ -59,7 +61,7 @@ class ResourceBase(object):
     def has_all_pks(self):
         # TODO doc and test
         for pk in self.pks:
-            if not pk in self.properties:
+            if pk not in self.properties:
                 return False
         return True
 
@@ -76,11 +78,12 @@ class ResourceBase(object):
         # TODO test
         links = self.meta.get('links', {})
         for name, value in six.iteritems(links):
-            if isinstance(value, list):
-                relationship = ListRelationship(name, relation=self.__name__)
+            if name in self._links:
+                yield self._links[name]
+            elif isinstance(value, list):
+                yield ListRelationship(name, relation=self.__class__.__name__)
             else:
-                relationship = Relationship(name=name, relation=self.__name__)
-            yield LinksMixin(name, relationship)
+                yield Relationship(name=name, relation=self.__class__.__name__)
 
     @property
     def url(self):
@@ -92,7 +95,11 @@ class ResourceBase(object):
         :rtype: unicode
         """
         if not self._url:
-            self._url = create_url(self.base_url, **self.item_pks)
+            url = create_url(self.base_url, **self.item_pks)
+            query_string = '&'.join('{0}={1}'.format(x, y) for x, y in six.iteritems(self.query_args))
+            if query_string:
+                url = '{0}?{1}'.format(url, query_string)
+            self._url = url
         return self._url
 
     @property
