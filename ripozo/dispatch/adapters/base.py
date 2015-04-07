@@ -95,4 +95,9 @@ class AdapterBase(object):
 
     @property
     def status_code(self):
-        return self.resource.status_code
+        """
+        :return: Returns the status code of the resource if
+            it is available. If it is not it assumes a 200.
+        :rtype: int
+        """
+        return self.resource.status_code or 200

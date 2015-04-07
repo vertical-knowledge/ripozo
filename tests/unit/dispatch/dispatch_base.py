@@ -9,6 +9,7 @@ from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
 from ripozo_tests.python2base import TestBase
 from ripozo_tests.helpers.dispatcher import FakeDispatcher
 
+import mock
 import unittest
 
 
@@ -72,3 +73,26 @@ class TestDispatchBase(TestBase, unittest.TestCase):
             pass
 
         self.assertRaises(AdapterFormatAlreadyRegisteredException, self.dispatcher.register_adapters, TempAdapter)
+
+    @mock.patch.object(FakeDispatcher, 'register_route')
+    def test_register_class_routes(self, mck):
+        """
+        Tests whether the ``AdapterBase().register_class_routes`` method
+        properly call the ``AdapterBase().register_route`` method
+        """
+        self.dispatcher.register_class_routes(self.mockKlass)
+        self.assertEqual(mck.call_count, 3)
+
+    @mock.patch.object(FakeDispatcher, 'register_route')
+    def test_register_mutiple_resource_classes(self, mck):
+        mockKlass = Mock()
+        mockKlass.endpoint_dictionary = Mock(return_value=dict(
+            first=[dict(route='/2/first', methods=['GET'])],
+            second=[
+                dict(route='/2/second', methods=['GET'], other='something', andanother='skdfmsdkf'),
+            ]
+        ))
+        mockKlass.__name__ = 'mockKlass2'
+        self.dispatcher.register_resources(mockKlass, self.mockKlass)
+
+        self.assertEqual(mck.call_count, 5)
