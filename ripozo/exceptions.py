@@ -11,7 +11,7 @@ class RestException(Exception):
     The base exception for any of the package
     specific exceptions
     """
-    def __init__(self, message, status_code=500, *args, **kwargs):
+    def __init__(self, message=None, status_code=500, *args, **kwargs):
         super(RestException, self).__init__(message, *args, **kwargs)
         self.status_code = status_code
 
