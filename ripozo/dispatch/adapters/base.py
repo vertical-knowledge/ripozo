@@ -91,7 +91,7 @@ class AdapterBase(object):
         """
         # TODO test
         status_code = getattr(exc, 'status_code', 500)
-        return json.dumps(dict(status=status_code, message=exc.msg)), cls.formats[0], status_code
+        return json.dumps(dict(status=status_code, message=exc.message)), cls.formats[0], status_code
 
     @property
     def status_code(self):

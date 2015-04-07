@@ -11,8 +11,8 @@ class RestException(Exception):
     The base exception for any of the package
     specific exceptions
     """
-    def __init__(self, status_code=500, *args, **kwargs):
-        super(RestException, self).__init__(*args, **kwargs)
+    def __init__(self, message, status_code=500, *args, **kwargs):
+        super(RestException, self).__init__(message, *args, **kwargs)
         self.status_code = status_code
 
 
@@ -48,8 +48,8 @@ class NotFoundException(ManagerException):
     This exception is raised when the manager can't
     find a model that was requested.
     """
-    def __init__(self, status_code=404, *args, **kwargs):
-        super(ManagerException, self).__init__(status_code=status_code, *args, **kwargs)
+    def __init__(self, message, status_code=404, *args, **kwargs):
+        super(ManagerException, self).__init__(message, status_code=status_code, *args, **kwargs)
 
 
 class FieldException(RestException, ValueError):
@@ -57,8 +57,8 @@ class FieldException(RestException, ValueError):
     An exception specifically for Field errors.  Specifically,
     when validation or casting fail.
     """
-    def __init__(self, status_code=400, *args, **kwargs):
-        super(FieldException, self).__init__(status_code=status_code, *args, **kwargs)
+    def __init__(self, message, status_code=400, *args, **kwargs):
+        super(FieldException, self).__init__(message, status_code=status_code, *args, **kwargs)
 
 
 class ValidationException(FieldException):

@@ -4,7 +4,7 @@ CHANGELOG
 0.1.22 (unreleased)
 ===================
 
-- Nothing changed yet.
+- Fixed error with formatting exceptions
 
 
 0.1.21 (2015-04-07)

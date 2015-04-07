@@ -23,7 +23,7 @@ class Create(ResourceBase):
         logger.debug('Creating a resource using manager {0}'.format(cls._manager))
         props = cls.manager.create(request.body_args)
         meta = dict(links=dict(created=props))
-        return cls(meta=meta)
+        return cls(meta=meta, status_code=201)
 
 
 class RetrieveList(ResourceBase):
@@ -33,7 +33,7 @@ class RetrieveList(ResourceBase):
     def retrieve_list(cls, request, *args, **kwargs):
         logger.debug('Retrieving list of resources using manager {0}'.format(cls._manager))
         props, meta = cls.manager.retrieve_list({})
-        return cls(properties={cls.resource_name: props}, meta=meta)
+        return cls(properties={cls.resource_name: props}, meta=meta, status_code=200)
 
 
 class Retrieve(ResourceBase):
@@ -44,7 +44,7 @@ class Retrieve(ResourceBase):
     def retrieve(cls, request, *args, **kwargs):
         logger.debug('Retrieving a resource using the manager {0}'.format(cls._manager))
         props = cls.manager.retrieve(request.url_params)
-        return cls(properties=props)
+        return cls(properties=props, status_code=200)
 
 
 class Update(ResourceBase):
@@ -55,7 +55,7 @@ class Update(ResourceBase):
     def update(cls, request, *args, **kwargs):
         logger.debug('Updating a resource using the manager {0}'.format(cls._manager))
         props = cls.manager.update(request.url_params, request.body_args)
-        return cls(properties=props)
+        return cls(properties=props, status_code=200)
 
 
 class Delete(ResourceBase):
@@ -66,7 +66,7 @@ class Delete(ResourceBase):
     def delete(cls, request, *args, **kwargs):
         logger.debug('Deleting the resource using manager {0}'.format(cls._manager))
         props = cls.manager.delete(request.url_params)
-        return cls(properties=props)
+        return cls(properties=props, status_code=204)
 
 
 class RetrieveUpdate(Retrieve, Update):
