@@ -174,8 +174,21 @@ class DispatcherBase(object):
         """
         logger.info('Dispatching request to endpoint function: {0}'.format(endpoint_func))
         result = endpoint_func(*args, **kwargs)
-        adapter_class = self.adapter_formats.get(format_type, self.default_adapter)
+        adapter_class = self.get_adapter_for_type(format_type)
         logger.info('Using adapter {0} to format response for format'
                     ' type {1}'.format(adapter_class, format_type))
         adapter = adapter_class(result, base_url=self.base_url)
         return adapter
+
+    def get_adapter_for_type(self, format_type):
+        """
+        Gets the appropriate adapter class for the specified format
+        type.  For example, if the format_type was siren it would
+        return the SirenAdapter.  Returns the default adapter
+        If it cannot not find an adapter for the format_type.
+
+        :param unicode format_type:
+        :return:
+        :rtype: type
+        """
+        return self.adapter_formats.get(format_type, self.default_adapter)

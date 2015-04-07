@@ -6,6 +6,7 @@ CHANGELOG
 
 - Added links
 - Added _list_fields attribute to BaseManager for more efficient querying when necessary
+- Moved getting the adapter class based on the format type in the dispatcher to its own method.
 
 
 0.1.20 (2015-03-24)
