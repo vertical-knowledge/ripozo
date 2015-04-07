@@ -36,12 +36,6 @@ class TestDispatchBase(TestBase, unittest.TestCase):
     def tearDown(self):
         self.dispatcher = None
 
-    def test_register_class_routes(self):
-        # TODO fix this test
-        pass
-        # self.dispatcher.register_class_routes(self.mockKlass)
-        # self.assertDictEqual(self.mockKlass.endpoint_dictionary(), self.dispatcher.routes)
-
     def test_dispatch(self):
         endpoint_func = MagicMock()
         self.assertRaises(TypeError, self.dispatcher.dispatch, endpoint_func, 'fake')

@@ -61,3 +61,33 @@ class TestManager(TestManagerMixin, TestBase, unittest.TestCase):
         self.assertEqual(mck.call_count, len(fields))
         args = list((x[0][0] for x in mck.call_args_list))
         self.assertListEqual(args, fields)
+
+    def test_list_fields_property(self):
+        """
+        Tests whether the list_fields property appropriately
+        gets the list_fields in all circumstances
+        """
+        fields = [1, 2, 3]
+        list_fields = [4, 5]
+
+        class M1(InMemoryManager):
+            _fields = fields
+            _list_fields = list_fields
+
+        self.assertListEqual(list_fields, M1.list_fields)
+        self.assertListEqual(fields, M1.fields)
+        self.assertNotEqual(M1.list_fields, M1.fields)
+
+        class M2(InMemoryManager):
+            _fields = fields
+
+        self.assertListEqual(fields, M2.fields)
+        self.assertListEqual(fields, M2.list_fields)
+        self.assertListEqual(M2.fields, M2.list_fields)
+
+        class M3(InMemoryManager):
+            _fields = None
+            _list_fields = None
+
+        self.assertListEqual(M3.fields, [])
+        self.assertListEqual(M3.list_fields, [])

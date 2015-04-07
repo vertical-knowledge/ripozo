@@ -177,7 +177,7 @@ class BaseManager(object):
             set, otherwise, ``cls.fields``
         :rtype: list
         """
-        return cls._list_fields or cls._fields
+        return cls._list_fields or cls.fields
 
     @classproperty
     def field_validators(cls):
