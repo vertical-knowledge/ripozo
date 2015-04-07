@@ -91,12 +91,9 @@ class SirenAdapter(AdapterBase):
 
     def generate_links(self):
         links = [dict(rel=['self'], href=self.combine_base_url_with_resource_url(self.resource.url))]
-        for link in self.resource.links:
-            props = self.resource.meta.get('links', {}).copy()
-            query_args = props.get(link.name, {}).pop('query_args', {})
-            for res in link.construct_resource(props, query_args=query_args):
-                links.append(dict(rel=[link.name],
-                                  href=self.combine_base_url_with_resource_url(res.url)))
+        for link_name, link in self.resource.links:
+            links.append(dict(rel=[link_name],
+                              href=self.combine_base_url_with_resource_url(link.url)))
         return links
 
     def get_entities_and_remove_related_properties(self):

@@ -45,6 +45,7 @@ class BaseManager(object):
     paginate_by = 10000
     order_by = None
     _fields = None
+    _list_fields = None
     model = None
     arg_parser = None
     _field_validators = None
@@ -162,6 +163,21 @@ class BaseManager(object):
         or some equivalent.
         """
         return cls._fields or []
+
+    @classproperty
+    def list_fields(cls):
+        """
+        These are the fields that should be used for
+        retrieving a list of models.  This is often necessary
+        for performance reasons when you only want the ids to
+        create links to the individual resource and not the full
+        resource
+
+        :return: The list fields, if the ``cls._list_fields`` attribute is
+            set, otherwise, ``cls.fields``
+        :rtype: list
+        """
+        return cls._list_fields or cls._fields
 
     @classproperty
     def field_validators(cls):

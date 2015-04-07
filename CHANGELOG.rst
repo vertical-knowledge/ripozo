@@ -5,6 +5,7 @@ CHANGELOG
 ===================
 
 - Added links
+- Added _list_fields attribute to BaseManager for more efficient querying when necessary
 
 
 0.1.20 (2015-03-24)
