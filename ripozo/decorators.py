@@ -63,6 +63,14 @@ class apimethod(object):
         The actual decorator that will be called and returns the method
         that is a ripozo route.
 
+        In addition to setting some properties on the function itself
+        (i.e. ``__rest_route__`` and ``routes``), It also wraps the actual
+        function calling both the preprocessors and postprocessors.
+
+        preprocessors get at least the cls, name of the function, request as arguments
+
+        postprocessors get the cls, function name, request and resource as arguments
+
         :param classmethod f:
         :return: The wrapped classmethod that is an action
             that can be performed on the resource.  For example,
@@ -72,7 +80,6 @@ class apimethod(object):
         @wraps(f)
         def wrapped(cls, request, *args, **kwargs):
             for proc in cls.preprocessors:
-                # TODO update docs for preprocessors and post processors
                 proc(cls, f.__name__, request, *args, **kwargs)
             resource = f(cls, request, *args, **kwargs)
             for proc in cls.postprocessors:
@@ -102,8 +109,16 @@ class translate(object):
 
         :param list fields: A list of FieldBase instances (or subclasses
             of FieldBase).
+        :param bool manager_field_validators: A flag that indicates the
+            field_validators property on the BaseManager subclass that
+            is registered on the ResourceBase subclass that this method
+            is a part of.
+        :param bool skip_required: If this flag is set to True,
+            then required fields will be considered optional.
+        :param bool validate: Indicates whether the validations should
+            be run.  If it is False, it will only translate the fields.
         """
-        # TODO test and update docs for manager_field_validators
+        # TODO test manager_field_validators
         self.original_fields = fields or []
         self.manager_field_validators = manager_field_validators
         self.skip_required = skip_required
