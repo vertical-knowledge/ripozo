@@ -27,12 +27,15 @@ class SirenAdapter(AdapterBase):
     def formatted_body(self):
         """
         Gets the formatted body of the response in unicode form.
+        If ``self.status_code == 204`` then this will
+        return an empty string.
 
         :return: The siren formatted response body
         :rtype: unicode
         """
-        if self.resource.status_code == 204:
-            return ''  # TODO write test to prevent regressions here
+        # 204's are supposed to be empty responses
+        if self.status_code == 204:
+            return ''
 
         links = self.generate_links()
 

@@ -114,7 +114,6 @@ class DispatcherBase(object):
         :param list classes: A list of ResourceBase subclasses that are being
             registered with this dispatcher.
         """
-        # TODO test this
         for klass in classes:
             self.register_class_routes(klass)
 

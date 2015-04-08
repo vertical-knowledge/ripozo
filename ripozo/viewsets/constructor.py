@@ -13,15 +13,29 @@ import six
 logger = logging.getLogger(__name__)
 
 
-# TODO documentation on class and __new__
 class ResourceMetaClass(type):
     """
-    :param dict registered_resource_classes: TODO
+    A metaclass that is used for registering ResourceBase
+    and its subclasses
+
+    :param dict registered_resource_classes: A dictionary mapping
+        the classes instantiated by this meta class to their
+        base_urls
+    :param dict registered_names_map:  A dictionary mapping the names
+        of the classes to the actual instances of this meta class
     """
     registered_resource_classes = {}
     registered_names_map = {}
 
     def __new__(mcs, name, bases, attrs):
+        """
+        The instantiator for the metaclass.  This
+        is responsible for creating the actual class
+        itself.
+
+        :return: The class
+        :rtype: type
+        """
         logger.debug('ResourceMetaClass "{0}" class being created'.format(name))
         klass = super(ResourceMetaClass, mcs).__new__(mcs, name, bases, attrs)
         if attrs.get('__abstract__', False) is True:  # Don't register endpoints of abstract classes
