@@ -10,12 +10,14 @@ from ripozo.viewsets.resource_base import ResourceBase
 from ripozo_tests.python2base import TestBase
 from ripozo_tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
 
+from tests.unit.dispatch.adapters.base import TestAdapterBase
+
 import json
 import six
 import unittest
 
 
-class TestSirenAdapter(TestBase, unittest.TestCase):
+class TestSirenAdapter(TestAdapterBase):
     """
     Tests whether the SirenAdapter appropriately adds
     creates a resource
@@ -99,3 +101,18 @@ class TestSirenAdapter(TestBase, unittest.TestCase):
         res = T1(properties=dict(x='something'), status_code=204)
         adapter = SirenAdapter(res)
         self.assertEqual(adapter.formatted_body, '')
+
+    def test_links_single(self):
+        """
+        Tests getting the links attribute for
+        """
+        pass
+
+    def test_links_list(self):
+        pass
+
+    def test_relationship_single(self):
+        pass
+
+    def test_relationship_list(self):
+        pass
