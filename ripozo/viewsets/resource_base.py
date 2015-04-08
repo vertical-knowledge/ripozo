@@ -22,9 +22,36 @@ url_part_finder = re.compile(r'<([^>]+)>')
 
 @six.add_metaclass(ResourceMetaClass)
 class ResourceBase(object):
-    # TODO class documentation
+    """
+    The core of ripozo.
+
+    :param bool __abstract__: abstract classes are not registered
+        by the ResourceMetaClass
+    :param dict _relationships: The relationships that will be
+        constructed by instances
+    :param list _pks: The pks for this resource.  These, along
+        with the ``namespace`` and ``resource_name`` are combined
+        to generate the url
+    :param type _manager: The BaseManager subclass that is responsible
+        for persistence within the applictation.  I.E. the AlchemyManager
+        from ripozo-sqlalchemy
+    :param unicode _namespace: The namespace of this resource.  This is
+        prepended to the resource_name and pks to create the url
+    :param unicode _resource_name: The name of the resource.
+    :param list _preprocessors: A list of functions that will be run before
+        any apimethod is called.
+    :param list _postprocessors: A list of functions that will be run after
+        any apimethod from this class is called.
+    :param dict _links: Works similarly to relationships.  The primary
+        difference between this and links is that links will assume the
+        resource is the same as this class if a relation is not specified.
+        Additionally, links are supposed to be meta information effectively.
+        They are not necessarily about this specific resource.  For example,
+        next and previous links for a list resource or created links when
+        creating a new resource on a list resource.
+    """
+
     __abstract__ = True
-    _endpoint_dictionary = None
     _relationships = None
     _pks = None
     _manager = None
@@ -84,7 +111,13 @@ class ResourceBase(object):
 
     @property
     def has_all_pks(self):
-        # TODO doc and test
+        """
+        :return: Indicates whether an instance of this class
+            has all of the items in the pks list as a key in
+            the ``self.properties`` attribute.
+        :rtype: bool
+        """
+        # TODO test
         for pk in self.pks:
             if pk not in self.properties:
                 return False
@@ -188,6 +221,7 @@ class ResourceBase(object):
         if cls._resource_name:
             return cls._resource_name
         return convert_to_underscore(cls.__name__)
+
 
 def _generate_endpoint_dict(cls):
     # TODO test and doc string
