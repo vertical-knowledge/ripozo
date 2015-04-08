@@ -53,12 +53,10 @@ class BaseField(object):
         :param object obj: The input from the request
             that is being translated
         :param bool skip_required: This is being ignored for now
-        :param bool _validate:
         :return: The object in the appropriate form
         :rtype: object
         :raises: ripozo.exceptions.TranslationException
         """
-        # TODO update docstring
         if isinstance(obj, (list, set)):
             if len(obj) > 0:
                 return obj[0]
@@ -157,13 +155,17 @@ def translate_fields(url_params, query_args, body_args, fields=None, skip_requir
     :param list fields: The list of BaseField instances that are supposed
         to be validated.  Only items in this list will be translated
         and validated
+    :param bool skip_required: A flag that indicates the required fields
+        are not required.  This is helpful for updates where fields are not
+        usually required.
+    :param bool validate: A flag that indicates whether the field validations
+        should be run.  If not, it will just translate the fields.
     :return: Returns the translated url_params, query_args and body_args
     :rtype: tuple
     :raises: RestException
     :raises: ValidationException
     :raises: TranslationException
     """
-    # TODO update docstring
     updated_url_params = url_params.copy()
     updated_query_args = query_args.copy()
     updated_body_args = body_args.copy()

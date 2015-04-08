@@ -154,12 +154,21 @@ class DateTimeField(BaseField):
 
     def __init__(self, name, required=False, maximum=None, minimum=None, arg_type=BODY_ARGS,
                  valid_formats=None, error_message=None):
-        # TODO docs
+        """
+        :param unicode name: The name of the field
+        :param bool required: Whether the field is required
+        :param datetime maximum: The field must be less than the maximum
+        :param datetime minimum: The input must be greater than this
+        :param unicode arg_type: Where the input should be put
+        :param list valid_formats: A list of datetime formats that are valid
+            for translation. By default it accepts %Y-%m-%dT%H:%M:%S.%fZ
+        :param unicode error_message: The error message to be returned if the
+            validation or translation fails.
+        """
         super(DateTimeField, self).__init__(name, required=required, maximum=maximum,
                                             minimum=minimum, arg_type=arg_type,
                                             error_message=error_message)
-        if valid_formats is not None:
-            self.valid_formats = valid_formats
+        self.valid_formats = valid_formats or self.valid_formats
 
     def _translate(self, obj, skip_required=False):
         """
