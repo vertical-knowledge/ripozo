@@ -67,12 +67,14 @@ class AdapterBase(object):
 
     def combine_base_url_with_resource_url(self, resource_url):
         """
-        Does exactly what it says it does
-        :param unicode resource_url:
-        :return:
+        Does exactly what it says it does.  Uses ``join_url_parts``
+        with the ``self.base_url`` and ``resource_url`` argument
+        together.
+
+        :param unicode resource_url: The part to join with the ``self.base_url``
+        :return: The joined url
         :rtype: unicode
         """
-        # TODO this needs documentation and it's rather naive in implementation
         return join_url_parts(self.base_url, resource_url)
 
     @classmethod

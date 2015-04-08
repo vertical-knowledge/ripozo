@@ -39,11 +39,21 @@ class BoringJSONAdapter(AdapterBase):
 
     @property
     def extra_headers(self):
-        # TODO docs
+        """
+        :return: A dictionary of headers that should be included
+            in the response
+        :rtype: dict
+        """
         return {'Content-Type': content_type}
 
     @property
     def formatted_body(self):
+        """
+        :return: The formatted body that should be returned.
+            It's just a ``json.dumps`` of the properties and
+            relationships
+        :rtype: unicode
+        """
         response = dict()
         parent_properties = self.resource.properties.copy()
         for field_name, relationship in six.iteritems(self.resource.relationships):
@@ -52,6 +62,13 @@ class BoringJSONAdapter(AdapterBase):
         return json.dumps({self.resource.resource_name: response})
 
     def generate_relationship(self, relationship):
+        """
+        :param ResourceBase relationship: The related resource that will be
+            used to generate a json response
+        :return: either a list of resources if it is a ``ListRelationship``
+            or a dictionary if it is a ``Relationship``
+        :rtype: list|dict
+        """
         embedded = list()
         for related_resource, is_embedded in relationship:
             embedded.append(related_resource.properties)

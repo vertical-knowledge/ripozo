@@ -5,6 +5,8 @@ from __future__ import unicode_literals
 
 from ripozo.dispatch.adapters.siren import SirenAdapter
 from ripozo.viewsets.request import RequestContainer
+from ripozo.viewsets.resource_base import ResourceBase
+
 from ripozo_tests.python2base import TestBase
 from ripozo_tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
 
@@ -85,3 +87,15 @@ class TestSirenAdapter(TestBase, unittest.TestCase):
             self.assertIsInstance(l['rel'], list)
             self.assertIn('href', l)
             self.assertIsInstance(l['href'], six.text_type)
+
+    def test_empty_response(self):
+        """
+        Tests whether an empty body is returned when the status_code
+        is 204
+        """
+        class T1(ResourceBase):
+            _resource_name = 'blah'
+
+        res = T1(properties=dict(x='something'), status_code=204)
+        adapter = SirenAdapter(res)
+        self.assertEqual(adapter.formatted_body, '')
