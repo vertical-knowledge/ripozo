@@ -1,4 +1,4 @@
-Tutorial Part 3: Managers
+Tutorial Part 5: Managers
 =========================
 
 Managers are the persistence abstraction layer in ripozo.

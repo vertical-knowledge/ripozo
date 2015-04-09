@@ -1,5 +1,5 @@
-Relationships and Links
-=======================
+Tutorial Part 4: Relationships and Links
+========================================
 
 Any good api is going to need references to
 on resources to other references.  For example,
