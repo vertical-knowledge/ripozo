@@ -18,10 +18,6 @@ ripozo
     :target: https://crate.io/packages/ripozo/
     :alt: Number of PyPI downloads
 
-.. image:: https://pypip.in/wheel/ripozo/badge.svg?style=flat
-    :target: https://pypi.python.org/pypi/ripozo/
-    :alt: Wheel Status
-
 .. image:: https://pypip.in/py_versions/ripozo/badge.svg?style=flat
     :target: https://pypi.python.org/pypi/ripozo/
 
@@ -32,6 +28,8 @@ web browsers, multiple native applications, and maybe even being exposed
 as an API to other developers.  Ripozo is designed to solve this problem.
 It allows you to easily build Hypermedia/HATEOAS/REST APIs quickly and 
 efficiently.
+
+`full ripozo documentation <https://ripozo.readthedocs.org/>`_
 
 **NOTE:**
 ripozo is under rapid development until version 1.0.0.  It is not considered
