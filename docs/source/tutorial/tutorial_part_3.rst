@@ -1,22 +1,73 @@
-Tutorial Part 3: Managers
-=========================
+Relationships and Links
+=======================
 
-Managers are the persistence abstraction layer in ripozo.
-They are responsible for all session to session persistence in
-a ripozo based application.  Typically, we can assume that the persistence
-layer is a database.  However, the actual method of persistence is
-irrelevant to ripozo.  There are ripozo extensions that are specifically
-for certain database types.  At the most basic level, all ripozo ManagerBase
-subclasses must implement basic CRUD+L.  That is they must implement a create,
-retrieve, update, delete an retrieve_list methods.
+Any good api is going to need references to
+on resources to other references.  For example,
+a parent and child resource would likely need
+hypermedia references to the other.  The ``_relationships``
+and ``_links`` class attributes on the ``ResourceBase`` subclass.
+These attributes inform the resource instances how to construct
+related and linked resources.
 
-Managers in ripozo are not required and are more intended as a way to create
-a common interface for database interactions.  Additionally, they are intended,
-to abstract away the database since individual database interactions should not
-be on the resource classes.
+Example
+"""""""
 
-Creating a manager extensions
------------------------------
+.. code-block:: python
 
-See :doc:`../extending/managers.rst` for more details on extending ripozo
+    from ripozo.decorators import apimethod
+    from ripozo.viewsets.relationships import Relationship
+    from ripozo.viewsets.resource_base import ResourceBase
 
+
+    class MyResource(ResourceBase):
+        _relationships = {
+            'related_resource': Relationship(name='related', relation='RelatedResource')
+        }
+
+        @apimethod(methods=['GET'])
+        def retrieve(cls, request, *args, **kwargs):
+            properties = {
+                'name': 'Yay!',
+                'related': {
+                    'id': 1
+                }
+            }
+            return cls(properties=properties)
+
+
+    class RelatedResource(ResourceBase):
+        pks = ['id']
+
+If we were to call the retrieve method now and inspect the
+properties on the returned instance we would see that it no longer
+contained the 'related' key or it's corresponding value.
+
+.. code-block:: python
+
+    >>> res = MyResource.retrieve(fake_request)
+    >>> res.properties
+    {'name': 'Yay!'}
+
+Instead the relationship 'related_resource' popped the
+value with the key 'related' from the properties dict
+and passed the properties to the instantiatior for the RelatedResource.
+The RelatedResource now exists in the ``res.relationships`` list.
+Adapters can properly retrieve urls using the resource object and
+format them appropriately.
+
+Links vs Relationships
+----------------------
+
+The links and the relationships attributes both use the ``Relationship``
+and ``ListRelationship``.  In fact in many aspects they are extraordinarily
+similiar.  They both construct resources.  The main difference is in how they
+are constructed (links use the ``resource.meta['links']`` dictionary and
+relationships directly access the properties) and their fundamental meaning.
+A relationship is effectively a part of the resource itself.  For example,
+a child and parent relationship.  The child is directly part of the parent.
+A link would be closer to a sibling.  They may be a 'next' link which points
+to the next sibling from a child resource.  However, there is no next attribute
+directly on the child.  A common use case for links is describing next and previous
+links on paginated lists.  The resource is the list and the next and previous is
+not actually an attribute of the resource.  Instead it is meta information about
+the resource.

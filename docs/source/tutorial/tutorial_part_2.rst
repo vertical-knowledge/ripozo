@@ -1,47 +1,48 @@
-Tutorial Part 2: Dispatchers
-============================
 
-Dispatchers are responsible for translating incoming requests
-and dispatching them to the appropriate resources.  They then
-take the response from the ResourceBase subclass and uses to appropriate
-adapter to create a response.  Dispatchers are responsible for coupling ripozo
-with a web framework.  As such, the dispatcher is not fully implemented in
-ripozo.  Rather there is an abstract base class that must be implemented
-for the specific framework that is being used.
+.. _preprocessors and postprocessors:
 
-Example
--------
+Preprocessors and Postprocessors
+================================
 
-When using a ripozo implementation for your preferred framework, registering
-the resource classes is very easy.
+Sometimes, you want to run a certain piece of code before/after every
+request to a resource.  For example, maybe the resource is only accessible
+to authenticated users. This can be done easily with preprocessors and postprocessors.
+The preprocessors and postprocessors lists are the functions that are called before
+and after the ``apimethod`` decorated function runs.  They are run in the order in which
+they are described in the list.
 
 .. code-block:: python
 
-    # Import your resource classes
-    from my_resources import MyResource, MyOtherResource
+    def pre1(cls, request):
+        print('In pre1')
 
-    # Import the adapters that you want to use
-    from ripozo.dispatch.adapters import SirenAdapter, HalAdapter
+    def pre2(cls, request):
+        print('In pre2')
 
-    # Initialize your Dispatcher (this will be different for
-    # different web frameworks.  Please look at the specific documentation
-    # for that framework.
-    # For example, in flask-ripozo it would be
-    # dispatcher = FlaskDispatcher(app)
+    def post1(cls, request, resource):
+        print('In post1')
 
-    # register your adapters, the first adapter is the default adapter
-    dispatcher.register_adapters(SirenAdapter, HalAdapter)
+    class MyResource(ResourceClass):
+        _preprocessors = [pre1, pre2]
+        _postprocessors = [post1]
 
-    # Register your resource classes
-    dispatcher.register_resources(MyResource, MyOtherResource)
+        @apimethod(methods=['GET'])
+        def say_hello(cls, request):
+            print('In say_hello')
+            return cls(properties=dict(hello='world'))
 
-I wasn't lying, it's pretty basic.
+.. code-block:: python
 
-Implementing a Dispatcher
--------------------------
+    >>> MyResource.say_hello(None)
+    In pre1
+    In pre2
+    In say_hello
+    In post1
 
-If you're interested in building a dispatcher for your python web framework of
-choice please see the :doc:`../extending/dispatchers.rst` for more information
-on extending ripozo.
+These can be used to perform any sort of common functionality across
+all requests to this resource.  Preprocessors always get the class as
+the first argument and the request as the second.  Postprocessors get an
+additional resource argument as the third.  The resource object is the return
+value of the apimethod.
 
-:doc:`tutorial_part_3.rst`
+:doc:`tutorial_part_3`
