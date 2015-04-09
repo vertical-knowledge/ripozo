@@ -44,4 +44,4 @@ If you're interested in building a dispatcher for your python web framework of
 choice please see the :doc:`../extending/dispatchers.rst` for more information
 on extending ripozo.
 
-:doc:`tutorial_part_3.rst`
+:doc:`tutorial_part_5.rst`

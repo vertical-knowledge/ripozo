@@ -20,3 +20,4 @@ Creating a manager extensions
 
 See :doc:`../extending/managers.rst` for more details on extending ripozo
 
+:doc:`tutorial_part_6`
