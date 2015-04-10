@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-0.1.22 (unreleased)
+0.1.22 (2015-04-10)
 ===================
 
 - Fixed error with formatting exceptions
