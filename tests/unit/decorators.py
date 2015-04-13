@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.decorators import apimethod, translate
+from ripozo.viewsets.resource_base import ResourceBase
 
 from ripozo_tests.python2base import TestBase
 
@@ -79,4 +80,17 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
         x = request.translate.call_args_list
         self.assertListEqual(x[0][0][0], fields)
 
+    def test_wrapping_apimethod(self):
+        """
+        Tests wrapping an apimethod and calling it
+        """
+        mck = mock.MagicMock()
 
+        class MyFakeResource(ResourceBase):
+            @translate(fields=[1, 2])
+            @apimethod(methods=['GET'])
+            def fake(*args, **kwargs):
+                return mck
+
+        rsp = MyFakeResource.fake(mock.MagicMock())
+        pass

@@ -25,14 +25,19 @@ class _apiclassmethod(object):
             klass = type(obj)
 
         method = self.f
+
         @wraps(method)
         def newfunc(*args):
             if not isinstance(args[0], type):
                 return method(klass, *args)
             return method(*args)
         newfunc.__rest_route__ = True
-        newfunc.routes = getattr(self.f, 'routes', [])
+        newfunc.routes = getattr(method, 'routes', [])
+        # setattr(self, '__call__', newfunc)
         return newfunc
+
+    def __call__(self, cls, *args, **kwargs):
+        return self.__get__(None, klass=cls)(*args, **kwargs)
 
     @property
     def __name__(self):
@@ -77,6 +82,12 @@ class apimethod(object):
             any sort of CRUD action.
         :rtype: classmethod
         """
+        setattr(f, '__rest_route__', True)
+        routes = getattr(f, 'routes', [])
+        routes.append((self.route, self.endpoint, self.options))
+        setattr(f, 'routes', routes)
+
+        @_apiclassmethod
         @wraps(f)
         def wrapped(cls, request, *args, **kwargs):
             for proc in cls.preprocessors:
@@ -85,12 +96,7 @@ class apimethod(object):
             for proc in cls.postprocessors:
                 proc(cls, f.__name__, request, resource, *args, **kwargs)
             return resource
-
-        wrapped.__rest_route__ = True
-        wrapped.routes = getattr(f, 'routes', [])
-
-        wrapped.routes.append((self.route, self.endpoint, self.options))
-        return _apiclassmethod(wrapped)
+        return wrapped
 
 
 class translate(object):
@@ -137,6 +143,7 @@ class translate(object):
         :return: The wrapped function
         :rtype: function
         """
+        @_apiclassmethod
         @wraps(f)
         def action(cls, request, *args, **kwargs):
             # TODO This is so terrible.  I really need to fix this.
