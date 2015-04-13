@@ -4,7 +4,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from abc import ABCMeta, abstractmethod, abstractproperty
-from ripozo.utilities import classproperty
+
+from ripozo.decorators import classproperty
 
 import logging
 import six

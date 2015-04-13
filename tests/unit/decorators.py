@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.decorators import apimethod, translate, _apiclassmethod
+from ripozo.decorators import apimethod, translate, _apiclassmethod, classproperty
 from ripozo.viewsets.resource_base import ResourceBase
 
 from ripozo_tests.python2base import TestBase
@@ -147,3 +147,20 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
                 return cls
 
         self.assertEqual(MyClass().fake(), MyClass)
+
+    def test_class_property(self):
+        class Fake(object):
+            x = 'hi'
+
+            @classproperty
+            def hello(cls):
+                return cls.x
+
+        self.assertEqual(Fake.hello, 'hi')
+        Fake.x = 'another'
+        self.assertEqual(Fake.hello, 'another')
+
+        f = Fake()
+        self.assertEqual(f.hello, 'another')
+        self.assertEqual(getattr(f, 'hello'), 'another')
+        self.assertEqual(getattr(Fake, 'hello'), 'another')

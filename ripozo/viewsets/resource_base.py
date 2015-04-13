@@ -7,9 +7,10 @@ import re
 import six
 
 from six.moves.urllib import parse
+from ripozo.decorators import classproperty
 from ripozo.viewsets.constructor import ResourceMetaClass
 from ripozo.viewsets.relationships import Relationship, ListRelationship
-from ripozo.utilities import classproperty, convert_to_underscore, join_url_parts
+from ripozo.utilities import convert_to_underscore, join_url_parts
 
 import inspect
 import logging

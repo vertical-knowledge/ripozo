@@ -8,36 +8,6 @@ from functools import wraps
 import re
 
 
-class ClassPropertyDescriptor(object):
-    """
-    Straight up stolen from stack overflow
-    Implements class level properties
-    http://stackoverflow.com/questions/5189699/how-can-i-make-a-class-property-in-python
-    """
-
-    def __init__(self, fget, fset=None):
-        self.fget = fget
-        self.fset = fset
-
-    def __get__(self, obj, klass=None):
-        if klass is None:
-            klass = type(obj)
-        return self.fget.__get__(obj, klass)()
-
-def classproperty(func):
-    """
-    Using this decorator a class can have a decorator. Necessary for dynamically settings urls
-    on application/blueprint
-
-    :param func: The function to wrap
-    :type func: function
-    :rtype: ClassPropertyDescriptor
-    """
-    if not isinstance(func, (classmethod, staticmethod)):
-        func = classmethod(func)
-    return ClassPropertyDescriptor(func)
-
-
 _first_cap_re = re.compile('(.)([A-Z][a-z]+)')
 _all_cap_re = re.compile('([a-z0-9])([A-Z])')
 

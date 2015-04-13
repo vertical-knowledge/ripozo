@@ -3,8 +3,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.utilities import convert_to_underscore, serialize_fields,\
-    titlize_endpoint, join_url_parts, classproperty, picky_processor
+from ripozo.utilities import serialize_fields, titlize_endpoint, join_url_parts, \
+    picky_processor, convert_to_underscore
 
 from ripozo_tests.python2base import TestBase
 from ripozo_tests.bases.manager import generate_random_name
@@ -82,23 +82,6 @@ class UtilitiesTestCase(TestBase, unittest.TestCase):
 
         url = join_url_parts('/', '/')
         self.assertEqual('/', url)
-
-    def test_class_property(self):
-        class Fake(object):
-            x = 'hi'
-
-            @classproperty
-            def hello(cls):
-                return cls.x
-
-        self.assertEqual(Fake.hello, 'hi')
-        Fake.x = 'another'
-        self.assertEqual(Fake.hello, 'another')
-
-        f = Fake()
-        self.assertEqual(f.hello, 'another')
-        self.assertEqual(getattr(f, 'hello'), 'another')
-        self.assertEqual(getattr(Fake, 'hello'), 'another')
 
     def test_picky_processor(self):
         processor = mock.Mock()
