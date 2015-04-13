@@ -239,9 +239,21 @@ def _generate_endpoint_dict(cls):
 
 
 def _get_apimethods(cls):
+    """
+    A generator that yields tuples of the name and method of
+    all ``@apimethod`` decorated methods on the class.
+
+    :param type cls: The instance of a ResourceMetaClass
+        that you wish to retrieve the apimethod decorated methods
+        from.
+    :type cls:
+    :return: A generator for tuples of the name, method combo
+    :rtype: type.GeneratorType
+    """
     for name, obj in inspect.getmembers(cls):
         if getattr(obj, 'rest_route', False) or getattr(obj, '__rest_route__', False):
-            yield name, obj
+            # Need to use getattr so that __get__ is appropriately called.
+            yield name, getattr(cls, name)
 
 
 def create_url(base_url, **kwargs):

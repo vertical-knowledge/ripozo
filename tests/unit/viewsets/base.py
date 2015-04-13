@@ -3,20 +3,18 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import logging
-import six
-
 from ripozo.decorators import apimethod
 from ripozo.exceptions import BaseRestEndpointAlreadyExists
-from ripozo.viewsets.constants import status
 from ripozo.viewsets.constructor import ResourceMetaClass
-from ripozo.viewsets.resource_base import ResourceBase
+from ripozo.viewsets.resource_base import ResourceBase, _get_apimethods
 from ripozo_tests.helpers.inmemory_manager import InMemoryManager
 from ripozo_tests.python2base import TestBase
 
 import mock
+import logging
+import six
+import types
 import unittest
-
 
 logger = logging.getLogger(__name__)
 
@@ -270,3 +268,43 @@ class TestResourceBase(TestBase, unittest.TestCase):
 
         meta = dict(links=dict(link=dict(id='a')))
         resource = T1(meta=meta)
+
+    def test_get_apimethods(self):
+        """
+        Tests that the function _get_apimethods
+        appropriately gets apimethods and that they
+        are class methods not _apiclassmethod instances.
+        """
+        class MyResource(ResourceBase):
+            @apimethod(methods=['GET'])
+            @apimethod(methods=['POST'])
+            def fake1(cls):
+                pass
+
+            @apimethod(route='/hey', methods=['GET'])
+            def fake2(self):
+                pass
+
+        names = []
+        for name, clsmethod in _get_apimethods(MyResource):
+            names.append(name)
+            self.assertIsInstance(clsmethod, types.FunctionType)
+        self.assertIn('fake1', names)
+        self.assertIn('fake2', names)
+        self.assertEqual(len(names), 2)
+
+    def test_run_get_apimethods(self):
+        """
+        Tests whether the methods returned by _get_apimethods
+        can be run raw.
+        """
+        class MyResource(ResourceBase):
+            @apimethod(methods=['GET'])
+            def fake(cls, request, *args, **kwargs):
+                return cls, request
+
+        request = object()
+        for name, clsmethod in _get_apimethods(MyResource):
+            klass, response = clsmethod(request)
+            self.assertEqual(MyResource, klass)
+            self.assertEqual(id(request), id(response))

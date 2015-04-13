@@ -123,7 +123,8 @@ class DispatcherBase(object):
         implementation.  This is so that the actual actions on the
         resources can be dispatched to by the framework.
 
-        :param type klass: The class whose endpoints must be registered
+        :param ripozo.viewsets.resource_base.ResourceBase klass: The
+            class whose endpoints must be registered
         """
         for endpoint, routes in six.iteritems(klass.endpoint_dictionary()):
             endpoint = '{0}.{1}'.format(klass.__name__, endpoint)
