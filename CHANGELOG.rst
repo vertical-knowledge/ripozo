@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-0.1.23 (unreleased)
+0.1.23 (2015-04-13)
 ===================
 
 - Changed location of classproperty decorator from ``ripozo.utilities`` to ``ripozo.decorators``
