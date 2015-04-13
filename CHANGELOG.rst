@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-0.1.24 (unreleased)
+0.1.24 (2015-04-13)
 ===================
 
 - Nothing changed yet.
