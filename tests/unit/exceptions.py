@@ -32,7 +32,6 @@ class TestExceptions(TestBase, unittest.TestCase):
         for e in self.exceptions:
             exc = e(message='some message', status_code=102)
             self.assertEqual(str(exc), 'some message')
-            self.assertEqual(exc.message, 'some message')
             self.assertEqual(exc.status_code, 102)
             exc = e('message')
-            self.assertEqual(exc.message, 'message')
+            self.assertEqual(str(exc), 'message')
