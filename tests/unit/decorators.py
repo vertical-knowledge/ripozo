@@ -82,7 +82,11 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
 
     def test_wrapping_apimethod(self):
         """
-        Tests wrapping an apimethod and calling it
+        Tests wrapping an apimethod and calling it.
+
+        This is primarily due to the failure when a
+        descriptor is wrapped (i.e. like in the classmethod
+        decorator).
         """
         mck = mock.MagicMock()
 
@@ -93,4 +97,5 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
                 return mck
 
         rsp = MyFakeResource.fake(mock.MagicMock())
-        pass
+        self.assertEqual(rsp, mck)
+        self.assertEqual([('', None, dict(methods=['GET']),)], MyFakeResource.fake.routes)
