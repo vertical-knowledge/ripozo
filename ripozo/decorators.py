@@ -10,10 +10,7 @@ import six
 
 
 class _apiclassmethod(object):
-    if six.PY2:
-        _name = six.binary_type('_apiclassmethod')
-    else:
-        _name = '_apiclassmethod'
+    __name__ = str('_apiclassmethod')
 
     def __init__(self, f):
         self.f = f
@@ -24,29 +21,21 @@ class _apiclassmethod(object):
         if klass is None:
             klass = type(obj)
 
-        method = self.f
-
-        @wraps(method)
+        @wraps(self.f)
         def newfunc(*args):
             if not isinstance(args[0], type):
-                return method(klass, *args)
-            return method(*args)
-        newfunc.__rest_route__ = True
-        newfunc.routes = getattr(method, 'routes', [])
-        # setattr(self, '__call__', newfunc)
+                return self.f(klass, *args)
+            return self.f(*args)
         return newfunc
 
     def __call__(self, cls, *args, **kwargs):
+        """
+        This is to fix for when this is wrapped by another
+        decorator.  In that case __get__ will not be called
+        and an AttributeError '_apiclassmethod object not callable'
+        would be raised.
+        """
         return self.__get__(None, klass=cls)(*args, **kwargs)
-
-    @property
-    def __name__(self):
-        return self._name
-
-    @__name__.setter
-    def __name__(self, value):
-        self._name = value
-
 
 
 class apimethod(object):
@@ -124,7 +113,6 @@ class translate(object):
         :param bool validate: Indicates whether the validations should
             be run.  If it is False, it will only translate the fields.
         """
-        # TODO test manager_field_validators
         self.original_fields = fields or []
         self.manager_field_validators = manager_field_validators
         self.skip_required = skip_required
