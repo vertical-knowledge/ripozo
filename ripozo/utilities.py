@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 from functools import wraps
 
 import re
-import six
 
 
 class ClassPropertyDescriptor(object):
