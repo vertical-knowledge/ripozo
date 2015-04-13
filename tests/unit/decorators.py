@@ -148,6 +148,22 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
 
         self.assertEqual(MyClass().fake(), MyClass)
 
+    def test_call_nested_apiclassmethod(self):
+        """
+        Tests that a nested apiclassmethod is still callable
+        """
+        class MyClass(object):
+            @_apiclassmethod
+            @_apiclassmethod
+            def fake(cls, first, second):
+                return cls, first, second
+        first = 1
+        second = 2
+        response = MyClass.fake(first, second)
+        self.assertEqual(response[0], MyClass)
+        self.assertEqual(response[1], first)
+        self.assertEqual(response[2], second)
+
     def test_class_property(self):
         class Fake(object):
             x = 'hi'

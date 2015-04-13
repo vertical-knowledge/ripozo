@@ -5,7 +5,10 @@ from __future__ import unicode_literals
 
 from functools import wraps
 
+import datetime
+import decimal
 import re
+import six
 
 
 _first_cap_re = re.compile('(.)([A-Z][a-z]+)')
@@ -123,3 +126,28 @@ def picky_processor(processor, include=None, exclude=None):
         if run:
             return processor(cls, function_name, *args, **kwargs)
     return wrapped
+
+
+def make_json_safe(obj):
+    """
+    Makes an object json serializable.
+    This is designed to take a list or dictionary,
+    and is fairly limited.
+
+    :param object obj:
+    :return:
+    :rtype: object|six.text_type|list|dict
+    """
+    if isinstance(obj, dict):
+        for key, value in six.iteritems(obj):
+            obj[key] = make_json_safe(value)
+    elif isinstance(obj, (list, set, tuple,)):
+        response = []
+        for val in obj:
+            response.append(make_json_safe(val))
+        return response
+    elif isinstance(obj, (datetime.datetime, datetime.date, datetime.time, datetime.timedelta)):
+        obj = six.text_type(obj)
+    elif isinstance(obj, decimal.Decimal):
+        obj = float(obj)
+    return obj

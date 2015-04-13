@@ -4,11 +4,13 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.utilities import serialize_fields, titlize_endpoint, join_url_parts, \
-    picky_processor, convert_to_underscore
+    picky_processor, convert_to_underscore, make_json_safe
 
 from ripozo_tests.python2base import TestBase
 from ripozo_tests.bases.manager import generate_random_name
 
+import datetime
+import decimal
 import mock
 import six
 import unittest
@@ -112,3 +114,38 @@ class UtilitiesTestCase(TestBase, unittest.TestCase):
         doesnt_run = picky_processor(processor, exclude=['runs'])
         doesnt_run(mock.MagicMock(), 'runs')
         self.assertEqual(processor.call_count, 4)
+
+    def test_make_json_safe(self):
+        """
+        Tests whether the make_json_safe method correctly
+        returns values.
+        """
+        # Test times
+        resp = make_json_safe(datetime.datetime.now())
+        self.assertIsInstance(resp, six.text_type)
+        resp = make_json_safe(datetime.date.today())
+        self.assertIsInstance(resp, six.text_type)
+        resp = make_json_safe(datetime.time())
+        self.assertIsInstance(resp, six.text_type)
+        resp = make_json_safe(datetime.timedelta(days=1))
+        self.assertIsInstance(resp, six.text_type)
+
+        # Test decimals
+        resp = make_json_safe(decimal.Decimal('1.02'))
+        self.assertEqual(resp, 1.02)
+        self.assertIsInstance(resp, float)
+
+        # Test lists
+        l = [datetime.time(), datetime.date.today(), datetime.datetime.now()]
+        resp = make_json_safe(l)
+        self.assertIsInstance(resp, list)
+        for item in resp:
+            self.assertIsInstance(item, six.text_type)
+
+        # Test dictionary
+        d = dict(a=datetime.datetime.now(), b=datetime.time(), c=datetime.date.today())
+        resp = make_json_safe(d)
+        self.assertIsInstance(resp, dict)
+        for key, value in six.iteritems(resp):
+            self.assertIsInstance(value, six.text_type)
+

@@ -4,7 +4,9 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from mock import Mock, MagicMock
+
 from ripozo.dispatch.adapters import BoringJSONAdapter, HalAdapter, SirenAdapter
+from ripozo.decorators import apimethod
 from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
 from ripozo_tests.python2base import TestBase
 from ripozo_tests.helpers.dispatcher import FakeDispatcher

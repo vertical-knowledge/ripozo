@@ -171,7 +171,8 @@ class DispatcherBase(object):
             can be used to find
         :rtype:
         """
-        logger.info('Dispatching request to endpoint function: {0}'.format(endpoint_func))
+        logger.info('Dispatching request to endpoint function: {0} with args:'
+                    ' {1} and kwargs: {2}'.format(endpoint_func, args, kwargs))
         result = endpoint_func(*args, **kwargs)
         adapter_class = self.get_adapter_for_type(format_type)
         logger.info('Using adapter {0} to format response for format'
