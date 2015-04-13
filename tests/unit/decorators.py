@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.decorators import apimethod, translate
+from ripozo.decorators import apimethod, translate, _apiclassmethod
 from ripozo.viewsets.resource_base import ResourceBase
 
 from ripozo_tests.python2base import TestBase
@@ -99,3 +99,51 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
         rsp = MyFakeResource.fake(mock.MagicMock())
         self.assertEqual(rsp, mck)
         self.assertEqual([('', None, dict(methods=['GET']),)], MyFakeResource.fake.routes)
+
+    def test_calling_apiclassmethod(self):
+        """
+        Tests the the _apiclassmethod decorator works
+        as intended.
+        """
+        class MyClass(object):
+            @_apiclassmethod
+            def fake(cls):
+                return cls
+        self.assertEqual(MyClass.fake(), MyClass)
+
+    def test_nested_apiclassmethod(self):
+        """
+        Tests that the _apiclassmethod decorator works
+        when wrapped twice.
+        """
+        class MyClass(object):
+            @_apiclassmethod
+            @_apiclassmethod
+            def fake(cls):
+                return cls
+
+        self.assertEqual(MyClass.fake(), MyClass)
+
+    def test_calling_apiclassmethod_on_instance(self):
+        """
+        Tests that an _apiclassmethod decorator still
+        works on an instance rather than a class.
+        """
+        class MyClass(object):
+            @_apiclassmethod
+            def fake(cls):
+                return cls
+        self.assertEqual(MyClass().fake(), MyClass)
+
+    def test_nested_apiclassmethod_on_instance(self):
+        """
+        Tests that a nested _apiclassmethod decorator
+        works on an instance even when nested.
+        """
+        class MyClass(object):
+            @_apiclassmethod
+            @_apiclassmethod
+            def fake(cls):
+                return cls
+
+        self.assertEqual(MyClass().fake(), MyClass)

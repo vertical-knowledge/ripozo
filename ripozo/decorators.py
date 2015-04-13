@@ -23,7 +23,7 @@ class _apiclassmethod(object):
 
         @wraps(self.f)
         def newfunc(*args):
-            if not isinstance(args[0], type):
+            if len(args) == 0 or not isinstance(args[0], type):
                 return self.f(klass, *args)
             return self.f(*args)
         return newfunc
