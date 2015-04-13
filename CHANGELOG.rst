@@ -4,7 +4,8 @@ CHANGELOG
 0.1.23 (unreleased)
 ===================
 
-- Nothing changed yet.
+- Changed location of classproperty decorator from ``ripozo.utilities`` to ``ripozo.decorators``
+- Fixed bug with wrapping _apiclassmethod decorated functions.
 
 
 0.1.22 (2015-04-10)
