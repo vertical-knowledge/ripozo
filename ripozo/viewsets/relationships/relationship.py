@@ -18,7 +18,7 @@ class Relationship(object):
     """
     _resource_meta_class = ResourceMetaClass
 
-    def __init__(self, name=None, property_map=None, relation=None, embedded=False, required=False):
+    def __init__(self, name, property_map=None, relation=None, embedded=False, required=False):
         """
         :param unicode name:
         :param dict property_map: A map of the parent's property name
@@ -78,7 +78,7 @@ class Relationship(object):
                 return
             else:
                 raise
-        yield self.relation(properties=related_properties, query_args=query_args)
+        return self.relation(properties=related_properties, query_args=query_args)
 
     def remove_child_resource_properties(self, properties):
         """
@@ -117,7 +117,8 @@ class Relationship(object):
         :rtype: :py:class:`dict`
         :raises: KeyError
         """
-        properties = parent_properties.get(self.name, {})
+        properties = {}
         for parent_prop, prop in six.iteritems(self.property_map):
-            properties[prop] = parent_properties[parent_prop]
+            properties[prop] = parent_properties.pop(parent_prop)
+        properties.update(parent_properties.pop(self.name, {}))
         return properties

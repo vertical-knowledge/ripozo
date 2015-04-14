@@ -11,19 +11,6 @@ class ListRelationship(Relationship):
     Special case for a list of relationships.
     """
 
-    def __init__(self, list_name, relation=None, embedded=False):
-        """
-        A special case for list relationships.
-
-        :param unicode list_name: The name of the list on the resource.
-        :param unicode relation: The ResourceBase subclass that describes the individual
-            items in the list
-        :param bool embedded: An indicator to the adapter for whether the resource should be
-            embedded or not
-        """
-        super(ListRelationship, self).__init__(relation=relation, embedded=embedded)
-        self.list_name = list_name
-
     def construct_resource(self, properties, query_args=None):
         """
         Takes a list of properties and returns a generator that
@@ -39,10 +26,12 @@ class ListRelationship(Relationship):
         :return: A generator that yields the relationships.
         :rtype: types.GeneratorType
         """
-        objects = properties.get(self.list_name, [])
+        objects = properties.get(self.name, [])
         objects = objects or []
+        resources = []
         for obj in objects:
-            yield self.relation(properties=obj, query_args=query_args)
+            resources.append(self.relation(properties=obj, query_args=query_args))
+        return resources
 
     def remove_child_resource_properties(self, properties):
         """
@@ -58,5 +47,5 @@ class ListRelationship(Relationship):
         :rtype: dict
         """
         properties = properties.copy()
-        properties.pop(self.list_name, None)
+        properties.pop(self.name, None)
         return properties

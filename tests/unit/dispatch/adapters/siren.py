@@ -107,47 +107,42 @@ class TestSirenAdapter(TestAdapterBase):
         Tests getting the links attribute for
         """
         class LinkResource(ResourceBase):
-            _links = {
-                'first_link': Relationship(name='first_link', relation='RelatedResource')
-            }
+            _links = [
+                Relationship('first_link', relation='RelatedResource')
+            ]
 
         class RelatedResource(ResourceBase):
             pks = ['id']
 
         meta = dict(links=dict(
             first_link=dict(id=1),
-            second_link=dict()
+            ignored_link=dict()
         ))
 
         lr = LinkResource(meta=meta)
         adapter = SirenAdapter(lr)
         data = json.loads(adapter.formatted_body)
         links = data['links']
-        self.assertEqual(len(links), 3)
+        self.assertEqual(len(links), 2)
 
         first_link = None
-        second_link = None
         self_ref = None
         for link in links:
             if 'self' in link['rel']:
                 self_ref = link['href']
-            elif 'second_link' in link['rel']:
-                second_link = link['href']
             elif 'first_link' in link['rel']:
                 first_link = link['href']
-        self.assertIsNotNone(second_link)
         self.assertIsNotNone(self_ref)
         self.assertIsNotNone(first_link)
         self.assertEqual(self_ref, '/link_resource')
         self.assertEqual(first_link, '/related_resource/1')
-        self.assertEqual(second_link, '/link_resource')
 
     def test_relationship_single(self):
         class RelationshipResource(ResourceBase):
-            _relationships = {
-                'first_link': Relationship(name='first_link', relation='RelatedResource'),
-                'second_link': Relationship(name='second_link', relation='RelatedResource', embedded=True)
-            }
+            _relationships = [
+                Relationship('first_link', relation='RelatedResource'),
+                Relationship('second_link', relation='RelatedResource', embedded=True)
+            ]
 
         class RelatedResource(ResourceBase):
             pks = ['id']

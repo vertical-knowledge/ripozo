@@ -8,6 +8,7 @@ import six
 
 from six.moves.urllib import parse
 from ripozo.decorators import classproperty
+from ripozo.exceptions import RestException
 from ripozo.viewsets.constructor import ResourceMetaClass
 from ripozo.viewsets.relationships import Relationship, ListRelationship
 from ripozo.utilities import convert_to_underscore, join_url_parts
@@ -82,29 +83,28 @@ class ResourceBase(object):
         self._url = None
         self._relationships = self._relationships or {}
 
-        relationships = {}
-        for field_name, relationship in six.iteritems(self._relationships):
-            relationship_list = []
-            for related_resource in relationship.construct_resource(self.properties):
-                relationship_list.append((related_resource, relationship.embedded,))
-            self.properties = relationship.remove_child_resource_properties(self.properties)
-            relationships[field_name] = relationship_list
-        self.relationships = relationships
+        self.relationships = self._generate_links(self._relationships, self.properties.copy())
 
-        links = []
         meta_links = self.meta.get('links', {}).copy()
-        for name, value in six.iteritems(self.meta.get('links', {})):
-            existing_links = self._links or {}
-            if name in existing_links:
-                link = existing_links[name]
-            elif isinstance(value, list):
-                link = ListRelationship(name, relation=self.__class__.__name__)
-            else:
-                link = Relationship(name=name, relation=self.__class__.__name__)
-            query_args = meta_links.get(link.name, {}).pop('query_args', {})
-            for res in link.construct_resource(meta_links, query_args=query_args):
-                links.append((link.name, res,))
-        self.links = links
+        self.links = self._generate_links(self._links, meta_links)
+
+    @staticmethod
+    def _generate_links(relationship_list, links_properties):
+        """
+        Generates a list of linked resources from the links_dict.
+
+        :param list links_dict:
+        :param dict links_properties:
+        :return: A list of ResourceBase objects
+        :rtype: list
+        """
+        links = []
+        relationship_list = relationship_list or []
+        for relationship in relationship_list:
+            query_args = links_properties.pop('query_args', {})
+            res = relationship.construct_resource(links_properties, query_args=query_args)
+            links.append((res, relationship.name, relationship.embedded))
+        return links
 
     @property
     def has_error(self):

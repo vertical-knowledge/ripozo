@@ -56,22 +56,14 @@ class BoringJSONAdapter(AdapterBase):
         """
         response = dict()
         parent_properties = self.resource.properties.copy()
-        for field_name, relationship in six.iteritems(self.resource.relationships):
-            response[field_name] = self.generate_relationship(relationship)
+        self._append_relationships_to_list(response, self.resource.relationships)
+        self._append_relationships_to_list(response, self.resource.links)
         response.update(parent_properties)
         return json.dumps({self.resource.resource_name: response})
 
-    def generate_relationship(self, relationship):
-        """
-        :param ResourceBase relationship: The related resource that will be
-            used to generate a json response
-        :return: either a list of resources if it is a ``ListRelationship``
-            or a dictionary if it is a ``Relationship``
-        :rtype: list|dict
-        """
-        embedded = list()
-        for related_resource, is_embedded in relationship:
-            embedded.append(related_resource.properties)
-        if not isinstance(relationship, ListRelationship):
-            return embedded[0]
-        return embedded
+    @staticmethod
+    def _append_relationships_to_list(rel_dict, relationships):
+        for resource, name, embedded in relationships:
+            if name not in rel_dict:
+                rel_dict[name] = []
+            rel_dict[name].append(resource.properties)

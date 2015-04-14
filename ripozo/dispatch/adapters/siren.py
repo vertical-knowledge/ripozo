@@ -94,7 +94,7 @@ class SirenAdapter(AdapterBase):
 
     def generate_links(self):
         links = [dict(rel=['self'], href=self.combine_base_url_with_resource_url(self.resource.url))]
-        for link_name, link in self.resource.links:
+        for link, link_name, embedded in self.resource.links:
             links.append(dict(rel=[link_name],
                               href=self.combine_base_url_with_resource_url(link.url)))
         return links
@@ -108,18 +108,17 @@ class SirenAdapter(AdapterBase):
         """
         entities = []
         parent_properties = self.resource.properties.copy()
-        for field_name, related_resource_list in six.iteritems(self.resource.relationships):
-            for related_resource, embedded in related_resource_list:
-                if not related_resource.has_all_pks:  # Don't include blank resources
-                    continue
-                ent = {'class': [related_resource.resource_name], 'rel': [field_name]}
-                resource_url = self.combine_base_url_with_resource_url(related_resource.url)
-                if not embedded:
-                    ent['href'] = resource_url
-                else:
-                    ent['properties'] = related_resource.properties
-                    ent['links'] = [dict(rel=['self'], href=resource_url)]
-                entities.append(ent)
+        for resource, name, embedded in self.resource.relationships:
+            if not resource.has_all_pks:
+                continue  # Don't include blank resources
+            ent = {'class': [resource.resource_name], 'rel': [name]}
+            resource_url = self.combine_base_url_with_resource_url(resource.url)
+            if not embedded:
+                ent['href'] = resource_url
+            else:
+                ent['properties'] = resource.properties
+                ent['links'] = [dict(rel=['self'], href=resource_url)]
+            entities.append(ent)
         return entities, parent_properties
 
 

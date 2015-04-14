@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 from ripozo.decorators import apimethod
 from ripozo.exceptions import BaseRestEndpointAlreadyExists
 from ripozo.viewsets.constructor import ResourceMetaClass
+from ripozo.viewsets.relationships import Relationship, ListRelationship
 from ripozo.viewsets.resource_base import ResourceBase, _get_apimethods
 from ripozo_tests.helpers.inmemory_manager import InMemoryManager
 from ripozo_tests.python2base import TestBase
@@ -308,3 +309,17 @@ class TestResourceBase(TestBase, unittest.TestCase):
             klass, response = clsmethod(request)
             self.assertEqual(MyResource, klass)
             self.assertEqual(id(request), id(response))
+
+    def test_generate_links(self):
+        """
+        Tests the private _generate_links staticmethod
+        """
+        class Related(ResourceBase):
+            _pks = ['id']
+
+        rel_list = [Relationship(name='first', relation='Related')]
+        props = dict(first=dict(id=1, other_value='something'))
+        resource_list = ResourceBase._generate_links(rel_list, props.copy())
+        resource, name, embedded = resource_list[0]
+        self.assertFalse(embedded)
+        self.assertEqual(props['first'], resource.properties)

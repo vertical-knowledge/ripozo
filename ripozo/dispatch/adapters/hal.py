@@ -34,16 +34,21 @@ class HalAdapter(AdapterBase):
         :return: The response body for the resource.
         :rtype: unicode
         """
-        links = self.generate_links_for_resource(self.resource)
-        embedded = dict()
+        resource_url = self.combine_base_url_with_resource_url(self.resource.url)
         parent_properties = self.resource.properties.copy()
-        for field_name, relationship in six.iteritems(self.resource.relationships):
-            embedded[field_name] = self.generate_embedded_relationship(relationship)
+
+        embedded, links = self.generate_relationship(self.resource.relationships)
+        embedded2, links2 = self.generate_relationship(self.resource.relationships)
+        embedded.update(embedded2)
+        links.update(links2)
+        links.update(dict(self=dict(href=resource_url)))
+
         response = dict(_links=links, _embedded=embedded)
         response.update(parent_properties)
         return json.dumps(response)
 
-    def generate_embedded_relationship(self, relationship):
+    @staticmethod
+    def generate_relationship(relationship_list):
         """
         Generates an appropriately formated embedded relationship
         in the HAL format.
@@ -55,25 +60,23 @@ class HalAdapter(AdapterBase):
             by the HAL specification.
         :rtype: list|dict
         """
-        embedded = list()
-        for related_resource, is_embedded in relationship:
-            indv = dict(_links=self.generate_links_for_resource(related_resource))
-            indv.update(related_resource.properties)
-            embedded.append(indv)
-        if not isinstance(relationship, ListRelationship):
-            return embedded[0]
-        return embedded
-
-
-    def generate_links_for_resource(self, resource):
-        """
-        Currently only returns the "self" link.  Will work for
-        embedded resources as well.
-
-        :param ripozo.viewsets.resource_base.ResourceBase resource: The
-            resource to generate the _links property for in the response
-        :return: A dictionary of the named links
-        :rtype: dict
-        """
-        resource_url = self.combine_base_url_with_resource_url(resource.url)
-        return dict(self=dict(href=resource_url))
+        embedded_dict = {}
+        links_dict = {}
+        for relationship, field_name, embedded in relationship_list:
+            if embedded:
+                to_use = embedded_dict
+            else:
+                to_use = links_dict
+            if isinstance(relationship, list):
+                response = []
+                for res in relationship:
+                    if embedded:
+                        response.append(res.properties)
+                    else:
+                        response.append(dict(href=res.url))
+                to_use[field_name] = response
+            elif embedded:
+                to_use[field_name] = relationship.properties
+            else:
+                to_use[field_name] = dict(href=relationship.url)
+        return embedded_dict, links_dict

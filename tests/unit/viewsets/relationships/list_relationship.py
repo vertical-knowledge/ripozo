@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.viewsets.relationships.list_relationship import ListRelationship
+from ripozo.viewsets.resource_base import ResourceBase
 
 from ripozo_tests.python2base import TestBase
 
@@ -23,34 +24,34 @@ class TestListRelationship(TestBase, unittest.TestCase):
         """
         list_name = 'mylist'
         lr = ListRelationship(list_name, relation='MyResource', embedded=True)
-        self.assertEqual(list_name, lr.list_name)
+        self.assertEqual(list_name, lr.name)
         self.assertTrue(lr.embedded)
         self.assertEqual(lr._relation, 'MyResource')
 
-    @mock.patch.object(ListRelationship, 'relation')
-    def test_construct_resource(self, mck):
+    def test_construct_resource(self):
+        class RelatedResource(ResourceBase):
+            _pks = ['pk']
+
         list_name = 'mylist'
-        lr = ListRelationship(list_name)
-        props = {list_name: range(10)}
-        generator = lr.construct_resource(props)
-        self.assertIsInstance(generator, types.GeneratorType)
-        for x in generator:
+        lr = ListRelationship(list_name, relation='RelatedResource')
+        props = {list_name: []}
+        for i in range(10):
+            props[list_name].append(dict(pk=i))
+        res_list = lr.construct_resource(props)
+        self.assertIsInstance(res_list, list)
+        for x in res_list:
+            # TODO actually check this
             pass
+        self.assertEqual(len(res_list), 10)
 
-        self.assertEquals(mck.call_count, 10)
-
-    @mock.patch.object(ListRelationship, 'relation')
-    def test_empty_list(self, mck):
+    def test_empty_list(self,):
+        class RelatedResource2(ResourceBase):
+            pass
         list_name = 'mylist'
-        lr = ListRelationship(list_name)
-        generator = lr.construct_resource(dict(some='thing', another='thing'))
-        self.assertIsInstance(generator, types.GeneratorType)
-
-        # There are no acceptable generators
-        for x in generator:
-            assert False
-
-        self.assertEqual(mck.call_count, 0)
+        lr = ListRelationship(list_name, relation='RelatedResource')
+        res_list = lr.construct_resource(dict(some='thing', another='thing'))
+        self.assertIsInstance(res_list, list)
+        self.assertEqual(len(res_list), 0)
 
     def test_remove_child_properties(self):
         """
