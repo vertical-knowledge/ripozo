@@ -81,7 +81,8 @@ class BaseField(object):
         :raises: ripozo.exceptions.ValidationException
         """
         if self.required and obj is None and skip_required is False:
-            raise ValidationException(self.error_message or 'The object is required and cannot be None')
+            raise ValidationException(self.error_message or 'The field "{0}" is required '
+                                                            'and cannot be None'.format(self.name))
         obj = self._validate_type(obj)
         return obj
 

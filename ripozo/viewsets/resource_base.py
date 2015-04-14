@@ -83,7 +83,7 @@ class ResourceBase(object):
         self._url = None
         self._relationships = self._relationships or {}
 
-        self.relationships = self._generate_links(self._relationships, self.properties.copy())
+        self.relationships = self._generate_links(self._relationships, self.properties)
 
         meta_links = self.meta.get('links', {}).copy()
         self.links = self._generate_links(self._links, meta_links)
@@ -98,11 +98,11 @@ class ResourceBase(object):
         :return: A list of ResourceBase objects
         :rtype: list
         """
+        # TODO need much better testing for this
         links = []
         relationship_list = relationship_list or []
         for relationship in relationship_list:
-            query_args = links_properties.pop('query_args', {})
-            res = relationship.construct_resource(links_properties, query_args=query_args)
+            res = relationship.construct_resource(links_properties)
             links.append((res, relationship.name, relationship.embedded))
         return links
 

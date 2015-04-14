@@ -82,6 +82,41 @@ class TestRelationship(TestBase, unittest.TestCase):
         expected = dict(child='value', child2='value2')
         self.assertDictEqual(child_properties, expected)
 
+    def test_relationship_generation(self):
+        """Tests the generation of relationships in the ResourceBase"""
+        class MyResource3(ResourceBase):
+            _relationships = [Relationship('related', relation='RelatedResource3')]
+
+        class RelatedResource3(ResourceBase):
+            _pks = ['pk']
+
+        resource = MyResource3(properties=dict(id=1, related=dict(pk=2)))
+        self.assertEqual(resource.properties, dict(id=1))
+        self.assertEqual(len(resource.relationships), 1)
+        relation = resource.relationships[0]
+        related_res = relation[0]
+        self.assertIsInstance(related_res, RelatedResource3)
+        self.assertEqual(related_res.properties, dict(pk=2))
+
+    def test_relationship_generation_with_dict_literal(self):
+        """
+        For some reason it breaks when you use brackets
+        to define the dictionary
+        """
+        class MyResource2(ResourceBase):
+            _relationships = [Relationship('related', relation='RelatedResource2')]
+
+        class RelatedResource2(ResourceBase):
+            _pks = ['pk']
+
+        resource = MyResource2(properties={'id': 1, 'related': {'pk': 2}})
+        self.assertEqual(resource.properties, dict(id=1))
+        self.assertEqual(len(resource.relationships), 1)
+        relation = resource.relationships[0]
+        related_res = relation[0]
+        self.assertIsInstance(related_res, RelatedResource2)
+        self.assertEqual(related_res.properties, dict(pk=2))
+
     def test_remove_child_resource_properties(self):
         property_map = dict(parent='child', parent2='child2')
         original_properties = dict(parent='value', parent2='value2',
