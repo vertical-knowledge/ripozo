@@ -47,8 +47,7 @@ class HalAdapter(AdapterBase):
         response.update(parent_properties)
         return json.dumps(response)
 
-    @staticmethod
-    def generate_relationship(relationship_list):
+    def generate_relationship(self, relationship_list):
         """
         Generates an appropriately formated embedded relationship
         in the HAL format.
@@ -60,23 +59,23 @@ class HalAdapter(AdapterBase):
             by the HAL specification.
         :rtype: list|dict
         """
+        # TODO clean this shit up.
         embedded_dict = {}
         links_dict = {}
         for relationship, field_name, embedded in relationship_list:
             if embedded:
-                to_use = embedded_dict
+                embedded_dict[field_name] = self._generate_relationship(relationship, embedded)
             else:
-                to_use = links_dict
-            if isinstance(relationship, list):
-                response = []
-                for res in relationship:
-                    if embedded:
-                        response.append(res.properties)
-                    else:
-                        response.append(dict(href=res.url))
-                to_use[field_name] = response
-            elif embedded:
-                to_use[field_name] = relationship.properties
-            else:
-                to_use[field_name] = dict(href=relationship.url)
+                links_dict[field_name] = self._generate_relationship(relationship, embedded)
         return embedded_dict, links_dict
+
+    def _generate_relationship(self, relationship, embedded):
+        if isinstance(relationship, list):
+            response = []
+            for res in relationship:
+                response.append(self._generate_relationship(res, embedded))
+            return response
+        if embedded:
+            return relationship.properties
+        else:
+            return dict(href=relationship.url)
