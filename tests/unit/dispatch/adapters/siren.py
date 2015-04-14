@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.dispatch.adapters.siren import SirenAdapter
+from ripozo.viewsets.relationships import Relationship, ListRelationship
 from ripozo.viewsets.request import RequestContainer
 from ripozo.viewsets.resource_base import ResourceBase
 
@@ -106,13 +107,77 @@ class TestSirenAdapter(TestAdapterBase):
         """
         Tests getting the links attribute for
         """
-        pass
+        class LinkResource(ResourceBase):
+            _links = {
+                'first_link': Relationship(name='first_link', relation='RelatedResource')
+            }
 
-    def test_links_list(self):
-        pass
+        class RelatedResource(ResourceBase):
+            pks = ['id']
+
+        meta = dict(links=dict(
+            first_link=dict(id=1),
+            second_link=dict()
+        ))
+
+        lr = LinkResource(meta=meta)
+        adapter = SirenAdapter(lr)
+        data = json.loads(adapter.formatted_body)
+        links = data['links']
+        self.assertEqual(len(links), 3)
+
+        first_link = None
+        second_link = None
+        self_ref = None
+        for link in links:
+            if 'self' in link['rel']:
+                self_ref = link['href']
+            elif 'second_link' in link['rel']:
+                second_link = link['href']
+            elif 'first_link' in link['rel']:
+                first_link = link['href']
+        self.assertIsNotNone(second_link)
+        self.assertIsNotNone(self_ref)
+        self.assertIsNotNone(first_link)
+        self.assertEqual(self_ref, '/link_resource')
+        self.assertEqual(first_link, '/related_resource/1')
+        self.assertEqual(second_link, '/link_resource')
 
     def test_relationship_single(self):
-        pass
+        class RelationshipResource(ResourceBase):
+            _relationships = {
+                'first_link': Relationship(name='first_link', relation='RelatedResource'),
+                'second_link': Relationship(name='second_link', relation='RelatedResource', embedded=True)
+            }
 
-    def test_relationship_list(self):
-        pass
+        class RelatedResource(ResourceBase):
+            pks = ['id']
+
+        properties = dict(
+            first_link=dict(
+                id=1,
+                prop='another'
+            ),
+            second_link=dict(
+                id=2,
+                prop='value'
+            )
+        )
+        lr = RelationshipResource(properties=properties)
+        adapter = SirenAdapter(lr)
+        data = json.loads(adapter.formatted_body)
+        entities = data['entities']
+        has_second = False
+        has_first = False
+        for ent in entities:
+            if 'second_link' in ent['rel']:
+                self.assertIn('properties', ent)
+                self.assertEqual(ent['properties']['id'], 2)
+                self.assertEqual(ent['properties']['prop'], 'value')
+                has_second = True
+            elif 'first_link' in ent['rel']:
+                assert 'properties' not in ent
+                self.assertEqual(ent['href'], '/related_resource/1')
+                has_first = True
+        self.assertTrue(has_first)
+        self.assertTrue(has_second)
