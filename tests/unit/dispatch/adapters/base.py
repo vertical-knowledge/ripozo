@@ -18,11 +18,13 @@ __author__ = 'Tim Martin'
 class TestAdapter(AdapterBase):
     __abstract__ = True
 
-    def get_formatted_body(self):
-        pass
+    @property
+    def formatted_body(self):
+        return super(TestAdapter, self).formatted_body
 
+    @property
     def extra_headers(self):
-        pass
+        return super(TestAdapter, self).extra_headers
 
 
 class TestAdapterBase(TestBase, unittest.TestCase):
@@ -63,3 +65,21 @@ class TestAdapterBase(TestBase, unittest.TestCase):
                 'link': Relationship('linked_list', relation='Related')
             }
         return LinkListResource
+
+    def test_coverage_annoyance(self):
+        """
+        Just hitting the NotImplementErrors so I don't get
+        annoyed anymore.
+        """
+        adapter = TestAdapter(None)
+        try:
+            x = adapter.formatted_body
+            assert False
+        except NotImplementedError:
+            assert True
+
+        try:
+            x = adapter.extra_headers
+            assert False
+        except NotImplementedError:
+            assert True

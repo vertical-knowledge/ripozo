@@ -37,8 +37,6 @@ class AdapterBase(object):
         :param resource: The resource that is being formatted.
         :type resource: rest.viewsets.resource_base.ResourceBase
         """
-        if base_url is None:
-            base_url = ''
         self.base_url = base_url
         self.resource = resource
 
@@ -52,7 +50,7 @@ class AdapterBase(object):
         :return: The formatted response body.
         :rtype: unicode
         """
-        pass
+        raise NotImplementedError
 
     @abstractproperty
     def extra_headers(self):
@@ -63,7 +61,7 @@ class AdapterBase(object):
         :return: A dictionary of the headers to return.
         :rtype: dict
         """
-        pass
+        raise NotImplementedError
 
     def combine_base_url_with_resource_url(self, resource_url):
         """

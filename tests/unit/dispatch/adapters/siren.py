@@ -4,18 +4,17 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.dispatch.adapters.siren import SirenAdapter
-from ripozo.viewsets.relationships import Relationship, ListRelationship
+from ripozo.exceptions import RestException
+from ripozo.viewsets.relationships import Relationship
 from ripozo.viewsets.request import RequestContainer
 from ripozo.viewsets.resource_base import ResourceBase
 
-from ripozo_tests.python2base import TestBase
 from ripozo_tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
 
 from tests.unit.dispatch.adapters.base import TestAdapterBase
 
 import json
 import six
-import unittest
 
 
 class TestSirenAdapter(TestAdapterBase):
@@ -181,3 +180,11 @@ class TestSirenAdapter(TestAdapterBase):
                 has_first = True
         self.assertTrue(has_first)
         self.assertTrue(has_second)
+
+    def test_format_exception(self):
+        exc = RestException('blah blah', status_code=458)
+        json_dump, content_type, status_code = SirenAdapter.format_exception(exc)
+        data = json.loads(json_dump)
+        self.assertEqual(SirenAdapter.formats[0], content_type)
+        self.assertEqual(status_code, 458)
+        self.assertEqual(data['message'], 'blah blah')
