@@ -4,7 +4,7 @@ CHANGELOG
 0.1.25 (unreleased)
 ===================
 
-- Nothing changed yet.
+- Overhauled how links and relationships are generated
 
 
 0.1.24 (2015-04-13)
