@@ -47,7 +47,8 @@ class _apiclassmethod(object):
             self.__dict__[key] = value
 
         self.f = f
-        self.func_name = f.func_name
+        if hasattr(f, 'func_name'):
+            self.func_name = f.func_name
 
     def __get__(self, obj, klass=None):
         if klass is None:

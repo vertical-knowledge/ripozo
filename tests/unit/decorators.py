@@ -176,7 +176,7 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
             @_apiclassmethod
             def fake(cls, first, second):
                 return cls, first, second
-        self.assertEqual(MyClass.fake.func_name, 'fake')
+        self.assertEqual(MyClass.fake.__name__, 'fake')
 
     def test_nested_apiclassmethod_funcname(self):
         """
@@ -188,7 +188,7 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
             @_apiclassmethod
             def fake(cls, first, second):
                 return cls, first, second
-        self.assertEqual(MyClass.fake.func_name, 'fake')
+        self.assertEqual(MyClass.fake.__name__, 'fake')
 
         class OtherClass(object):
             def fake2(cls, req):
@@ -196,7 +196,10 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
         method = _apiclassmethod(OtherClass.fake2)
         method = _apiclassmethod(method)
         self.assertEqual(method.__name__, 'fake2')
-        self.assertEqual(method.__name__, method.func_name)
+
+        # Python 3 compatibility
+        if hasattr(method, 'func_name'):
+            self.assertEqual(method.__name__, method.func_name)
 
     def test_multiple_apimethods(self):
         """

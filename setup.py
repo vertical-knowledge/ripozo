@@ -28,7 +28,7 @@ setup(
     # long_description=long_description,
     install_requires=[
         'six>=1.4.1,!=1.7.1',
-        'jinja2',
+        'jinja2'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
