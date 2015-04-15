@@ -39,8 +39,8 @@ class SirenAdapter(AdapterBase):
 
         links = self.generate_links()
 
-        entities, updated_properties = self.get_entities_and_remove_related_properties()
-        response = dict(properties=updated_properties, actions=self._actions,
+        entities = self.get_entities()
+        response = dict(properties=self.resource.properties, actions=self._actions,
                         links=links, entities=entities)
 
         # need to do this separately since class is a reserved keyword
@@ -99,7 +99,7 @@ class SirenAdapter(AdapterBase):
                               href=self.combine_base_url_with_resource_url(link.url)))
         return links
 
-    def get_entities_and_remove_related_properties(self):
+    def get_entities(self):
         """
         Gets a list of related entities in an appropriate SIREN format
 
@@ -107,10 +107,22 @@ class SirenAdapter(AdapterBase):
         :rtype: list
         """
         entities = []
-        parent_properties = self.resource.properties.copy()
         for resource, name, embedded in self.resource.relationships:
+            for ent in self.generate_entity(resource, name, embedded):
+                entities.append(ent)
+        return entities
+
+    def generate_entity(self, resource, name, embedded):
+        """
+        A generator that yields entities
+        """
+        if isinstance(resource, list):
+            for res in resource:
+                for ent in self.generate_entity(res, name, embedded):
+                    yield ent
+        else:
             if not resource.has_all_pks:
-                continue  # Don't include blank resources
+                return
             ent = {'class': [resource.resource_name], 'rel': [name]}
             resource_url = self.combine_base_url_with_resource_url(resource.url)
             if not embedded:
@@ -118,9 +130,7 @@ class SirenAdapter(AdapterBase):
             else:
                 ent['properties'] = resource.properties
                 ent['links'] = [dict(rel=['self'], href=resource_url)]
-            entities.append(ent)
-        return entities, parent_properties
-
+            yield ent
 
     @property
     def extra_headers(self):

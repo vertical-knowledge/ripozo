@@ -3,10 +3,9 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from functools import wraps
+from functools import wraps, update_wrapper
 
 import logging
-import six
 
 
 class ClassPropertyDescriptor(object):
@@ -38,14 +37,19 @@ def classproperty(func):
         func = classmethod(func)
     return ClassPropertyDescriptor(func)
 
-
 class _apiclassmethod(object):
     __name__ = str('_apiclassmethod')
 
     def __init__(self, f):
         self.f = f
-        self.rest_route = True
-        self.routes = getattr(f, 'routes', [])
+        # This is necessary due to the __call__ function being a bit hacky
+        # self.func_dict = {}
+        # if hasattr(f, 'func_name'):
+        #     self.func_name = f.func_name
+        # updated = ('__dict__', 'func_dict') if hasattr(f, 'func_dict') else ('__dict__',)
+        # update_wrapper(self, f, updated=updated)
+        # self.func_dict = f.func_dict
+        pass
 
     def __get__(self, obj, klass=None):
         if klass is None:
@@ -57,15 +61,6 @@ class _apiclassmethod(object):
                 return self.f(klass, *args)
             return self.f(*args)
         return newfunc
-
-    def __call__(self, cls, *args, **kwargs):
-        """
-        This is to fix for when this is wrapped by another
-        decorator.  In that case __get__ will not be called
-        and an AttributeError '_apiclassmethod object not callable'
-        would be raised.
-        """
-        return self.__get__(None, klass=cls)(*args, **kwargs)
 
 
 class apimethod(object):

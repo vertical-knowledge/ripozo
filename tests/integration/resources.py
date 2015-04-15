@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 from ripozo.decorators import translate, apimethod
 from ripozo.exceptions import ValidationException
 from ripozo.viewsets.fields import BaseField
+from ripozo.viewsets.relationships import ListRelationship
 from ripozo.viewsets.request import RequestContainer
 from ripozo.viewsets.resource_base import ResourceBase
 
@@ -55,6 +56,28 @@ class TestResourceIntegration(TestBase, unittest.TestCase):
             pass
 
         self.help_test_validate_with_manager_field_validators(TestValidateIntegrationsInherited)
+
+    def test_relationships_resource_instance(self):
+        """
+        Tests whether the relationships are appropriately created.
+        """
+        lr = ListRelationship('resource_list', relation='Resource')
+        class ResourceList(ResourceBase):
+            _resource_name = 'resource_list'
+            _relationships = [
+                lr,
+            ]
+
+        class Resource(ResourceBase):
+            _pks = ['id']
+
+        self.assertEqual(ResourceList._relationships, [lr])
+        props = dict(resource_list=[dict(id=1), dict(id=2)])
+        res = ResourceList(properties=props)
+        self.assertEqual(len(res.relationships), 1)
+        resources = res.relationships[0][0]
+        self.assertIsInstance(resources, list)
+        self.assertEqual(len(resources), 2)
 
     def help_test_validate_with_manager_field_validators(self, klass):
         """

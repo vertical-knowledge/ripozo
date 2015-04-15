@@ -8,6 +8,7 @@ Resource Example
     class MyResource(ResourceBase):
         _pks = ['id']
 
+
 .. code-block:: python
 
     >>> MyResource.base_url
@@ -24,7 +25,7 @@ Resource Example
     class MyResource(ResourceBase):
         _namespace = '/api'
         _pks = ['id']
-        _resource_name = 'resource'
+        _resource_name = 'resource/'
 
 
 .. code-block:: python
@@ -50,14 +51,14 @@ Resource Example
 
         @apimethod(methods=['GET'])
         def hello_world(cls, request):
-            id = request.body_args['id']
+            id = request.url_params['id']
             return cls(properties={'id': id, 'hello': 'world'})
 
 
 .. code-block:: python
 
     >>> from ripozo.viewsets.request import RequestContainer
-    >>> request = RequestContainer(body_args={'id': 2})
+    >>> request = RequestContainer(url_params={'id': 2})
     >>> resource = MyResource.hello_world(request)
     >>> resource.url
     '/api/resource/2'
@@ -68,6 +69,7 @@ Resource Example
 .. code-block:: python
 
     from ripozo.decorators import apimethod, translate
+    from ripozo.viewsets.constants.input_categories import URL_PARAMS
     from ripozo.viewsets.fields.common import IntegerField
     from ripozo.viewsets.resource_base import ResourceBase
 
@@ -77,9 +79,9 @@ Resource Example
         _resource_name = 'resource'
 
         @apimethod(methods=['GET'])
-        @translate(fields=[IntegerField('id', required=True)], validate=True)
+        @translate(fields=[IntegerField('id', required=True, arg_type=URL_PARAMS)], validate=True)
         def hello_world(cls, request):
-            id = request.body_args['id']
+            id = request.url_params['id']
             return cls(properties={'id': id, 'hello': 'world'})
 
 
@@ -95,6 +97,7 @@ Resource Example
 .. code-block:: python
 
     from ripozo.decorators import apimethod, translate
+    from ripozo.viewsets.constants.input_categories import URL_PARAMS
     from ripozo.viewsets.fields.common import IntegerField
     from ripozo.viewsets.relationships import Relationship
     from ripozo.viewsets.resource_base import ResourceBase

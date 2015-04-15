@@ -19,6 +19,12 @@ class TestMixins(TestBase, unittest.TestCase):
         ResourceMetaClass.registered_names_map = {}
         ResourceMetaClass.registered_resource_classes = {}
 
+    def get_fake_manager(self):
+        manager = mock.MagicMock()
+        manager.rest_route = False
+        manager.__rest_route__ = False
+        return manager
+
     def test_create(self):
         manager2 = mock.MagicMock()
 
@@ -30,6 +36,16 @@ class TestMixins(TestBase, unittest.TestCase):
         self.assertEqual(request.translate.call_count, 1)
         self.assertEqual(manager2.create.call_count, 1)
         self.assertIsInstance(response, T1)
+
+    def test_create_has_apimethod(self):
+        """
+        Tests that the endpoint_dictionary gets the
+        result
+        """
+        class T1(Create):
+            manager = self.get_fake_manager()
+        endpoints = T1.endpoint_dictionary()
+        self.assertEqual(len(endpoints), 1)
 
     def test_retrieve_list(self):
         manager2 = mock.MagicMock()

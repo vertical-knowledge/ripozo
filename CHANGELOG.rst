@@ -5,6 +5,7 @@ CHANGELOG
 ===================
 
 - Overhauled how links and relationships are generated
+- Lots of bugs
 
 
 0.1.24 (2015-04-13)

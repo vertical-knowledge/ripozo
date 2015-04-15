@@ -323,3 +323,62 @@ class TestResourceBase(TestBase, unittest.TestCase):
         resource, name, embedded = resource_list[0]
         self.assertFalse(embedded)
         self.assertEqual(props['first'], resource.properties)
+
+    def test_generate_links_list(self):
+        """
+        Tests the private _generate_links staticmethod
+        with a ListRelationship
+        """
+        class Related(ResourceBase):
+            _pks = ['id']
+
+        rel_list = [ListRelationship('relations', relation='Related')]
+        props = dict(relations=[dict(id=1), dict(id=2)])
+        resource_list = ResourceBase._generate_links(rel_list, props.copy())
+        resource, name, embedded = resource_list[0]
+        self.assertIsInstance(resource, list)
+        self.assertEqual(len(resource), 2)
+        for res in resource:
+            self.assertIsInstance(res, Related)
+
+    def test_construct_self_referential(self):
+        """
+        Tests trying to use a self-referential relationship
+        when constructing a resource
+        """
+        class Resource(ResourceBase):
+            _pks = ['id']
+            _relationships = [
+                Relationship('child', relation='Resource'),
+                Relationship('parent', relation='Resource')
+            ]
+
+        res = Resource(properties=dict(id=1))
+        self.assertEqual(len(res.relationships), 0)
+
+        res = Resource(properties=dict(id=1, child=dict(id=2)))
+        self.assertEqual(len(res.relationships), 1)
+        relation = res.relationships[0][0]
+        self.assertIsInstance(relation, Resource)
+
+        res = Resource(properties=dict(id=1, child=dict(id=2, parent=dict(id=1))))
+        self.assertEqual(len(res.relationships), 1)
+        relation = res.relationships[0][0]
+        self.assertIsInstance(relation, Resource)
+
+        self.assertEqual(len(relation.relationships), 1)
+        parent = res.relationships[0][0]
+        self.assertIsInstance(parent, Resource)
+
+    def test_get_apimethods_multiwrapped(self):
+        class MyResource(ResourceBase):
+            @apimethod(methods=['GET'])
+            @apimethod(methods=['POST'])
+            def fake(*args, **kwargs):
+                return args, kwargs
+
+        count = 0
+        for name, method in _get_apimethods(MyResource):
+            count += 1
+            self.assertEqual(name, 'fake')
+        self.assertEqual(count, 1)

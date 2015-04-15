@@ -120,5 +120,5 @@ class Relationship(object):
         properties = {}
         for parent_prop, prop in six.iteritems(self.property_map):
             properties[prop] = parent_properties.pop(parent_prop)
-        properties.update(parent_properties.pop(self.name, {}))
+        properties.update(parent_properties.pop(self.name))
         return properties

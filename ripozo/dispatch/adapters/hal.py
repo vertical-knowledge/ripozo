@@ -63,18 +63,25 @@ class HalAdapter(AdapterBase):
         embedded_dict = {}
         links_dict = {}
         for relationship, field_name, embedded in relationship_list:
+            rel = self._generate_relationship(relationship, embedded)
+            if not rel:
+                continue
             if embedded:
-                embedded_dict[field_name] = self._generate_relationship(relationship, embedded)
+                embedded_dict[field_name] = rel
             else:
-                links_dict[field_name] = self._generate_relationship(relationship, embedded)
+                links_dict[field_name] = rel
         return embedded_dict, links_dict
 
     def _generate_relationship(self, relationship, embedded):
         if isinstance(relationship, list):
             response = []
             for res in relationship:
+                if not res.has_all_pks:
+                    continue
                 response.append(self._generate_relationship(res, embedded))
             return response
+        if not relationship.has_all_pks:
+            return
         if embedded:
             return relationship.properties
         else:

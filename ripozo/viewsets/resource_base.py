@@ -81,7 +81,8 @@ class ResourceBase(object):
         self.meta = meta
         self.query_args = query_args or {}
         self._url = None
-        self._relationships = self._relationships or {}
+        self._relationships = self._relationships or []
+        self._links = self._links or []
 
         self.relationships = self._generate_links(self._relationships, self.properties)
 
@@ -103,6 +104,8 @@ class ResourceBase(object):
         relationship_list = relationship_list or []
         for relationship in relationship_list:
             res = relationship.construct_resource(links_properties)
+            if res is None:
+                continue
             links.append((res, relationship.name, relationship.embedded))
         return links
 
@@ -250,10 +253,17 @@ def _get_apimethods(cls):
     :return: A generator for tuples of the name, method combo
     :rtype: type.GeneratorType
     """
-    for name, obj in inspect.getmembers(cls):
+    inspect.ismethoddescriptor
+    for name, obj in inspect.getmembers(cls, predicate=_temp_descriptor):
         if getattr(obj, 'rest_route', False) or getattr(obj, '__rest_route__', False):
             # Need to use getattr so that __get__ is appropriately called.
-            yield name, getattr(cls, name)
+            obj = getattr(cls, name)
+            yield name, obj
+
+
+def _temp_descriptor(obj):
+    # TODO REMOVE THIS
+    return getattr(obj, 'rest_route', False) or getattr(obj, '__rest_route__', False)
 
 
 def create_url(base_url, **kwargs):

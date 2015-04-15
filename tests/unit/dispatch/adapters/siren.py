@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 
 from ripozo.dispatch.adapters.siren import SirenAdapter
 from ripozo.exceptions import RestException
-from ripozo.viewsets.relationships import Relationship
+from ripozo.viewsets.relationships import Relationship, ListRelationship
 from ripozo.viewsets.request import RequestContainer
 from ripozo.viewsets.resource_base import ResourceBase
 
@@ -183,3 +183,18 @@ class TestSirenAdapter(TestAdapterBase):
         self.assertEqual(SirenAdapter.formats[0], content_type)
         self.assertEqual(status_code, 458)
         self.assertEqual(data['message'], 'blah blah')
+
+    def test_list_relationship_entity(self):
+        """
+        Tests a List entity entity
+        """
+        class Resource(ResourceBase):
+            _pks = ['id']
+            _relationships = [
+                ListRelationship('related', relation='Resource')
+            ]
+        props = dict(id=1, related=[dict(id=2), dict(id=3)])
+        res = Resource(properties=props)
+        adapter = SirenAdapter(res)
+        entities = adapter.get_entities()
+        self.assertEqual(len(entities), 2)

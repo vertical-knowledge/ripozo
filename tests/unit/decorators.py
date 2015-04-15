@@ -4,6 +4,9 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.decorators import apimethod, translate, _apiclassmethod, classproperty
+from ripozo.exceptions import TranslationException, ValidationException
+from ripozo.viewsets.fields.common import IntegerField
+from ripozo.viewsets.request import RequestContainer
 from ripozo.viewsets.resource_base import ResourceBase
 
 from ripozo_tests.python2base import TestBase
@@ -30,7 +33,7 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
 
         api = apimethod(route=route, endpoint=endpoint)
         wrapped = api(fake)
-        self.assertTrue(getattr(wrapped, 'rest_route', False))
+        self.assertTrue(getattr(wrapped, '__rest_route__', False))
         routes = getattr(wrapped, 'routes')
         self.assertIsInstance(routes, list)
         self.assertEqual(len(routes), 1)
@@ -164,6 +167,54 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
         self.assertEqual(response[1], first)
         self.assertEqual(response[2], second)
 
+    def test_apiclassmethod_func_name(self):
+        """
+        Tests that the _apiclassmethod appropriately
+        gets the func_name
+        """
+        class MyClass(object):
+            @_apiclassmethod
+            def fake(cls, first, second):
+                return cls, first, second
+        self.assertEqual(MyClass.fake.func_name, 'fake')
+
+    def test_nested_apiclassmethod_funcname(self):
+        """
+        Tests that a nested _apiclassmethod appropriately
+        returns the function name
+        """
+        class MyClass(object):
+            @_apiclassmethod
+            @_apiclassmethod
+            def fake(cls, first, second):
+                return cls, first, second
+        self.assertEqual(MyClass.fake.func_name, 'fake')
+
+        class OtherClass(object):
+            def fake2(cls, req):
+                return cls, req
+        method = _apiclassmethod(OtherClass.fake2)
+        method = _apiclassmethod(method)
+        self.assertEqual(method.__name__, 'fake2')
+        self.assertEqual(method.__name__, method.func_name)
+
+    def test_multiple_apimethods(self):
+        """
+        Tests that multiple apimethod decorators work
+        """
+        class MyClass(ResourceBase):
+            @apimethod(route='something', methods=['GET'])
+            @apimethod(route='another', methods=['GET'])
+            def fake(cls, request):
+                return cls, request
+
+        self.assertEqual(len(MyClass.fake.routes), 2)
+        self.assertIsRestRoute(MyClass.fake)
+
+    def assertIsRestRoute(self, method):
+        is_rest_route = getattr(method, 'rest_route', False) or getattr(method, '__rest_route__', False)
+        self.assertTrue(is_rest_route)
+
     def test_class_property(self):
         class Fake(object):
             x = 'hi'
@@ -180,3 +231,32 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
         self.assertEqual(f.hello, 'another')
         self.assertEqual(getattr(f, 'hello'), 'another')
         self.assertEqual(getattr(Fake, 'hello'), 'another')
+
+    def test_translate_failure(self):
+        """
+        Tests whether the translate decorator appropriately
+        calls translate when validate=False
+        """
+        class TranslateClass(ResourceBase):
+            @apimethod(methods=['GET'])
+            @translate(fields=[IntegerField('id', required=True)], validate=False)
+            def hey(cls, req):
+                return
+
+        req = RequestContainer(body_args=dict(id='notvalid'))
+        self.assertRaises(TranslationException, TranslateClass.hey, req)
+
+    def test_translate_success(self):
+        """
+        Tests that the translate decorator will succesfully
+        translate a parameter
+        """
+        class TranslateClass2(ResourceBase):
+            @apimethod(methods=['GET'])
+            @translate(fields=[IntegerField('id', required=True)], validate=False)
+            def hey(cls, req):
+                return req.body_args.get('id')
+
+        req = RequestContainer(body_args=dict(id='10'))
+        id = TranslateClass2.hey(req)
+        self.assertIsInstance(id, int)

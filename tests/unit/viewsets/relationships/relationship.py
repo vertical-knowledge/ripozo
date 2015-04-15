@@ -58,10 +58,6 @@ class TestRelationship(TestBase, unittest.TestCase):
         prop_input = dict(parent='value')
         resource = r.construct_resource(prop_input)
 
-        self.assertIsInstance(resource, RelatedResource)
-
-        r.required = False
-        resource = r.construct_resource({})
         self.assertIsNone(resource)
 
         r.required = True
@@ -74,13 +70,7 @@ class TestRelationship(TestBase, unittest.TestCase):
             pass
 
     def test_map_pks(self):
-        # TODO this should probably be redone
-        property_map = dict(parent='child', parent2='child2')
-        original_props = dict(parent='value', parent2='value2')
-        r = Relationship('related', property_map=property_map)
-        child_properties = r._map_pks(original_props)
-        expected = dict(child='value', child2='value2')
-        self.assertDictEqual(child_properties, expected)
+        assert False
 
     def test_relationship_generation(self):
         """Tests the generation of relationships in the ResourceBase"""
