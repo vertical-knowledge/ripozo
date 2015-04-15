@@ -3,6 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from ripozo.exceptions import RestException
 from ripozo.viewsets.relationships.relationship import Relationship
 from ripozo.viewsets.resource_base import ResourceBase
 from ripozo_tests.python2base import TestBase
@@ -58,19 +59,11 @@ class TestRelationship(TestBase, unittest.TestCase):
         prop_input = dict(parent='value')
         resource = r.construct_resource(prop_input)
 
-        self.assertIsNone(resource)
+        self.assertIsNotNone(resource)
 
         r.required = True
         # This should raise a key error since the field is required
-        try:
-            for rsrc in r.construct_resource({}):
-                assert False
-            assert False
-        except KeyError:
-            pass
-
-    def test_map_pks(self):
-        assert False
+        self.assertRaises(RestException, r.construct_resource, {})
 
     def test_relationship_generation(self):
         """Tests the generation of relationships in the ResourceBase"""
