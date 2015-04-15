@@ -260,3 +260,12 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
         req = RequestContainer(body_args=dict(id='10'))
         id = TranslateClass2.hey(req)
         self.assertIsInstance(id, int)
+
+    def test_apimethod_and_translate_endpoints(self):
+        class Fake(ResourceBase):
+            @apimethod(methods=['GET'])
+            @translate(fields=[])
+            def fake(cls, *args, **kwargs):
+                return cls, args, kwargs
+
+        self.assertEqual(len(Fake.endpoint_dictionary()), 1)

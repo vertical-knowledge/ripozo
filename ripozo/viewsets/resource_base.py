@@ -72,13 +72,10 @@ class ResourceBase(object):
         :param list errors:
         :param dict meta:
         """
-        properties = properties or {}
-        errors = errors or []
-        meta = meta or {}
-        self.properties = properties
+        self.properties = properties or {}
         self.status_code = status_code
-        self.errors = errors
-        self.meta = meta
+        self.errors = errors or []
+        self.meta = meta or {}
         self.query_args = query_args or {}
         self._url = None
         self._relationships = self._relationships or []
@@ -253,15 +250,11 @@ def _get_apimethods(cls):
     :return: A generator for tuples of the name, method combo
     :rtype: type.GeneratorType
     """
-    inspect.ismethoddescriptor
-    for name, obj in inspect.getmembers(cls, predicate=_temp_descriptor):
-        if getattr(obj, 'rest_route', False) or getattr(obj, '__rest_route__', False):
-            # Need to use getattr so that __get__ is appropriately called.
-            obj = getattr(cls, name)
-            yield name, obj
+    for name, obj in inspect.getmembers(cls, predicate=_apimethod_predicate):
+        yield name, getattr(cls, name)
 
 
-def _temp_descriptor(obj):
+def _apimethod_predicate(obj):
     # TODO REMOVE THIS
     return getattr(obj, 'rest_route', False) or getattr(obj, '__rest_route__', False)
 

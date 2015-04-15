@@ -3,9 +3,13 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from ripozo.exceptions import RestException
 from ripozo.viewsets.constructor import ResourceMetaClass
 
+import logging
 import six
+
+logger = logging.getLogger(__name__)
 
 
 class Relationship(object):
@@ -69,16 +73,17 @@ class Relationship(object):
         :return: An instance of a self.relation class that corresponds
             to this related resource
         :rtype: rest.viewsets.resource_base.ResourceBase
-        :raises: KeyError
         """
-        try:
-            related_properties = self._map_pks(properties)
-        except KeyError:
-            if self.required is False:
-                return
-            else:
-                raise
-        return self.relation(properties=related_properties, query_args=query_args)
+        logger.debug('Constructing resource {0} of type {1}'.format(self.name, self.relation))
+        related_properties = self._map_pks(properties)
+        resource = self.relation(properties=related_properties, query_args=query_args)
+        if self.required and not resource.has_all_pks:
+            raise RestException('The relationship {0} could not construct a valid {1}'
+                                ' with all of its pks.  Properties'
+                                ' {2}'.format(self.name, self.relation, related_properties))
+        elif not resource.has_all_pks:
+            return None
+        return resource
 
     def remove_child_resource_properties(self, properties):
         """
@@ -119,6 +124,8 @@ class Relationship(object):
         """
         properties = {}
         for parent_prop, prop in six.iteritems(self.property_map):
-            properties[prop] = parent_properties.pop(parent_prop)
-        properties.update(parent_properties.pop(self.name))
+            val = parent_properties.pop(parent_prop, None)
+            if val is not None:
+                properties[prop] = val
+        properties.update(parent_properties.pop(self.name, {}))
         return properties

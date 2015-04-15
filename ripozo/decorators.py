@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 from functools import wraps, update_wrapper
 
 import logging
+import six
 
 
 class ClassPropertyDescriptor(object):
@@ -41,15 +42,12 @@ class _apiclassmethod(object):
     __name__ = str('_apiclassmethod')
 
     def __init__(self, f):
+        update_wrapper(self, f)
+        for key, value in six.iteritems(getattr(f, 'func_dict', {})):
+            self.__dict__[key] = value
+
         self.f = f
-        # This is necessary due to the __call__ function being a bit hacky
-        # self.func_dict = {}
-        # if hasattr(f, 'func_name'):
-        #     self.func_name = f.func_name
-        # updated = ('__dict__', 'func_dict') if hasattr(f, 'func_dict') else ('__dict__',)
-        # update_wrapper(self, f, updated=updated)
-        # self.func_dict = f.func_dict
-        pass
+        self.func_name = f.func_name
 
     def __get__(self, obj, klass=None):
         if klass is None:
@@ -61,6 +59,9 @@ class _apiclassmethod(object):
                 return self.f(klass, *args)
             return self.f(*args)
         return newfunc
+
+    def __call__(self, cls, *args, **kwargs):
+        return self.__get__(None, klass=cls)(*args, **kwargs)
 
 
 class apimethod(object):

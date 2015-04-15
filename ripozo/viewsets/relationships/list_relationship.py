@@ -26,7 +26,7 @@ class ListRelationship(Relationship):
         :return: A generator that yields the relationships.
         :rtype: types.GeneratorType
         """
-        objects = properties.get(self.name, [])
+        objects = properties.pop(self.name, [])
         objects = objects or []
         resources = []
         for obj in objects:
