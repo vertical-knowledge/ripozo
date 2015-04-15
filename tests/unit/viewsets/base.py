@@ -382,3 +382,17 @@ class TestResourceBase(TestBase, unittest.TestCase):
             count += 1
             self.assertEqual(name, 'fake')
         self.assertEqual(count, 1)
+
+    def test_self_referential_relationships(self):
+        class Resource1(ResourceBase):
+            _pks = ['id']
+            _relationships = [Relationship('resource2', relation='Resource2')]
+
+        class Resource2(ResourceBase):
+            _pks = ['id']
+            _relationships = [Relationship('resource1', relation='Resource1')]
+
+        res = Resource1(dict(id=1, resource2=dict(id=2)))
+        self.assertEqual(len(res.relationships), 1)
+        related = res.relationships[0][0]
+        self.assertEqual(len(related.relationships), 0)

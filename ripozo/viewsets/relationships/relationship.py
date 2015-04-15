@@ -76,12 +76,14 @@ class Relationship(object):
         """
         logger.debug('Constructing resource {0} of type {1}'.format(self.name, self.relation))
         related_properties = self._map_pks(properties)
-        resource = self.relation(properties=related_properties, query_args=query_args)
-        if self.required and not resource.has_all_pks:
+        resource = None
+        if related_properties:
+            resource = self.relation(properties=related_properties, query_args=query_args)
+        if self.required and (not resource or not resource.has_all_pks):
             raise RestException('The relationship {0} could not construct a valid {1}'
                                 ' with all of its pks.  Properties'
                                 ' {2}'.format(self.name, self.relation, related_properties))
-        elif not resource.has_all_pks:
+        elif not resource or not resource.has_all_pks:
             return None
         return resource
 
