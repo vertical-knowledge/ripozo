@@ -396,3 +396,32 @@ class TestResourceBase(TestBase, unittest.TestCase):
         self.assertEqual(len(res.relationships), 1)
         related = res.relationships[0][0]
         self.assertEqual(len(related.relationships), 0)
+
+    def test_has_all_pks_property(self):
+        """
+        Tests the has_all_pks instance property
+        """
+        class Fake1(ResourceBase):
+            pass
+
+        res = Fake1()
+        self.assertTrue(res.has_all_pks)
+
+        class Fake2(ResourceBase):
+            _pks = ['id', 'pk']
+
+        res = Fake2(properties=dict(id=1, pk=2))
+        self.assertTrue(res.has_all_pks)
+        res = Fake2(properties=dict(id=1))
+        self.assertFalse(res.has_all_pks)
+
+    def test_url_prop_with_query_args(self):
+        """
+        Tests that query args get added to
+        the url property appropriately
+        """
+        class Fake(ResourceBase):
+            _resource_name = 'fake'
+
+        res = Fake(query_args=dict(param=2, other=4))
+        self.assertEqual(res.url, '/fake?other=4&param=2')

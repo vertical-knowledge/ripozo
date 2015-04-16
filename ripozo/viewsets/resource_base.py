@@ -8,9 +8,7 @@ import six
 
 from six.moves.urllib import parse
 from ripozo.decorators import classproperty
-from ripozo.exceptions import RestException
 from ripozo.viewsets.constructor import ResourceMetaClass
-from ripozo.viewsets.relationships import Relationship, ListRelationship
 from ripozo.utilities import convert_to_underscore, join_url_parts
 
 import inspect
