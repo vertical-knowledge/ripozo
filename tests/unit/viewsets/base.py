@@ -424,4 +424,4 @@ class TestResourceBase(TestBase, unittest.TestCase):
             _resource_name = 'fake'
 
         res = Fake(query_args=dict(param=2, other=4))
-        self.assertEqual(res.url, '/fake?other=4&param=2')
+        self.assertIn(res.url, ['/fake?other=4&param=2', '/fake?param=2&other=4'])
