@@ -228,14 +228,16 @@ class ListField(BaseField):
 
     def translate(self, obj, skip_required=False, validate=False):
         obj = super(ListField, self).translate(obj, skip_required=skip_required, validate=validate)
+        if obj is None:
+            return obj
         translated_list = []
         for f in obj:
             translated_list.append(self.indv_field.translate(f, skip_required=skip_required, validate=validate))
         return translated_list
 
     def _translate(self, obj, skip_required=False):
-        if not obj:
-            obj = []
+        if obj is None:  # let the validation handle it.
+            return obj
         if not isinstance(obj, (list, set, tuple,)):
             raise TranslationException(self.error_message or 'A list field must be an instance of a list, '
                                                              'tuple, or set')

@@ -103,14 +103,41 @@ class TestListField(FieldTestBase2, unittest.TestCase):
     translation_failures = [12]
 
     def test_not_required(self):
-        pass
-        # This will always return a list
-        # TODO write this test
+        """
+        Tests that a validation error
+        is raised only when appropriate.
+        """
+        l = ListField('field', required=False)
+        obj = l.translate(None, validate=True)
+        self.assertListEqual(obj, [])
 
     def test_required(self):
-        pass
-        # TODO write this
+        """
+        Tests that the validation error
+        is raised when required is True
+        """
+        l = ListField('field', required=True)
+        self.assertRaises(ValidationException, l.translate, None, validate=True)
 
-    def test_translate_none(self):
-        pass
-        # TODO write this
+    def test_translate_items(self):
+        """
+        Tests validating the items.
+        """
+        items = [datetime.datetime.now(), 'gonna break']
+        l = ListField('field', indv_field=DateTimeField('datetime'))
+        self.assertRaises(TranslationException, l.translate, items)
+        items = [datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%fZ')]
+        resp_items = l.translate(items)
+        self.assertEqual(len(resp_items), 1)
+        self.assertIsInstance(resp_items[0], datetime.datetime)
+
+    def test_validate_items(self):
+        """
+        Tests validating the items in the list
+        """
+        items = [10, 15]
+        l = ListField('field', indv_field=IntegerField('int', minimum=5))
+        resp_items = l.translate(items, validate=True)
+        self.assertEqual(items, resp_items)
+        items = [15, 0]
+        self.assertRaises(ValidationException, l.translate, items, validate=True)
