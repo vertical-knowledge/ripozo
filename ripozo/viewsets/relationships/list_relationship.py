@@ -30,7 +30,9 @@ class ListRelationship(Relationship):
         objects = objects or []
         resources = []
         for obj in objects:
-            resources.append(self.relation(properties=obj, query_args=query_args))
+            res = self.relation(properties=obj, query_args=query_args,
+                                include_relationships=self.embedded)
+            resources.append(res)
         return resources
 
     def remove_child_resource_properties(self, properties):

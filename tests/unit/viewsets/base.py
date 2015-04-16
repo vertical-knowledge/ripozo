@@ -349,7 +349,7 @@ class TestResourceBase(TestBase, unittest.TestCase):
         class Resource(ResourceBase):
             _pks = ['id']
             _relationships = [
-                Relationship('child', relation='Resource'),
+                Relationship('child', relation='Resource', embedded=True),
                 Relationship('parent', relation='Resource')
             ]
 

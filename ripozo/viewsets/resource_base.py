@@ -63,7 +63,8 @@ class ResourceBase(object):
     _postprocessors = None
     _links = None
 
-    def __init__(self, properties=None, errors=None, meta=None, status_code=200, query_args=None, embedded=False):
+    def __init__(self, properties=None, errors=None, meta=None,
+                 status_code=200, query_args=None, include_relationships=True):
         """
         Initializes a response
 
@@ -71,6 +72,9 @@ class ResourceBase(object):
         :param int status_code:
         :param list errors:
         :param dict meta:
+        :param bool include_relationships: If not True, then this resource
+            will not include relationships or links.  This is primarily used
+            to increase performance with linked resources.
         """
         self.properties = properties or {}
         self.status_code = status_code
@@ -81,10 +85,14 @@ class ResourceBase(object):
         self._relationships = self._relationships or []
         self._links = self._links or []
 
-        self.relationships = self._generate_links(self._relationships, self.properties)
+        if include_relationships:
+            self.relationships = self._generate_links(self._relationships, self.properties)
 
-        meta_links = self.meta.get('links', {}).copy()
-        self.links = self._generate_links(self._links, meta_links)
+            meta_links = self.meta.get('links', {}).copy()
+            self.links = self._generate_links(self._links, meta_links)
+        else:
+            self.relationships = []
+            self.links = []
 
     @staticmethod
     def _generate_links(relationship_list, links_properties):

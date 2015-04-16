@@ -6,6 +6,7 @@ CHANGELOG
 
 - Overhauled how links and relationships are generated
 - Lots of bugs
+- Added include_relationships keyword argument to ResourceBase __init__ for performance reasons
 
 
 0.1.24 (2015-04-13)
