@@ -14,7 +14,7 @@ _content_type = 'application/hal+json'
 
 class HalAdapter(AdapterBase):
     """
-    An adapter that formats the response in the HAL format
+    An adapter that formats the response in the HAL format.
     A description of the HAL format can be found here:
     `HAL Specification <http://stateless.co/hal_specification.html>`_
     """
