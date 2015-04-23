@@ -253,7 +253,8 @@ def _generate_endpoint_dict(cls):
         logger.debug('Found the apimethod {0} on the class {1}'.format(name, cls.__name__))
         all_routes = []
         for route, endpoint, options in method.routes:
-            route = join_url_parts(cls.base_url, route)
+            base_url = cls.base_url_sans_pks if options.get('no_pks', False) else cls.base_url
+            route = join_url_parts(base_url, route)
             all_routes.append(dict(route=route, endpoint_func=method, **options))
         logger.info('Registering routes: {0} as key {1}'.format(all_routes, name))
         endpoint_dictionary[name] = all_routes
@@ -277,7 +278,6 @@ def _get_apimethods(cls):
 
 
 def _apimethod_predicate(obj):
-    # TODO REMOVE THIS
     return getattr(obj, 'rest_route', False) or getattr(obj, '__rest_route__', False)
 
 

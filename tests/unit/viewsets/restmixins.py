@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 
 from ripozo.viewsets.constructor import ResourceMetaClass
 from ripozo.viewsets.restmixins import Create, Retrieve, Update, Delete, RetrieveUpdateDelete, \
-    RetrieveUpdate, CreateRetrieveList, RetrieveList
+    RetrieveUpdate, RetrieveList
 
 from ripozo_tests.python2base import TestBase
 

@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 class Create(ResourceBase):
     __abstract__ = True
 
-    @apimethod(methods=['POST'])
+    @apimethod(methods=['POST'], no_pks=True)
     @translate(manager_field_validators=True, validate=True)
     def create(cls, request, *args, **kwargs):
         logger.debug('Creating a resource using manager {0}'.format(cls._manager))
@@ -77,5 +77,13 @@ class RetrieveUpdateDelete(Retrieve, Update, Delete):
     __abstract__ = True
 
 
-class CreateRetrieveList(RetrieveList, Create):
+class CreateRetrieve(Create, Retrieve):
+    __abstract__ = True
+
+
+class CreateRetrieveUpdate(Create, Retrieve, Update):
+    __abstract__ = True
+
+
+class CreateRetrieveUpdateDelete(Create, Retrieve, Update, Delete):
     __abstract__ = True

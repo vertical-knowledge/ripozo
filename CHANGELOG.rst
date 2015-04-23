@@ -4,7 +4,10 @@ CHANGELOG
 0.1.26 (unreleased)
 ===================
 
-- Nothing changed yet.
+- Added base_url_sans_pks classproperty to ResourceBase
+- Create is now an individual resource rather than a list resource
+- Added CreateRetrieve, CreateRetrieveUpdate, andCreateRetrieveUpdateDelete mixins
+- Removed CreateRetrieveList mixin
 
 
 0.1.25 (2015-04-16)
