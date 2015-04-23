@@ -3,7 +3,9 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from ripozo import ResourceBase
 from ripozo.dispatch.adapters.hal import HalAdapter
+from ripozo.viewsets.constructor import ResourceMetaClass
 from ripozo.viewsets.request import RequestContainer
 from ripozo_tests.python2base import TestBase
 from ripozo_tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
@@ -20,6 +22,8 @@ class TestHalAdapter(TestBase, unittest.TestCase):
     """
 
     def setUp(self):
+        ResourceMetaClass.registered_names_map.clear()
+        ResourceMetaClass.registered_resource_classes.clear()
         HelloWorldViewset = get_refreshed_helloworld_viewset()
 
         self.properties = {'content': 'hello'}
@@ -64,3 +68,33 @@ class TestHalAdapter(TestBase, unittest.TestCase):
             for v in value:
                 self.test_links(data=v)
                 # TODO need to check if properties available
+
+    def test_embedded_relationships(self):
+        class Fake(ResourceBase):
+            pass
+        props = dict(val=1, val2=2)
+        rel = Fake(properties=props)
+        adapter = HalAdapter(None)
+        resp = adapter._generate_relationship(rel, True)
+        self.assertEqual(resp, props)
+
+    def test_list_relationships(self):
+        class Fake(ResourceBase):
+            pass
+        props = dict(val=1, val2=2)
+        props2 = dict(val=3, val4=4)
+        adapter = HalAdapter(None)
+        rel1 = Fake(properties=props)
+        rel2 = Fake(properties=props2)
+        resp = adapter._generate_relationship([rel1, rel2], True)
+        self.assertListEqual([props, props2], resp)
+
+    def test_not_all_pks(self):
+        class Fake(ResourceBase):
+            _pks = ['id']
+
+        props = dict(val=1)
+        adapter = HalAdapter(None)
+        rel = Fake(properties=props)
+        resp = adapter._generate_relationship(rel, False)
+        self.assertIsNone(resp)

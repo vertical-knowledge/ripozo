@@ -58,11 +58,8 @@ class SirenAdapter(AdapterBase):
         actions = []
         for endpoint, options in six.iteritems(self.resource.endpoint_dictionary()):
             options = options[0]
-            all_methods = options.get('methods', [])
-            if len(all_methods) == 0:
-                meth = 'GET'
-            else:
-                meth = all_methods[0]
+            all_methods = options.get('methods', ('GET',))
+            meth = all_methods[0]
             base_route = options.get('route', self.resource.base_url)
             route = create_url(base_route, **self.resource.properties)
             route = self.combine_base_url_with_resource_url(route)
