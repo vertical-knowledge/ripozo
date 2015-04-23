@@ -98,3 +98,20 @@ class TestHalAdapter(TestBase, unittest.TestCase):
         rel = Fake(properties=props)
         resp = adapter._generate_relationship(rel, False)
         self.assertIsNone(resp)
+
+    def test_content_type(self):
+        adapter = HalAdapter(None)
+        self.assertEqual(adapter.extra_headers, {'Content-Type': 'application/hal+json'})
+
+    def test_list_relationship_not_all_pks(self):
+        class Fake(ResourceBase):
+            pks = ['id']
+
+        adapter = HalAdapter(None)
+        props1 = dict(id=1, val=2)
+        props2 = dict(val=1)
+        rel1 = Fake(properties=props1)
+        rel2 = Fake(properties=props2)
+        resp = adapter._generate_relationship([rel1, rel2], True)
+        self.assertEqual(len(resp), 1)
+        self.assertEqual(resp[0], props1)
