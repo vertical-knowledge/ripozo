@@ -74,8 +74,8 @@ class TestResourceIntegration(TestBase, unittest.TestCase):
         self.assertEqual(ResourceList._relationships, [lr])
         props = dict(resource_list=[dict(id=1), dict(id=2)])
         res = ResourceList(properties=props)
-        self.assertEqual(len(res.relationships), 1)
-        resources = res.relationships[0][0]
+        self.assertEqual(len(res.related_resources), 1)
+        resources = res.related_resources[0][0]
         self.assertIsInstance(resources, list)
         self.assertEqual(len(resources), 2)
 

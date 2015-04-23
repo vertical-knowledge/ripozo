@@ -94,7 +94,7 @@ class SirenAdapter(AdapterBase):
 
     def generate_links(self):
         links = [dict(rel=['self'], href=self.combine_base_url_with_resource_url(self.resource.url))]
-        for link, link_name, embedded in self.resource.links:
+        for link, link_name, embedded in self.resource.linked_resources:
             links.append(dict(rel=[link_name],
                               href=self.combine_base_url_with_resource_url(link.url)))
         return links
@@ -107,7 +107,7 @@ class SirenAdapter(AdapterBase):
         :rtype: list
         """
         entities = []
-        for resource, name, embedded in self.resource.relationships:
+        for resource, name, embedded in self.resource.related_resources:
             for ent in self.generate_entity(resource, name, embedded):
                 entities.append(ent)
         return entities

@@ -354,20 +354,20 @@ class TestResourceBase(TestBase, unittest.TestCase):
             ]
 
         res = Resource(properties=dict(id=1))
-        self.assertEqual(len(res.relationships), 0)
+        self.assertEqual(len(res.related_resources), 0)
 
         res = Resource(properties=dict(id=1, child=dict(id=2)))
-        self.assertEqual(len(res.relationships), 1)
-        relation = res.relationships[0][0]
+        self.assertEqual(len(res.related_resources), 1)
+        relation = res.related_resources[0][0]
         self.assertIsInstance(relation, Resource)
 
         res = Resource(properties=dict(id=1, child=dict(id=2, parent=dict(id=1))))
-        self.assertEqual(len(res.relationships), 1)
-        relation = res.relationships[0][0]
+        self.assertEqual(len(res.related_resources), 1)
+        relation = res.related_resources[0][0]
         self.assertIsInstance(relation, Resource)
 
-        self.assertEqual(len(relation.relationships), 1)
-        parent = res.relationships[0][0]
+        self.assertEqual(len(relation.related_resources), 1)
+        parent = res.related_resources[0][0]
         self.assertIsInstance(parent, Resource)
 
     def test_get_apimethods_multiwrapped(self):
@@ -393,9 +393,9 @@ class TestResourceBase(TestBase, unittest.TestCase):
             _relationships = [Relationship('resource1', relation='Resource1')]
 
         res = Resource1(dict(id=1, resource2=dict(id=2)))
-        self.assertEqual(len(res.relationships), 1)
-        related = res.relationships[0][0]
-        self.assertEqual(len(related.relationships), 0)
+        self.assertEqual(len(res.related_resources), 1)
+        related = res.related_resources[0][0]
+        self.assertEqual(len(related.related_resources), 0)
 
     def test_has_all_pks_property(self):
         """

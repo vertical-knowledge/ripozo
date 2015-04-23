@@ -56,8 +56,8 @@ class BoringJSONAdapter(AdapterBase):
         """
         response = dict()
         parent_properties = self.resource.properties.copy()
-        self._append_relationships_to_list(response, self.resource.relationships)
-        self._append_relationships_to_list(response, self.resource.links)
+        self._append_relationships_to_list(response, self.resource.related_resources)
+        self._append_relationships_to_list(response, self.resource.linked_resources)
         response.update(parent_properties)
         return json.dumps({self.resource.resource_name: response})
 

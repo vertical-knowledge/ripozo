@@ -37,8 +37,8 @@ class HalAdapter(AdapterBase):
         resource_url = self.combine_base_url_with_resource_url(self.resource.url)
         parent_properties = self.resource.properties.copy()
 
-        embedded, links = self.generate_relationship(self.resource.relationships)
-        embedded2, links2 = self.generate_relationship(self.resource.relationships)
+        embedded, links = self.generate_relationship(self.resource.related_resources)
+        embedded2, links2 = self.generate_relationship(self.resource.linked_resources)
         embedded.update(embedded2)
         links.update(links2)
         links.update(dict(self=dict(href=resource_url)))

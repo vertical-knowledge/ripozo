@@ -75,8 +75,8 @@ class TestRelationship(TestBase, unittest.TestCase):
 
         resource = MyResource3(properties=dict(id=1, related=dict(pk=2)))
         self.assertEqual(resource.properties, dict(id=1))
-        self.assertEqual(len(resource.relationships), 1)
-        relation = resource.relationships[0]
+        self.assertEqual(len(resource.related_resources), 1)
+        relation = resource.related_resources[0]
         related_res = relation[0]
         self.assertIsInstance(related_res, RelatedResource3)
         self.assertEqual(related_res.properties, dict(pk=2))
@@ -94,8 +94,8 @@ class TestRelationship(TestBase, unittest.TestCase):
 
         resource = MyResource2(properties={'id': 1, 'related': {'pk': 2}})
         self.assertEqual(resource.properties, dict(id=1))
-        self.assertEqual(len(resource.relationships), 1)
-        relation = resource.relationships[0]
+        self.assertEqual(len(resource.related_resources), 1)
+        relation = resource.related_resources[0]
         related_res = relation[0]
         self.assertIsInstance(related_res, RelatedResource2)
         self.assertEqual(related_res.properties, dict(pk=2))

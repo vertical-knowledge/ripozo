@@ -35,5 +35,5 @@ class TestBoringJSONAdapter(TestBase, unittest.TestCase):
             self.assertIn(key, data)
             self.assertEqual(value, data[key])
 
-        for relationship, field_name, embedded in self.resource.relationships:
+        for relationship, field_name, embedded in self.resource.related_resources:
             self.assertIn(field_name, data)

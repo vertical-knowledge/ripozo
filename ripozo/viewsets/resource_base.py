@@ -80,17 +80,15 @@ class ResourceBase(object):
         self.meta = meta or {}
         self.query_args = query_args or {}
         self._url = None
-        self._relationships = self._relationships or []
-        self._links = self._links or []
 
         if include_relationships:
-            self.relationships = self._generate_links(self._relationships, self.properties)
+            self.related_resources = self._generate_links(self.relationships, self.properties)
 
             meta_links = self.meta.get('links', {}).copy()
-            self.links = self._generate_links(self._links, meta_links)
+            self.linked_resources = self._generate_links(self.links, meta_links)
         else:
-            self.relationships = []
-            self.links = []
+            self.related_resources = []
+            self.linked_resources = []
 
     @staticmethod
     def _generate_links(relationship_list, links_properties):
@@ -210,6 +208,18 @@ class ResourceBase(object):
         return _generate_endpoint_dict(cls)
 
     @classproperty
+    def links(cls):
+        """
+        This should be overridden in __abstract__
+        subclasses that require default links such
+        as the Create rest mixin.
+
+        :return: A tuple of the links for this class
+        :rtype: tuple
+        """
+        return cls._links or ()
+
+    @classproperty
     def manager(cls):
         if cls._manager is None:
             return None
@@ -230,6 +240,21 @@ class ResourceBase(object):
     @classproperty
     def preprocessors(cls):
         return cls._preprocessors or []
+
+    @classproperty
+    def relationships(cls):
+        """
+        This should be overridden in __abstract__
+        classes that require a default relationship.
+        For example, you have a series of classes that
+        should have an ``user`` relationship.  In that
+        case you would simply append the User relationship
+        to the _relationships attribute.
+
+        :return: A tuple of the relationships for this class
+        :rtype: tuple
+        """
+        return cls._relationships or ()
 
     @classproperty
     def resource_name(cls):
