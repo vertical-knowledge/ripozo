@@ -425,3 +425,30 @@ class TestResourceBase(TestBase, unittest.TestCase):
 
         res = Fake(query_args=dict(param=2, other=4))
         self.assertIn(res.url, ['/fake?other=4&param=2', '/fake?param=2&other=4'])
+
+    def test_base_url_sans_pks(self):
+        """
+        Tests the class property for the
+        base_url_sans_pks property on the
+        ResourceBase class
+        """
+        class Fake(ResourceBase):
+            _resource_name = 'api'
+
+        self.assertEqual(Fake.base_url_sans_pks, '/api')
+
+        class Fake2(ResourceBase):
+            _namespace = 'api'
+
+        self.assertEqual(Fake2.base_url_sans_pks, '/api/fake2')
+
+        class Fake3(ResourceBase):
+            _resource_name = 'fake'
+            _namespace = 'api'
+
+        self.assertEqual(Fake3.base_url_sans_pks, '/api/fake')
+
+        class Fake4(ResourceBase):
+            _namespace = '/api'
+
+        self.assertEqual(Fake4.base_url_sans_pks, '/api/fake4')

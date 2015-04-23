@@ -175,9 +175,25 @@ class ResourceBase(object):
         """
         pks = cls.pks or []
         parts = list(map(lambda pk: '<{0}>'.format(pk), pks))
-        parts.insert(0, cls.resource_name)
-        parts.insert(0, cls.namespace)
-        base_url = join_url_parts(*parts).lstrip('/')
+        base_url = join_url_parts(cls.base_url_sans_pks, *parts).lstrip('/')
+        return '/{0}'.format(base_url)
+
+    @classproperty
+    def base_url_sans_pks(cls):
+        """
+        A class property that eturns the base url
+        without the pks.
+        This is just the /{namespace}/{resource_name}
+
+        For example if the _namespace = '/api' and
+        the _resource_name = 'resource' this would
+        return '/api/resource' regardless if there
+        are pks or not.
+
+        :return: The base url without the pks
+        :rtype: unicode
+        """
+        base_url = join_url_parts(cls.namespace, cls.resource_name).lstrip('/')
         return '/{0}'.format(base_url)
 
     @classmethod
