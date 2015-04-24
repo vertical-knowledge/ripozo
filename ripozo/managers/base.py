@@ -233,3 +233,39 @@ class BaseManager(object):
         filters = filters.copy()
         last_pagination_pk = filters.pop(self.pagination_pk_query_arg, None)
         return last_pagination_pk, filters
+
+    def dot_field_list_to_dict(self, fields=None):
+        """
+        Converts a list of dot delimited fields (and related fields)
+        and turns it into a dictionary for example, it would transform
+
+        .. code-block:: python
+
+            >>> dot_field_list_to_dict(['id', 'value', 'related.id', 'related.related_value'])
+            {
+                'id': None,
+                'value': None,
+                'related': {
+                    'id': None,
+                    'related_value': None
+                }
+            }
+
+        :param list fields:
+        :return: A dictionary of the fields layered as to
+            indicate relationships.
+        :rtype: dict
+        """
+        # TODO find a better fucking way
+        field_dict = {}
+        fields = fields or self.fields
+        for f in fields:
+            field_parts = f.split('.')
+            current = field_dict
+            part = field_parts.pop(0)
+            while len(field_parts) > 0:
+                current[part] = current.get(part, dict())
+                current = current[part]
+                part = field_parts.pop(0)
+            current[part] = None
+        return field_dict
