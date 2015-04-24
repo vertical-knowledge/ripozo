@@ -198,3 +198,18 @@ class TestSirenAdapter(TestAdapterBase):
         adapter = SirenAdapter(res)
         entities = adapter.get_entities()
         self.assertEqual(len(entities), 2)
+
+    def test_extra_headers(self):
+        adapter = SirenAdapter(None)
+        self.assertEqual(adapter.extra_headers, {'Content-Type': 'application/vnd.siren+json'})
+
+    def test_generate_entity_not_all_pks(self):
+        class Fake(ResourceBase):
+            _pks = ['id']
+
+        f = Fake(properties=dict(val='something'))
+        adapter = SirenAdapter(f)
+        resp = adapter.generate_entity(f, 'blah', True)
+        # Ensure that it is an empty generator
+        for r in resp:
+            assert False

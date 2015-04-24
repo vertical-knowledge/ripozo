@@ -37,3 +37,7 @@ class TestBoringJSONAdapter(TestBase, unittest.TestCase):
 
         for relationship, field_name, embedded in self.resource.related_resources:
             self.assertIn(field_name, data)
+
+    def test_content_header(self):
+        adapter = BoringJSONAdapter(None)
+        self.assertEqual(adapter.extra_headers, {'Content-Type': 'application/json'})

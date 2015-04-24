@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 from mock import Mock, MagicMock
 
 from ripozo.dispatch.adapters import BoringJSONAdapter, HalAdapter, SirenAdapter
-from ripozo.decorators import apimethod
+from ripozo.dispatch.dispatch_base import DispatcherBase
 from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
 from ripozo_tests.python2base import TestBase
 from ripozo_tests.helpers.dispatcher import FakeDispatcher
@@ -92,3 +92,15 @@ class TestDispatchBase(TestBase, unittest.TestCase):
         self.dispatcher.register_resources(mockKlass, self.mockKlass)
 
         self.assertEqual(mck.call_count, 5)
+
+    def test_pissing_me_off(self):
+        class Fake(DispatcherBase):
+            def register_route(self, endpoint, endpoint_func=None, route=None, methods=None, **options):
+                return super(Fake, self).register_route(endpoint)
+
+            @property
+            def base_url(self):
+                return 'blah'
+
+        disp = Fake()
+        self.assertIsNone(disp.register_route('fake'))

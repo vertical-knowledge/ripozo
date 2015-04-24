@@ -19,5 +19,6 @@ class TestHtmlAdapter(TestBase, unittest.TestCase):
         self.adapter = HtmlAdapter(self.resource, base_url='http://localhost:5000/')
         self.response = self.adapter.formatted_body
 
-    def test_fake(self):
-        pass
+    def test_extra_headers(self):
+        adapter = HtmlAdapter(None)
+        self.assertEqual(adapter.extra_headers, {'Content-Type': 'text/html'})
