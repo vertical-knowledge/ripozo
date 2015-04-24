@@ -91,3 +91,25 @@ class TestManager(TestManagerMixin, TestBase, unittest.TestCase):
 
         self.assertListEqual(M3.fields, [])
         self.assertListEqual(M3.list_fields, [])
+
+    def test_dot_field_list_to_dict(self):
+        """
+        Tests the appropriate dictionary return
+        """
+        class Manager(InMemoryManager):
+            pass
+
+        input_outputs = [
+            ([], {}),
+            (['blah'], {'blah': None}),
+            (['blah', 'a.b', 'a.c'], {'blah': None, 'a': {'b': None, 'c': None}})
+        ]
+        for method_input, output in input_outputs:
+            generated = Manager().dot_field_list_to_dict(method_input)
+            self.assertDictEqual(generated, output)
+
+    def test_abstact_method_pissing_me_off(self):
+        class Manager(InMemoryManager):
+            pass
+
+        self.assertIsNone(super(Manager, Manager()).get_field_type('blah'))

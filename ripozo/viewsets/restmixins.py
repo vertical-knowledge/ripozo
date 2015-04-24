@@ -3,7 +3,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.decorators import apimethod, translate
+from ripozo.viewsets.relationships.relationship import Relationship
+from ripozo.decorators import apimethod, translate, classproperty
 from ripozo.viewsets.resource_base import ResourceBase
 
 import logging
@@ -25,6 +26,20 @@ class Create(ResourceBase):
         meta = dict(links=dict(created=props))
         return cls(meta=meta, status_code=201)
 
+    @classproperty
+    def links(cls):
+        """
+        Appends the "created" link to the _links
+        and returns the corresponding tuple.
+
+        :return: The links defined on the class plus
+            the "created" link that references the newly
+            created link.
+        :rtype: tuple
+        """
+        links = cls._links or tuple()
+        return links + (Relationship('created', relation=cls.__name__), )
+
 
 class RetrieveList(ResourceBase):
     __abstract__ = True
@@ -34,6 +49,21 @@ class RetrieveList(ResourceBase):
         logger.debug('Retrieving list of resources using manager {0}'.format(cls._manager))
         props, meta = cls.manager.retrieve_list({})
         return cls(properties={cls.resource_name: props}, meta=meta, status_code=200)
+
+    @classproperty
+    def links(cls):
+        """
+        Appends the "next" and "previous" links to the
+        _links and returns the corresponding tuple.
+
+        :return: The links defined on the class plus
+            the "next" and "previous" link that references
+            the newly created link.
+        :rtype: tuple
+        """
+        links = cls._links or tuple()
+        return links + (Relationship('next', relation=cls.__name__),
+                        Relationship('previous', relation=cls.__name__),)
 
 
 class Retrieve(ResourceBase):
