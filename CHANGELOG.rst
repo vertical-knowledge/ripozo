@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-0.1.26 (unreleased)
+0.1.26 (2015-04-23)
 ===================
 
 - Added base_url_sans_pks classproperty to ResourceBase
