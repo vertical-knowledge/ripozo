@@ -25,6 +25,7 @@ class ClassPropertyDescriptor(object):
             klass = type(obj)
         return self.fget.__get__(obj, klass)()
 
+
 def classproperty(func):
     """
     Using this decorator a class can have a decorator. Necessary for dynamically settings urls
@@ -37,6 +38,7 @@ def classproperty(func):
     if not isinstance(func, (classmethod, staticmethod)):
         func = classmethod(func)
     return ClassPropertyDescriptor(func)
+
 
 class _apiclassmethod(object):
     __name__ = str('_apiclassmethod')

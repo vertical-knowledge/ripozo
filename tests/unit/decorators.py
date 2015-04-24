@@ -3,8 +3,9 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.decorators import apimethod, translate, _apiclassmethod, classproperty
-from ripozo.exceptions import TranslationException, ValidationException
+from ripozo.decorators import apimethod, translate, _apiclassmethod, \
+    classproperty, ClassPropertyDescriptor
+from ripozo.exceptions import TranslationException
 from ripozo.viewsets.fields.common import IntegerField
 from ripozo.viewsets.request import RequestContainer
 from ripozo.viewsets.resource_base import ResourceBase
@@ -272,3 +273,14 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
                 return cls, args, kwargs
 
         self.assertEqual(len(Fake.endpoint_dictionary()), 1)
+
+    def test_getters_with_no_class_classpropertydescriptor(self):
+        """
+        Not really necessary just pissing me off.
+        """
+        mck = mock.MagicMock()
+        mck.__get__ = mock.MagicMock()
+        descriptor = ClassPropertyDescriptor(mck)
+        resp = descriptor.__get__(5)
+        self.assertEqual(mck.__get__.call_args_list[0][0], (5, int))
+
