@@ -7,7 +7,7 @@ from ripozo.viewsets.constructor import ResourceMetaClass
 from ripozo.viewsets.restmixins import Create, Retrieve, Update, Delete, RetrieveUpdateDelete, \
     RetrieveUpdate, RetrieveList
 
-from ripozo_tests.python2base import TestBase
+from ripozo.tests.python2base import TestBase
 
 import mock
 import unittest

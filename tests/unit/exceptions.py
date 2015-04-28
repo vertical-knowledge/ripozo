@@ -7,7 +7,7 @@ from ripozo.exceptions import RestException, BaseRestEndpointAlreadyExists, Disp
     TranslationException, ValidationException, AdapterFormatAlreadyRegisteredException, FieldException, \
     ManagerException, NoResourceNameDeclaredException
 
-from ripozo_tests.python2base import TestBase
+from ripozo.tests.python2base import TestBase
 
 import unittest
 

@@ -8,8 +8,8 @@ from mock import Mock, MagicMock
 from ripozo.dispatch.adapters import BoringJSONAdapter, HalAdapter, SirenAdapter
 from ripozo.dispatch.dispatch_base import DispatcherBase
 from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
-from ripozo_tests.python2base import TestBase
-from ripozo_tests.helpers.dispatcher import FakeDispatcher
+from ripozo.tests.python2base import TestBase
+from ripozo.tests.helpers.dispatcher import FakeDispatcher
 
 import mock
 import unittest

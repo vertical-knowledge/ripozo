@@ -8,8 +8,8 @@ from ripozo.exceptions import BaseRestEndpointAlreadyExists
 from ripozo.viewsets.constructor import ResourceMetaClass
 from ripozo.viewsets.relationships import Relationship, ListRelationship
 from ripozo.viewsets.resource_base import ResourceBase, _get_apimethods
-from ripozo_tests.helpers.inmemory_manager import InMemoryManager
-from ripozo_tests.python2base import TestBase
+from ripozo.tests.helpers.inmemory_manager import InMemoryManager
+from ripozo.tests.python2base import TestBase
 
 import mock
 import logging

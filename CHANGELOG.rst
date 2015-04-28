@@ -4,7 +4,7 @@ CHANGELOG
 0.1.27 (unreleased)
 ===================
 
-- Nothing changed yet.
+- Removed ripozo_tests dependency.  It is now included in the package itself.
 
 
 0.1.26 (2015-04-23)

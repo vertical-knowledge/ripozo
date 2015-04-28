@@ -3,14 +3,13 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import six
 import unittest
 
 from ripozo.dispatch.adapters.base import AdapterBase
 from ripozo.viewsets.relationships import Relationship, ListRelationship
 from ripozo.viewsets.resource_base import ResourceBase
 
-from ripozo_tests.python2base import TestBase
+from ripozo.tests.python2base import TestBase
 
 __author__ = 'Tim Martin'
 

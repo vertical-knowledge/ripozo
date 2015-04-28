@@ -3,9 +3,9 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo_tests.python2base import TestBase
-from ripozo_tests.bases.manager import TestManagerMixin
-from ripozo_tests.helpers.inmemory_manager import InMemoryManager
+from ripozo.tests.python2base import TestBase
+from ripozo.tests.bases.manager import TestManagerMixin
+from ripozo.tests.helpers.inmemory_manager import InMemoryManager
 
 import mock
 import six

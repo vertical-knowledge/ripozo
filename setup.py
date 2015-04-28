@@ -45,8 +45,7 @@ setup(
     ],
     tests_require=[
         'tox',
-        'mock',
-        'ripozo-tests'
+        'mock'
     ],
     test_suite="tests"
 )

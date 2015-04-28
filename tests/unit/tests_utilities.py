@@ -6,8 +6,8 @@ from __future__ import unicode_literals
 from ripozo.utilities import serialize_fields, titlize_endpoint, join_url_parts, \
     picky_processor, convert_to_underscore, make_json_safe
 
-from ripozo_tests.python2base import TestBase
-from ripozo_tests.bases.manager import generate_random_name
+from ripozo.tests.python2base import TestBase
+from ripozo.tests.bases.manager import generate_random_name
 
 import datetime
 import decimal

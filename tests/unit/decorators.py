@@ -10,7 +10,7 @@ from ripozo.viewsets.fields.common import IntegerField
 from ripozo.viewsets.request import RequestContainer
 from ripozo.viewsets.resource_base import ResourceBase
 
-from ripozo_tests.python2base import TestBase
+from ripozo.tests.python2base import TestBase
 
 import mock
 import unittest

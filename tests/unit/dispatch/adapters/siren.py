@@ -9,7 +9,7 @@ from ripozo.viewsets.relationships import Relationship, ListRelationship
 from ripozo.viewsets.request import RequestContainer
 from ripozo.viewsets.resource_base import ResourceBase
 
-from ripozo_tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
+from ripozo.tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
 
 from tests.unit.dispatch.adapters.base import TestAdapterBase
 

@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 from ripozo.exceptions import ValidationException, TranslationException
 from ripozo.viewsets.fields.common import StringField, BooleanField, FloatField,\
     DateTimeField, IntegerField, ListField
-from ripozo_tests.bases.field import FieldTestBase
+from ripozo.tests.bases.field import FieldTestBase
 
 import datetime
 import re

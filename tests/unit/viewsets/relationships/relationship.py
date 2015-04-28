@@ -6,10 +6,9 @@ from __future__ import unicode_literals
 from ripozo.exceptions import RestException
 from ripozo.viewsets.relationships.relationship import Relationship
 from ripozo.viewsets.resource_base import ResourceBase
-from ripozo_tests.python2base import TestBase
+from ripozo.tests.python2base import TestBase
 
 import mock
-import types
 import unittest
 
 
