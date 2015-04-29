@@ -74,6 +74,7 @@ class ResourceBase(object):
             will not include relationships or links.  This is primarily used
             to increase performance with linked resources.
         """
+        # TODO finish out the docstring
         self.properties = properties or {}
         self.status_code = status_code
         self.errors = errors or []
