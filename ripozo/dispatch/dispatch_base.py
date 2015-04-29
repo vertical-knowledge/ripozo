@@ -127,7 +127,7 @@ class DispatcherBase(object):
             class whose endpoints must be registered
         """
         for endpoint, routes in six.iteritems(klass.endpoint_dictionary()):
-            endpoint = '{0}.{1}'.format(klass.__name__, endpoint)
+            endpoint = '{0}__{1}'.format(klass.__name__, endpoint)
             for options in routes:
                 options = options.copy()
                 route = options.pop('route', klass.base_url)

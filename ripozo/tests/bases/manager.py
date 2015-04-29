@@ -23,161 +23,98 @@ class TestManagerMixin(TestBase):
     manager, does_not_exist_exception, and all_person_models proeprties need to be implemented
     get_person_model_by_id method needs to be implemented
     """
-    first_name_field = 'first_name'
-    last_name_field = 'last_name'
-    id_field = 'id'
-    _manager = None
-
-    def setUp(self):
-        self._manager = self.manager
-
-    @property
-    def manager(self):
+    def test_create(self):
         """
-        Return the serializer for the specific implementation
-
-        :rtype: rest.managers.base.BaseManager
+        Tests that the model is appropriately created
         """
-        raise NotImplementedError
+        assert False
 
-    @property
-    def does_not_exist_exception(self):
+    def test_create_not_exists(self):
         """
-        return the exception type that is raised when the model does not exist
+        Tests that a DoesNotExistException exception
+        is raised if the model does not exists
         """
-        raise NotImplementedError
+        assert False
 
-    @property
-    def all_person_models(self):
+    def test_create_specific_fields(self):
         """
-        :return: Every single person model
-        :rtype: list
+        Tests that the model only updates the create_fields
+        if the _create_fields attribute is set.
         """
-        raise NotImplementedError
+        assert False
 
-    def get_person_model_by_id(self, person_id):
+    def test_update(self):
         """
-        Directly query the data base for a person model with the id specified
+        Tests that a model is appropriately updated
         """
-        raise NotImplementedError
+        assert False
 
-    def test_create_person(self):
-        first_name = generate_random_name()
-        last_name = generate_random_name()
-        person = self._manager.create({self.first_name_field: first_name,
-                                      self.last_name_field: last_name})
-        self.assertIsNotNone(person)
-        self.assertEqual(first_name, person[self.first_name_field])
-        self.assertEqual(last_name, person[self.last_name_field])
-        self.assertIsNotNone(person[self.id_field])
-
-    def test_delete_person(self):
-        first_name = generate_random_name()
-        last_name = generate_random_name()
-        p = self._manager.create({self.first_name_field: first_name,
-                                 self.last_name_field: last_name})
-        _id = p[self.id_field]
-        self._manager.delete({self.id_field: _id})
-        self.assertRaises(self.does_not_exist_exception, self.get_person_model_by_id, _id)
-
-    def test_retrieve_person(self):
-        first_name = generate_random_name()
-        last_name = generate_random_name()
-        p = self._manager.create({self.first_name_field: first_name,
-                                 self.last_name_field: last_name})
-        p2 = self._manager.retrieve({self.id_field: p[self.id_field]})
-        self.assertIsNotNone(p2)
-        self.assertEqual(p2[self.first_name_field], p[self.first_name_field])
-        self.assertEqual(p2[self.last_name_field], p[self.last_name_field])
-        self.assertEqual(p2[self.id_field], p[self.id_field])
-
-    def test_update_person(self):
-        first_name = generate_random_name()
-        last_name = generate_random_name()
-        p = self._manager.create({self.first_name_field: first_name,
-                                 self.last_name_field: last_name})
-        new_first_name = generate_random_name()
-        new_last_name = generate_random_name()
-        self._manager.update({self.id_field: p[self.id_field]},
-                             {self.first_name_field: new_first_name,
-                              self.last_name_field: new_last_name})
-        p2 = self._manager.retrieve({self.id_field: p[self.id_field]})
-        self.assertEqual(new_first_name, p2[self.first_name_field])
-        self.assertEqual(new_last_name, p2[self.last_name_field])
-        self.assertNotEqual(first_name, p2[self.first_name_field])
-        self.assertNotEqual(last_name, p2[self.last_name_field])
-
-    def test_create_many(self):
-        num_randoms = 10
-        for i in range(num_randoms):
-            self._manager.create({self.first_name_field: generate_random_name(),
-                                 self.last_name_field: generate_random_name()})
-        response = self._manager.retrieve_list({})
-        self.assertEqual(num_randoms, len(list(response[0])))
-
-        # Check the meta response
-        meta = response[1]
-        self.assertIn(self._manager.pagination_pk_query_arg, meta)
-        self.assertIn(self._manager.pagination_count_query_arg, meta)
-        self.assertIn(self._manager.pagination_next, meta)
-
-    def test_retrieve_many(self):
+    def test_update_not_exists(self):
         """
-        Tests the ability to retrieve many objects effectively
+        Tests that a DoesNotExistException exception
+        is raised if the model does not exists
         """
-        manager = self._manager
-        manager.paginate_by = 1000000
-        for i in range(30):
-            manager.create({self.first_name_field: generate_random_name(),
-                            self.last_name_field: generate_random_name()})
-        retrieved_list = manager.retrieve_list({})
-        self.assertEqual(len(retrieved_list[0]), len(self.all_person_models))
+        assert False
 
-    def test_retrieve_many_pagination(self):
-        manager = self._manager
-        manager.paginate_by = 10
-        for i in range(50):
-            manager.create(dict(first_name=generate_random_name(),
-                                last_name=generate_random_name()))
+    def test_update_specific_fields(self):
+        """
+        Tests that a model specifically only allows the
+        update_fields and not the fields if update_fields
+        is specified
+        """
+        assert False
 
-        pk_query_arg = manager.pagination_pk_query_arg
-        retrieved_list = manager.retrieve_list({})
-        next_pk = retrieved_list[1][pk_query_arg]
-        self.assertIsNotNone(next_pk)
-        self.assertEqual(len(retrieved_list[0]), manager.paginate_by)
-        while next_pk:
-            retrieved_list = manager.retrieve_list({
-                pk_query_arg: next_pk
-            })[0]
-            next_pk = retrieved_list[1].get(pk_query_arg, None)
-            if next_pk:
-                self.assertEqual(len(retrieved_list[0]), manager.paginate_by)
-            else:
-                self.assertLessEqual(len(retrieved_list[0]), manager.paginate_by)
+    def test_retrieve_list(self):
+        """
+        Tests that the retrieve_list appropriately
+        returns a list of resources
+        """
+        assert False
 
-    def test_retrieve_many_pagination_arbitrary_count(self):
-        manager = self._manager
-        manager.paginate_by = 10
-        for i in range(50):
-            manager.create(dict(first_name=generate_random_name(),
-                                last_name=generate_random_name()))
+    def test_retrieve_empty_list(self):
+        """
+        Tests that an empty list is returned if
+        no results match.
+        """
+        assert False
 
-        pk_query_arg = manager.pagination_pk_query_arg
-        count_query_arg = manager.pagination_count_query_arg
-        retrieved_list, meta = manager.retrieve_list({})
-        next_pk = meta[pk_query_arg]
-        self.assertIsNotNone(next_pk)
-        self.assertEqual(len(retrieved_list), manager.paginate_by)
-        count = random.choice(range(1, 10))
-        while next_pk:
-            retrieved_list, meta = manager.retrieve_list({
-                pk_query_arg: next_pk,
-                count_query_arg: count
-            })
-            next_pk = meta.get(pk_query_arg)
-            objects_count = len(retrieved_list)
-            logger().debug('Retrieved count: {0}'.format(objects_count))
-            if next_pk:
-                self.assertEqual(len(retrieved_list), count)
-            else:
-                self.assertLessEqual(len(retrieved_list), count)
+    def test_retrieve_filtering(self):
+        """
+        Tests that the basic filtering works
+        for the manager
+        """
+        assert False
+
+    def test_retrieve_list_specific_fields(self):
+        """
+        Tests that the retrieve_list retrieves
+        only the _retrieve_list fields if specified
+        """
+        assert False
+
+    def test_retrieve_list_paginations(self):
+        """
+        Tests that the pagination works correctly with
+        retrieve_list
+        """
+        assert False
+
+    def test_retrieve_list_pagination_links(self):
+        """
+        Tests that the pagination links are appropriately
+        set.
+        """
+        assert False
+
+    def test_delete(self):
+        """
+        Tests that a resource is deleted appropriately.
+        """
+        assert False
+
+    def test_delete_not_exists(self):
+        """
+        Tests that a DoesNotExistException exception
+        is raised if the model does not exists
+        """
+        assert False
