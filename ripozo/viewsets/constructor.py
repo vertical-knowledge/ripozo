@@ -57,8 +57,6 @@ class ResourceMetaClass(type):
         :param klass: The class to register
         :raises: BaseRestEndpointAlreadyExists
         """
-        if klass.base_url in six.itervalues(mcs.registered_resource_classes):
-            raise BaseRestEndpointAlreadyExists
         mcs.registered_resource_classes[klass] = klass.base_url
         mcs.registered_names_map[klass.__name__] = klass
 

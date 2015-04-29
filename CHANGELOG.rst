@@ -5,6 +5,7 @@ CHANGELOG
 ==================
 
 - Endpoints that are generated now use "<class name>__<function_name>" as the default endpoint name
+- Removed check fore the base rest endpoint.  This doesn't take into account dispatchers having url_prefixes
 
 
 0.2.0 (2015-04-28)
