@@ -95,6 +95,27 @@ class RequestContainer(object):
     def content_type(self, value):
         self._headers['Content-Type'] = value
 
+    def get(self, name, default=None):
+        """
+        Attempts to retrieve the parameter with the
+        name in the url_params, query_args and then
+        body_args in that order.  Returns the default
+        if not found.
+
+        :param unicode name: The name of the parameter
+            to retrieve. From the request
+        :return: The requested attribute if found
+            otherwise the default if specified.
+        :rtype: object
+        :raises: KeyError
+        """
+        if name in self.url_params:
+            return self.url_params.get(name)
+        elif name in self.query_args:
+            return self.query_args.get(name)
+        return self.body_args.get(name, default)
+
+
     def translate(self, fields, skip_required=False, validate=False):
         """
         TODO

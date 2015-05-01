@@ -6,6 +6,7 @@ CHANGELOG
 
 - Endpoints that are generated now use "<class name>__<function_name>" as the default endpoint name
 - Removed check fore the base rest endpoint.  This doesn't take into account dispatchers having url_prefixes
+- Added get method to RequestContainer which searches through the url_params, query_args, and then the body_args to find a value
 
 
 0.2.0 (2015-04-28)

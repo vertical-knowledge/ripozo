@@ -56,3 +56,31 @@ class TestRequestContainer(TestBase, unittest.TestCase):
         # Test empty dict
         r = RequestContainer()
         self.assertIsInstance(getattr(r, name), dict)
+
+    def test_get(self):
+        """
+        Tests that the get method appropriately retrieves
+        paramaters.
+        """
+        r = RequestContainer(url_params=dict(key=1, key2=2))
+        self.assertEqual(r.get('key'), 1)
+        self.assertEqual(r.get('key2'), 2)
+
+        r = RequestContainer(query_args=dict(key=1, key2=2))
+        self.assertEqual(r.get('key'), 1)
+        self.assertEqual(r.get('key2'), 2)
+
+        r = RequestContainer(body_args=dict(key=1, key2=2))
+        self.assertEqual(r.get('key'), 1)
+        self.assertEqual(r.get('key2'), 2)
+
+        r = RequestContainer(url_params=dict(key=1), query_args=dict(key=2), body_args=dict(key=3))
+        self.assertEqual(r.get('key'), 1)
+
+    def test_get_not_found(self):
+        """
+        Tests the get with a default value
+        """
+        r = RequestContainer()
+        self.assertEqual(r.get('fake', 'hey'), 'hey')
+        self.assertEqual(r.get('fak'), None)
