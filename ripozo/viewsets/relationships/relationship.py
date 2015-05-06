@@ -130,5 +130,7 @@ class Relationship(object):
             val = parent_properties.pop(parent_prop, None)
             if val is not None:
                 properties[prop] = val
-        properties.update(parent_properties.pop(self.name, {}))
+        name_values = parent_properties.pop(self.name, {})
+        if name_values is not None:
+            properties.update(name_values)
         return properties
