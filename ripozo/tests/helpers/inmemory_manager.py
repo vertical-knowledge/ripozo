@@ -72,13 +72,15 @@ class InMemoryManager(BaseManager):
 
     def delete(self, lookup_keys, *args, **kwargs):
         super(InMemoryManager, self).delete(lookup_keys, *args, **kwargs)
+        if 'id' not in lookup_keys or not lookup_keys['id'] in self.queryset:
+            raise NotFoundException('Blah...')
         self.queryset.pop(lookup_keys['id'])
         return None
 
     def _get_model(self, model_id):
         obj = self.queryset.get(model_id['id'], None)
         if not obj:
-            raise NotFoundException
+            raise NotFoundException('Blah...')
         return obj
 
 

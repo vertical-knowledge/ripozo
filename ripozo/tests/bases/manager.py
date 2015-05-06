@@ -3,10 +3,11 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import ripozo
+
 from ripozo.exceptions import NotFoundException
 from ripozo.tests.python2base import TestBase
 
-import abc
 import logging
 import random
 import six
@@ -22,53 +23,51 @@ def generate_random_name():
     return ''.join(random.choice(string.ascii_letters) for _ in range(15))
 
 
-@six.add_metaclass(abc.ABCMeta)
 class TestManagerMixin(TestBase):
     """
     manager, does_not_exist_exception, and all_person_models proeprties need to be implemented
     get_person_model_by_id method needs to be implemented
     """
 
-    @abc.abstractproperty
     def manager(self):
-        # TODO docs
-        pass
+        """
 
-    @abc.abstractproperty
+        :return:
+        :rtype: ripozo.managers.base.BaseManager
+        """
+
     def model_pks(self):
-        # TODO docs
-        pass
+        """
 
-    @abc.abstractmethod
+        :return:
+        :rtype: dict
+        """
+        raise NotImplementedError
+
     def assertValuesEqualModel(self, model, values):
         # TODO docs
-        pass
+        raise NotImplementedError
 
-    @abc.abstractmethod
     def assertValuesNotEqualsModel(self, model, values):
         # TODO docs
-        pass
+        raise NotImplementedError
 
-    @abc.abstractmethod
     def create_model(self, values=None):
         # TODO docs
-        pass
+        raise NotImplementedError
 
-    @abc.abstractmethod
     def get_model(self, values):
         # TODO docs
         # Should raise exception when not found
-        pass
+        raise NotImplementedError
 
-    @abc.abstractmethod
     def get_model_pks(self, model):
         # TODO docs
-        pass
+        raise NotImplementedError
 
-    @abc.abstractmethod
     def get_values(self, defaults=None):
         # TODO docs
-        pass
+        raise NotImplementedError
 
     def assertResponseValid(self, resp, init_values, valid_fields=None):
         valid_fields = valid_fields or self.manager.fields
@@ -89,7 +88,7 @@ class TestManagerMixin(TestBase):
         Tests that the model is appropriately created
         """
         new_values = self.get_values()
-        resp = self.manager().create(new_values)
+        resp = self.manager.create(new_values)
         self.assertResponseValid(resp, new_values, valid_fields=self.manager.create_fields)
 
     def test_retrieve(self):
@@ -99,7 +98,7 @@ class TestManagerMixin(TestBase):
         new_values = self.get_values()
         model = self.create_model(values=new_values)
         pks = self.get_model_pks(model)
-        resp = self.manager().retrieve(pks)
+        resp = self.manager.retrieve(pks)
         self.assertResponseValid(resp, new_values)
 
     def test_retrieve_not_found(self):
@@ -107,7 +106,7 @@ class TestManagerMixin(TestBase):
         Tests that NotFoundException is raised when
         a model is not found.
         """
-        self.assertRaises(NotFoundException, self.manager().retrieve, self.get_random_pks())
+        self.assertRaises(NotFoundException, self.manager.retrieve, self.get_random_pks())
 
     def test_update(self):
         """
@@ -116,7 +115,7 @@ class TestManagerMixin(TestBase):
         new_values = self.get_values()
         model = self.create_model(values=new_values)
         updated_values = self.get_values()
-        resp = self.manager().update(self.get_model_pks(model), updated_values)
+        resp = self.manager.update(self.get_model_pks(model), updated_values)
         self.assertValuesEqualModel(model, updated_values)
         self.assertValuesNotEqualsModel(model, new_values)
         self.assertResponseValid(resp, updated_values)
@@ -128,7 +127,7 @@ class TestManagerMixin(TestBase):
         """
         new_values = self.get_values()
         pks_dict = self.get_random_pks()
-        self.assertRaises(NotFoundException, self.manager().update, pks_dict, new_values)
+        self.assertRaises(NotFoundException, self.manager.update, pks_dict, new_values)
 
     def test_retrieve_list(self):
         """
@@ -138,7 +137,7 @@ class TestManagerMixin(TestBase):
         new_count = 10
         for i in range(new_count):
             self.create_model()
-        resp, meta = self.manager().retrieve_list({})
+        resp, meta = self.manager.retrieve_list({})
         if new_count > self.manager.paginate_by:
             self.assertEqual(len(resp), self.manager.paginate_by)
         else:
@@ -153,7 +152,7 @@ class TestManagerMixin(TestBase):
         no results match.
         """
         pks = self.get_random_pks()
-        resp, meta = self.manager().retrieve_list(pks)
+        resp, meta = self.manager.retrieve_list(pks)
         self.assertEqual(len(resp), 0)
 
     def test_retrieve_filtering(self):
@@ -171,7 +170,7 @@ class TestManagerMixin(TestBase):
         original = self.manager.paginate_by
         self.manager.paginate_by = 3
         try:
-            pass
+            assert False
         finally:
             self.manager.paginate_by = original
 
@@ -183,7 +182,7 @@ class TestManagerMixin(TestBase):
         original = self.manager.paginate_by
         self.manager.paginate_by = 3
         try:
-            pass
+            assert False
         finally:
             self.manager.paginate_by = original
 
@@ -193,7 +192,7 @@ class TestManagerMixin(TestBase):
         """
         model = self.create_model()
         model_pks = self.get_model_pks(model)
-        resp = self.manager().delete(model_pks)
+        resp = self.manager.delete(model_pks)
         self.assertRaises(Exception, self.get_model, model_pks)
         # TODO assert response value
 
@@ -202,4 +201,4 @@ class TestManagerMixin(TestBase):
         Tests that a DoesNotExistException exception
         is raised if the model does not exists
         """
-        self.assertRaises(NotFoundException, self.manager().delete, self.get_random_pks())
+        self.assertRaises(NotFoundException, self.manager.delete, self.get_random_pks())

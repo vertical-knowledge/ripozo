@@ -3,6 +3,9 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import random
+import string
+
 __author__ = 'Tim Martin'
 
 
@@ -30,3 +33,7 @@ class TestBase(object):
     def assertListEqual(self, a, b, msg=None):
         for i in range(len(a)):
             self.assertEqual(a[i], b[i], msg=msg)
+
+    @staticmethod
+    def random_string(length=50):
+        return ''.join(random.choice(string.ascii_letters) for _ in range(length))
