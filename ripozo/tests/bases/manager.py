@@ -3,11 +3,15 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from ripozo.exceptions import NotFoundException
 from ripozo.tests.python2base import TestBase
 
+import abc
 import logging
 import random
+import six
 import string
+import uuid
 
 
 def logger():
@@ -18,65 +22,139 @@ def generate_random_name():
     return ''.join(random.choice(string.ascii_letters) for _ in range(15))
 
 
+@six.add_metaclass(abc.ABCMeta)
 class TestManagerMixin(TestBase):
     """
     manager, does_not_exist_exception, and all_person_models proeprties need to be implemented
     get_person_model_by_id method needs to be implemented
     """
+
+    @abc.abstractproperty
+    def manager(self):
+        # TODO docs
+        pass
+
+    @abc.abstractproperty
+    def model_pks(self):
+        # TODO docs
+        pass
+
+    @abc.abstractmethod
+    def assertValuesEqualModel(self, model, values):
+        # TODO docs
+        pass
+
+    @abc.abstractmethod
+    def assertValuesNotEqualsModel(self, model, values):
+        # TODO docs
+        pass
+
+    @abc.abstractmethod
+    def create_model(self, values=None):
+        # TODO docs
+        pass
+
+    @abc.abstractmethod
+    def get_model(self, values):
+        # TODO docs
+        # Should raise exception when not found
+        pass
+
+    @abc.abstractmethod
+    def get_model_pks(self, model):
+        # TODO docs
+        pass
+
+    @abc.abstractmethod
+    def get_values(self, defaults=None):
+        # TODO docs
+        pass
+
+    def assertResponseValid(self, resp, init_values, valid_fields=None):
+        valid_fields = valid_fields or self.manager.fields
+        for key, value in six.iteritems(init_values):
+            if key not in valid_fields:
+                self.assertTrue(key not in resp)
+            else:
+                self.assertEqual(resp[key], init_values[key])
+
+    def get_random_pks(self):
+        pks_dict = dict()
+        for pk in self.model_pks:
+            pks_dict[pk] = uuid.uuid4()
+        return pks_dict
+
     def test_create(self):
         """
         Tests that the model is appropriately created
         """
-        assert False
+        new_values = self.get_values()
+        resp = self.manager().create(new_values)
+        self.assertResponseValid(resp, new_values, valid_fields=self.manager.create_fields)
 
-    def test_create_not_exists(self):
+    def test_retrieve(self):
         """
-        Tests that a DoesNotExistException exception
-        is raised if the model does not exists
+        Tests that a model can be appropriately retrieved
         """
-        assert False
+        new_values = self.get_values()
+        model = self.create_model(values=new_values)
+        pks = self.get_model_pks(model)
+        resp = self.manager().retrieve(pks)
+        self.assertResponseValid(resp, new_values)
 
-    def test_create_specific_fields(self):
+    def test_retrieve_not_found(self):
         """
-        Tests that the model only updates the create_fields
-        if the _create_fields attribute is set.
+        Tests that NotFoundException is raised when
+        a model is not found.
         """
-        assert False
+        self.assertRaises(NotFoundException, self.manager().retrieve, self.get_random_pks())
 
     def test_update(self):
         """
         Tests that a model is appropriately updated
         """
-        assert False
+        new_values = self.get_values()
+        model = self.create_model(values=new_values)
+        updated_values = self.get_values()
+        resp = self.manager().update(self.get_model_pks(model), updated_values)
+        self.assertValuesEqualModel(model, updated_values)
+        self.assertValuesNotEqualsModel(model, new_values)
+        self.assertResponseValid(resp, updated_values)
 
     def test_update_not_exists(self):
         """
         Tests that a DoesNotExistException exception
         is raised if the model does not exists
         """
-        assert False
-
-    def test_update_specific_fields(self):
-        """
-        Tests that a model specifically only allows the
-        update_fields and not the fields if update_fields
-        is specified
-        """
-        assert False
+        new_values = self.get_values()
+        pks_dict = self.get_random_pks()
+        self.assertRaises(NotFoundException, self.manager().update, pks_dict, new_values)
 
     def test_retrieve_list(self):
         """
         Tests that the retrieve_list appropriately
         returns a list of resources
         """
-        assert False
+        new_count = 10
+        for i in range(new_count):
+            self.create_model()
+        resp, meta = self.manager().retrieve_list({})
+        if new_count > self.manager.paginate_by:
+            self.assertEqual(len(resp), self.manager.paginate_by)
+        else:
+            self.assertGreaterEqual(len(resp), new_count)
+        for r in resp:
+            for key, value in six.iteritems(r):
+                self.assertIn(key, self.manager.list_fields)
 
     def test_retrieve_empty_list(self):
         """
         Tests that an empty list is returned if
         no results match.
         """
-        assert False
+        pks = self.get_random_pks()
+        resp, meta = self.manager().retrieve_list(pks)
+        self.assertEqual(len(resp), 0)
 
     def test_retrieve_filtering(self):
         """
@@ -85,36 +163,43 @@ class TestManagerMixin(TestBase):
         """
         assert False
 
-    def test_retrieve_list_specific_fields(self):
-        """
-        Tests that the retrieve_list retrieves
-        only the _retrieve_list fields if specified
-        """
-        assert False
-
     def test_retrieve_list_paginations(self):
         """
         Tests that the pagination works correctly with
         retrieve_list
         """
-        assert False
+        original = self.manager.paginate_by
+        self.manager.paginate_by = 3
+        try:
+            pass
+        finally:
+            self.manager.paginate_by = original
 
     def test_retrieve_list_pagination_links(self):
         """
         Tests that the pagination links are appropriately
         set.
         """
-        assert False
+        original = self.manager.paginate_by
+        self.manager.paginate_by = 3
+        try:
+            pass
+        finally:
+            self.manager.paginate_by = original
 
     def test_delete(self):
         """
         Tests that a resource is deleted appropriately.
         """
-        assert False
+        model = self.create_model()
+        model_pks = self.get_model_pks(model)
+        resp = self.manager().delete(model_pks)
+        self.assertRaises(Exception, self.get_model, model_pks)
+        # TODO assert response value
 
     def test_delete_not_exists(self):
         """
         Tests that a DoesNotExistException exception
         is raised if the model does not exists
         """
-        assert False
+        self.assertRaises(NotFoundException, self.manager().delete, self.get_random_pks())
