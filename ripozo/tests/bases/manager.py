@@ -202,3 +202,10 @@ class TestManagerMixin(TestBase):
         is raised if the model does not exists
         """
         self.assertRaises(NotFoundException, self.manager.delete, self.get_random_pks())
+
+    def test_get_field(self):
+        """
+        Tests that the
+        :return:
+        :rtype:
+        """

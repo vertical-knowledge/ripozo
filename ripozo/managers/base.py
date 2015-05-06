@@ -46,6 +46,7 @@ class BaseManager(object):
     paginate_by = 10000
     order_by = None
     _fields = None
+    _create_fields = None
     _list_fields = None
     model = None
     arg_parser = None
@@ -164,6 +165,22 @@ class BaseManager(object):
         or some equivalent.
         """
         return cls._fields or []
+
+    @classproperty
+    def create_fields(cls):
+        """
+        These are the fields that are valid when
+        creating a model.  This is necessary when you
+        want the user to only be able to specify certain
+        fields on creation.  Defaults to ``cls.fields``
+        if ``cls._create_fields`` is not specified
+
+        :return: The list of fields to use when creating
+            a model using this manager
+        :rtype: list
+        """
+        # TODO test this explicitly
+        return cls._create_fields or cls.fields
 
     @classproperty
     def list_fields(cls):
