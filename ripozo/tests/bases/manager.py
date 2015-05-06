@@ -161,7 +161,7 @@ class TestManagerMixin(TestBase):
         Tests that the basic filtering works
         for the manager
         """
-        assert False
+        raise NotImplementedError
 
     def test_retrieve_list_paginations(self):
         """

@@ -56,3 +56,13 @@ class TestInMemoryManager(InMemoryManagerBaseTestMixin, unittest.TestCase):
             _fields = ['id', 'value1', 'value2']
 
         self._manager = FakeManager()
+
+    def test_retrieve_filtering(self):
+        defaults = dict(value1=self.random_string())
+        same_value1_count = 5
+        for i in range(same_value1_count):
+            self.create_model(values=self.get_values(defaults=defaults))
+        resp, meta = self.manager.retrieve_list({})
+        self.assertEqual(len(resp), same_value1_count)
+        for r in resp:
+            self.assertEqual(defaults['value1'], r['value1'])
