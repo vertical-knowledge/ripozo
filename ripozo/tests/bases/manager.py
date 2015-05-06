@@ -112,12 +112,13 @@ class TestManagerMixin(TestBase):
         """
         Tests that a model is appropriately updated
         """
-        new_values = self.get_values()
-        model = self.create_model(values=new_values)
+        values = self.get_values()
+        old_values = values.copy()
+        model = self.create_model(values=values)
         updated_values = self.get_values()
         resp = self.manager.update(self.get_model_pks(model), updated_values)
         self.assertValuesEqualModel(model, updated_values)
-        self.assertValuesNotEqualsModel(model, new_values)
+        self.assertValuesNotEqualsModel(model, old_values)
         self.assertResponseValid(resp, updated_values)
 
     def test_update_not_exists(self):

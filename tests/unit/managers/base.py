@@ -4,7 +4,6 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.tests.python2base import TestBase
-from ripozo.tests.bases.manager import TestManagerMixin
 from ripozo.tests.helpers.inmemory_manager import InMemoryManager
 
 import mock
@@ -12,7 +11,7 @@ import six
 import unittest
 
 
-class TestManager(TestManagerMixin, TestBase, unittest.TestCase):
+class TestManager(TestBase, unittest.TestCase):
     @property
     def manager(self):
         """

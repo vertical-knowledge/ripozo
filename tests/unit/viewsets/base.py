@@ -140,19 +140,6 @@ class TestResourceBase(TestBase, unittest.TestCase):
 
         self.assertIn('my_api_method1', T1.endpoint_dictionary())
 
-    def test_base_url_duplication_exception(self):
-        """Tests whether an excption is raised if the base_url
-        already exists"""
-        class T1(TestResource):
-            pass
-
-        try:
-            class T2(TestResource):
-                pass
-            assert False
-        except BaseRestEndpointAlreadyExists:
-            pass
-
     def test_init(self):
         """Just tests whether the __init__ method initializes without exception"""
         class T1(TestResource):

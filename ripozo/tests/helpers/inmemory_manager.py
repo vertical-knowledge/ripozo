@@ -12,6 +12,8 @@ __author__ = 'Tim Martin'
 
 
 class InMemoryManager(BaseManager):
+    # TODO redo this suite taking into account the
+    # TODO TestManagerMixin (i.e. don't use the InMemoryManager)
     objects = None
     _model_name = 'Fake'
 
