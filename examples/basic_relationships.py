@@ -31,3 +31,13 @@ if __name__ == '__main__':
     # prints {'say': 'hello'}
     print(resource.properties)
 
+    resource_tuple = resource.related_resources[0]
+
+    # prints 'related'
+    print(resource_tuple.name)
+
+    # prints '/api/related/1'
+    print(resource_tuple.resource.url)
+
+    # prints {'id': 1}
+    print(resource_tuple.resource.properties)
