@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-0.2.1 (unreleased)
+0.2.1 (2015-05-08)
 ==================
 
 - Endpoints that are generated now use "<class name>__<function_name>" as the default endpoint name
