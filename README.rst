@@ -14,10 +14,10 @@ ripozo
 .. image:: https://pypip.in/version/ripozo/badge.svg?style=flat
     :target: https://pypi.python.org/pypi/ripozo/
 
-.. image:: https://pypip.in/d/ripozo/badge.png?style=flat
-    :target: https://crate.io/packages/ripozo/
+.. image:: https://pypip.in/download/ripozo/badge.png?style=flat
+    :target: https://pypi.python.org/pypi/ripozo/
     :alt: Number of PyPI downloads
-
+    
 .. image:: https://pypip.in/py_versions/ripozo/badge.svg?style=flat
     :target: https://pypi.python.org/pypi/ripozo/
 
