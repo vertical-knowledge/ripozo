@@ -30,6 +30,9 @@ class TestBase(object):
     def assertLessEqual(self, a, b, msg=None):
         self.assertTrue(a <= b, msg=msg)
 
+    def assertGreaterEqual(self, a, b, msg=None):
+        self.assertTrue(a >= b, msg=msg)
+
     def assertListEqual(self, a, b, msg=None):
         for i in range(len(a)):
             self.assertEqual(a[i], b[i], msg=msg)
