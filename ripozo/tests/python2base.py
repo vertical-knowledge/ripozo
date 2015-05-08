@@ -37,6 +37,13 @@ class TestBase(object):
         for i in range(len(a)):
             self.assertEqual(a[i], b[i], msg=msg)
 
+    def assertPropertyRaises(self, exc, obj, property, msg=None):
+        try:
+            getattr(obj, property)
+            self.assertTrue(False, msg=msg)
+        except exc:
+            pass
+
     @staticmethod
     def random_string(length=50):
         return ''.join(random.choice(string.ascii_letters) for _ in range(length))

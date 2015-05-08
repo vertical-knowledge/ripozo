@@ -29,13 +29,16 @@ class TestManagerMixin(TestBase):
     get_person_model_by_id method needs to be implemented
     """
 
+    @property
     def manager(self):
         """
 
         :return:
         :rtype: ripozo.managers.base.BaseManager
         """
+        raise NotImplementedError
 
+    @property
     def model_pks(self):
         """
 

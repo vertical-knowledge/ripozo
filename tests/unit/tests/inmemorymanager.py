@@ -66,3 +66,21 @@ class TestInMemoryManager(InMemoryManagerBaseTestMixin, unittest.TestCase):
         self.assertEqual(len(resp), same_value1_count)
         for r in resp:
             self.assertEqual(defaults['value1'], r['value1'])
+
+
+class TestBaseMixinCoverageFake(TestBase, unittest.TestCase):
+    """
+    Just to call the NotImplemented so that
+    this shit doesn't get annoying.
+    """
+
+    def test_not_implemented(self):
+        manager_mixin = TestManagerMixin()
+        self.assertPropertyRaises(NotImplementedError, manager_mixin, 'manager')
+        self.assertPropertyRaises(NotImplementedError, manager_mixin, 'model_pks')
+        self.assertRaises(NotImplementedError, manager_mixin.assertValuesEqualModel, None, None)
+        self.assertRaises(NotImplementedError, manager_mixin.assertValuesNotEqualsModel, None, None)
+        self.assertRaises(NotImplementedError, manager_mixin.create_model)
+        self.assertRaises(NotImplementedError, manager_mixin.get_model, None)
+        self.assertRaises(NotImplementedError, manager_mixin.get_model_pks, None)
+        self.assertRaises(NotImplementedError, manager_mixin.get_values, None)
