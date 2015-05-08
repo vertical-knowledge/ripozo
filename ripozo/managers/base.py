@@ -43,6 +43,7 @@ class BaseManager(object):
     pagination_pk_query_arg = 'pagination_pk'
     pagination_count_query_arg = 'count'
     pagination_next = 'next'
+    pagination_prev = 'previous'
     paginate_by = 10000
     order_by = None
     _fields = None

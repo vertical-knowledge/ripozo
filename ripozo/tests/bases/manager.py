@@ -168,22 +168,32 @@ class TestManagerMixin(TestBase):
         Tests that the pagination works correctly with
         retrieve_list
         """
+        paginate_by = 3
         original = self.manager.paginate_by
-        self.manager.paginate_by = 3
+        self.manager.paginate_by = paginate_by
         try:
-            assert False
-        finally:
-            self.manager.paginate_by = original
+            for i in range(paginate_by * 3 + 1):
+                self.create_model()
+            resp, meta = self.manager.retrieve_list({})
+            self.assertEqual(len(resp), paginate_by)
+            links = meta['links']
+            self.assertIn('next', links)
+            next_count = 0
+            while 'next' in links:
+                next_count += 1
+                resp, meta = self.manager.retrieve_list(links['next'])
+                self.assertLessEqual(len(resp), paginate_by)
+                links = meta['links']
 
-    def test_retrieve_list_pagination_links(self):
-        """
-        Tests that the pagination links are appropriately
-        set.
-        """
-        original = self.manager.paginate_by
-        self.manager.paginate_by = 3
-        try:
-            assert False
+            prev_count = 0
+            self.assertIn('previous', links)
+            while 'previous' in links:
+                prev_count += 1
+                resp, meta = self.manager.retrieve_list(links['previous'])
+                self.assertLessEqual(len(resp), paginate_by)
+                links = meta['links']
+
+            self.assertEqual(prev_count, next_count)
         finally:
             self.manager.paginate_by = original
 

@@ -34,18 +34,31 @@ class InMemoryManager(BaseManager):
         if not pagination_page:
             pagination_page = 0
         pagination_count, filters = self.get_pagination_count(filters)
+        original_page = pagination_page
         values = list(six.itervalues(self.queryset))
         first = pagination_page * pagination_count
         last = first + pagination_count
-        if last > len(values):
+        no_next = False
+        no_prev = False
+        if last >= len(values):
             values = values[first:]
-            pagination_page = None
+            no_next = True
         else:
             values = values[first:last]
-            pagination_page += 1
-        return values, {self.pagination_next: None,
-                        self.pagination_pk_query_arg: pagination_page,
-                        self.pagination_count_query_arg: pagination_count}
+
+        if first <= 0:
+            no_prev = True
+
+        links = dict()
+        if not no_prev:
+            links[self.pagination_prev] = {self.pagination_pk_query_arg: original_page - 1,
+                                           self.pagination_count_query_arg: pagination_count}
+        if not no_next:
+            links[self.pagination_next] = {self.pagination_pk_query_arg: original_page + 1,
+                                           self.pagination_count_query_arg: pagination_count}
+
+
+        return values, {'links': links}
 
     @property
     def queryset(self):
