@@ -4,7 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 import re
 
-import six
+from collections import namedtuple
 
 from six.moves.urllib import parse
 from ripozo.decorators import classproperty
@@ -13,6 +13,7 @@ from ripozo.utilities import convert_to_underscore, join_url_parts
 
 import inspect
 import logging
+import six
 
 logger = logging.getLogger(__name__)
 
@@ -108,7 +109,7 @@ class ResourceBase(object):
             res = relationship.construct_resource(links_properties)
             if res is None:
                 continue
-            links.append((res, relationship.name, relationship.embedded))
+            links.append(_RelatedTuple(res, relationship.name, relationship.embedded))
         return links
 
     @property
@@ -325,3 +326,6 @@ def create_url(base_url, **kwargs):
         to_replace = '<{0}>'.format(key)
         base_url = re.sub(to_replace, six.text_type(value), base_url)
     return base_url
+
+
+_RelatedTuple = namedtuple('_RelatedTuple', 'resource, name, embedded')

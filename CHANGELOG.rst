@@ -8,6 +8,7 @@ CHANGELOG
 - Removed check fore the base rest endpoint.  This doesn't take into account dispatchers having url_prefixes
 - Added get method to RequestContainer which searches through the url_params, query_args, and then the body_args to find a value
 - Added create_fields property to the BaseManager.  This allows a user to specify which fields are valid for creation.
+- related resources and linked resources named tuples
 
 0.2.0 (2015-04-28)
 ==================

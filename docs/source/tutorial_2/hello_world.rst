@@ -18,6 +18,7 @@ Minimal Application
 
    from ripozo import ResourceBase, apimethod
 
+
    class MyResource(ResourceBase):
 
        @apimethod(methods=['GET'])

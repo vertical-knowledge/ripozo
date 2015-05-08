@@ -28,7 +28,7 @@ they are described in the list.
 
         @apimethod(methods=['GET'])
         def say_hello(cls, request):
-            print('In say_hello')
+            print('hello')
             return cls(properties=dict(hello='world'))
 
 .. code-block:: python
@@ -36,7 +36,7 @@ they are described in the list.
     >>> MyResource.say_hello(None)
     In pre1
     In pre2
-    In say_hello
+    hello
     In post1
 
 These can be used to perform any sort of common functionality across

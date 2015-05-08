@@ -14,24 +14,17 @@ Example
 
 .. code-block:: python
 
-    from ripozo.decorators import apimethod
-    from ripozo.viewsets.relationships import Relationship
-    from ripozo.viewsets.resource_base import ResourceBase
+    from ripozo import apimethod, Relationship, ResourceBase
 
 
     class MyResource(ResourceBase):
         _relationships = {
-            'related_resource': Relationship(name='related', relation='RelatedResource')
+            'related_resource': Relationship('related', relation='RelatedResource')
         }
 
         @apimethod(methods=['GET'])
         def retrieve(cls, request, *args, **kwargs):
-            properties = {
-                'name': 'Yay!',
-                'related': {
-                    'id': 1
-                }
-            }
+            properties = request.body_args
             return cls(properties=properties)
 
 
@@ -44,7 +37,9 @@ contained the 'related' key or it's corresponding value.
 
 .. code-block:: python
 
-    >>> res = MyResource.retrieve(fake_request)
+    >>> from ripozo import RequestContainer
+    >>> request = RequestContainer({'name': 'Yay!', 'related': {'id': 1}})
+    >>> res = MyResource.retrieve(request)
     >>> res.properties
     {'name': 'Yay!'}
 
