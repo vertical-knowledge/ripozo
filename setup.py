@@ -43,6 +43,15 @@ setup(
         'Programming Language :: Python :: Implementation :: PyPy',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
+    extras_require={
+        'examples': [
+            'flask-ripozo',
+            'ripozo-sqlalchemy'
+        ],
+        'docs': [
+            'sphinx'
+        ]
+    },
     tests_require=[
         'tox',
         'mock'

@@ -24,7 +24,7 @@ class Create(ResourceBase):
         logger.debug('Creating a resource using manager {0}'.format(cls._manager))
         props = cls.manager.create(request.body_args)
         meta = dict(links=dict(created=props))
-        return cls(meta=meta, status_code=201)
+        return cls(properties=props, meta=meta, status_code=201)
 
     @classproperty
     def links(cls):
@@ -38,16 +38,17 @@ class Create(ResourceBase):
         :rtype: tuple
         """
         links = cls._links or tuple()
-        return links + (Relationship('created', relation=cls.__name__), )
+        return links + (Relationship('created', relation=cls.__name__, embedded=True), )
 
 
 class RetrieveList(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['GET'])
+    @translate(manager_field_validators=True, validate=False)
     def retrieve_list(cls, request, *args, **kwargs):
         logger.debug('Retrieving list of resources using manager {0}'.format(cls._manager))
-        props, meta = cls.manager.retrieve_list({})
+        props, meta = cls.manager.retrieve_list(request.query_args)
         return cls(properties={cls.resource_name: props}, meta=meta, status_code=200)
 
     @classproperty

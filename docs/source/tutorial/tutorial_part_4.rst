@@ -27,6 +27,7 @@ the resource classes is very easy.
     # different web frameworks.  Please look at the specific documentation
     # for that framework.
     # For example, in flask-ripozo it would be
+    # app = Flask(app)
     # dispatcher = FlaskDispatcher(app)
 
     # register your adapters, the first adapter is the default adapter

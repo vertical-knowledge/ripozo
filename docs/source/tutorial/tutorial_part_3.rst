@@ -42,6 +42,13 @@ contained the 'related' key or it's corresponding value.
     >>> res = MyResource.retrieve(request)
     >>> res.properties
     {'name': 'Yay!'}
+    >>> resource_tuple = res.related_resources[0]
+    >>> print(resource_tuple.name)
+    'related'
+    >>> print(resource_tuple.resource.url)
+    '/api/related/1'
+    >>> print(resource_tuple.resource.properties)
+    {'id': 1}
 
 Instead the relationship 'related_resource' popped the
 value with the key 'related' from the properties dict
