@@ -27,9 +27,6 @@ class TestBase(object):
     def assertIsNone(self, obj, msg=None):
         self.assertTrue(obj is None, msg=msg)
 
-    def assertIsNone(self, obj, msg=None):
-        self.assertTrue(obj is None, msg=msg)
-
     def assertLessEqual(self, a, b, msg=None):
         self.assertTrue(a <= b, msg=msg)
 

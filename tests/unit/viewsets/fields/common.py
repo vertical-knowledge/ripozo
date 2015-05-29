@@ -7,6 +7,7 @@ from ripozo.exceptions import ValidationException, TranslationException
 from ripozo.viewsets.fields.common import StringField, BooleanField, FloatField,\
     DateTimeField, IntegerField, ListField, DictField
 from ripozo.tests.bases.field import FieldTestBase
+from ripozo.tests import python2base
 
 import datetime
 import re
@@ -143,7 +144,7 @@ class TestListField(FieldTestBase2, unittest.TestCase):
         self.assertRaises(ValidationException, l.translate, items, validate=True)
 
 
-class TestDictField(unittest.TestCase):
+class TestDictField(python2base.TestBase, unittest.TestCase):
     def test_required(self):
         """
         Tests that a validation exception is raised
