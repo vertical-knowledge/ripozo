@@ -4,7 +4,8 @@ CHANGELOG
 0.2.2 (unreleased)
 ==================
 
-- Nothing changed yet.
+- Fixes for RetrieveList bad translation.
+- Added DictField which can translate and validate dictionary fields (and their subfields)
 
 
 0.2.1 (2015-05-08)

@@ -245,6 +245,63 @@ class ListField(BaseField):
 
     def _validate(self, obj, skip_required=False):
         obj = super(ListField, self)._validate(obj, skip_required=skip_required)
-        if not obj:
-            obj = []
+        obj = obj or []
+        return self._validate_size(obj, len(obj), msg=self.error_message)
+
+
+class DictField(BaseField):
+    """
+    A field for a dictionary of objects.  Each named
+    sub-field can be mapped to individual fields (Or even
+    nested DictField's).
+    """
+    field_type = dict
+
+    def __init__(self, name, field_list=None, **kwargs):
+        """
+        Calls super and sets the field_dict on the object.
+
+        :param unicode name: The name of this field.
+        :param list field_list: A list of fields the names
+            of the fields are what is used as the key in the dictionary.
+        :param dict kwargs: The standard arguments for BaseField.__init__
+        """
+        self.field_list = field_list or []
+        super(DictField, self).__init__(name, **kwargs)
+
+    def translate(self, obj, **kwargs):
+        """
+        Translates and Validates the dictionary field and
+        each of it's contained fields.  It will iterate over
+        this field_dict and translate and validate each of the
+        individual key, value pairs.
+
+        :param dict obj: The object to translate and validate (if
+            validate=True)
+        :return: The translated (and possibly validated) object.
+        :rtype: dict
+        """
+        obj = super(DictField, self).translate(obj, **kwargs)
+        if obj is None:
+            return obj
+        translated_dict = {}
+        for field in self.field_list:
+            key = field.name
+            value = obj.get(key, None)
+            value = field.translate(value, **kwargs)
+            translated_dict[key] = value
+        return translated_dict
+
+    def _translate(self, obj, skip_required=False):
+        if obj is None:  # let the validation handle it.
+            return obj
+        if not hasattr(obj, 'get'):
+            raise TranslationException(self.error_message or 'A dictionary field must have a get method '
+                                                             'that allows for retrieving an item with a default. '
+                                                             'For example a dictionary.')
+        return obj
+
+    def _validate(self, obj, skip_required=False):
+        obj = super(DictField, self)._validate(obj, skip_required=skip_required)
+        obj = obj or {}
         return self._validate_size(obj, len(obj), msg=self.error_message)

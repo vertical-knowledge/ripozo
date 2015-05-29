@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 
 from ripozo.exceptions import ValidationException, TranslationException
 from ripozo.viewsets.fields.common import StringField, BooleanField, FloatField,\
-    DateTimeField, IntegerField, ListField
+    DateTimeField, IntegerField, ListField, DictField
 from ripozo.tests.bases.field import FieldTestBase
 
 import datetime
@@ -141,3 +141,80 @@ class TestListField(FieldTestBase2, unittest.TestCase):
         self.assertEqual(items, resp_items)
         items = [15, 0]
         self.assertRaises(ValidationException, l.translate, items, validate=True)
+
+
+class TestDictField(unittest.TestCase):
+    def test_required(self):
+        """
+        Tests that a validation exception is raised
+        when the field is required.
+        """
+        f = DictField('', required=True)
+        self.assertRaises(ValidationException, f.translate, None, validate=True)
+
+    def test_not_required(self):
+        """
+        Tests that a validation error is
+        raised for an empty field only when
+        required=True
+        """
+        f = DictField('')
+        obj = f.translate(None, validate=True)
+        self.assertDictEqual(obj, {})
+
+    def test_tranlation_failure(self):
+        """
+        Tests that translation fails when appropriate.
+        """
+        f = DictField('f')
+        self.assertRaises(TranslationException, f.translate, object())
+
+    def test_translation_none(self):
+        """
+        Tests attempting to translate a NoneType
+        """
+        f = DictField('f')
+        resp = f.translate(None)
+        self.assertIsNone(resp)
+
+    def test_validate_bad_size(self):
+        """
+        Tests that a ValidationError is raised
+        if the size of the dictionary is inappropriate.
+        """
+        f = DictField('f', minimum=2)
+        self.assertRaises(ValidationException, f._validate, {})
+
+    def test_validate_none_failure(self):
+        """
+        Tests that a ValidationError is raised
+        if the object is None, when required=True
+        """
+        f = DictField('f', required=True)
+        self.assertRaises(ValidationException, f._validate, None)
+
+    def test_translate_subfield_failure(self):
+        """
+        Tests that when one of the child fields
+        fails then this field as a whole will fail.
+        """
+        field_dict = [StringField('field1'), IntegerField('field2', maximum=10)]
+        field = DictField('f', required=True, field_list=field_dict)
+
+        input_vals = dict(field1='hey', field2='notanumber')
+        self.assertRaises(TranslationException, field.translate, input_vals, validate=True)
+
+        input_vals = dict(field1='hey', field2='11')
+        self.assertRaises(ValidationException, field.translate, input_vals, validate=True)
+
+    def test_translate_success(self):
+        """
+        Tests the expected conditions for
+        the translate method.
+        """
+        field_dict = [StringField('field1'), IntegerField('field2')]
+        field = DictField('f', required=True, field_list=field_dict)
+
+        input_vals = dict(field1='hey', field2='5')
+        resp = field.translate(input_vals, validate=True)
+        self.assertDictEqual(dict(field1='hey', field2=5), resp)
