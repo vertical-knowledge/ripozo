@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-0.3.1 (unreleased)
+0.3.1 (2015-05-29)
 ==================
 
 - Added DictField to top level import in fields.
