@@ -288,8 +288,7 @@ class DictField(BaseField):
         for field in self.field_list:
             key = field.name
             value = obj.get(key, None)
-            value = field.translate(value, **kwargs)
-            translated_dict[key] = value
+            translated_dict[key] = field.translate(value, **kwargs)
         return translated_dict
 
     def _translate(self, obj, skip_required=False):
