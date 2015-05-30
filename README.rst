@@ -65,6 +65,20 @@ Example
 And just like that, you have an api that can return either Siren or Hal
 formatted responses.  Pretty easy, right?
 
+The ripozo ecosystem
+--------------------
+
+ripozo is designed to be extensible and flexible.  That means
+that it theoretically integrate with any database or web framework.
+Currently, we have integrations with Django, Flask, SQLAlchemy,
+and Cassandra (via cqlengine).
+
+- `flask-ripozo <https://github.com/vertical-knowledge/flask-ripozo>`_
+- `django-ripozo <https://github.com/vertical-knowledge/django-ripozo>`_
+- `ripozo-sqlalchemy <https://github.com/vertical-knowledge/ripozo-sqlalchemy>`_
+- `ripozo-cassandra <https://github.com/vertical-knowledge/ripozo-cassandra>`_
+
+
 Philosophy
 ----------
 

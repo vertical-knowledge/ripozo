@@ -3,12 +3,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.decorators import _apiclassmethod
-from ripozo.exceptions import BaseRestEndpointAlreadyExists
-
 import logging
 import inspect
-import six
 
 logger = logging.getLogger(__name__)
 
