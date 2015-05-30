@@ -64,4 +64,7 @@ Then we will setup our models.
         user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
         comment = db.Column(db.Text, nullable=False)
 
-Now that we have our 
+    db.create_all()
+
+Now that we have our non-ripozo aspect set up we
+are ready to start building a RESTful API!
