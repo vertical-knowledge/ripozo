@@ -12,8 +12,11 @@ This allows us to actually call our endpoints.
 
     dispatcher = FlaskDispatcher(app, url_prefix='/api')
     dispatcher.register_resources(TaskBoardResourceList, TaskBoardResource, TaskResource)
-    dispatcher.register_adapter(adapters.SirenAdapter, adapters.HalAdapter)
+    dispatcher.register_adapters(adapters.SirenAdapter, adapters.HalAdapter)
 
-We now have a functioning RESTful api that serves both
+We now have a functioning RESTful api that serves both.
+To start up this application, we just need to run:
 
+.. code-block:: python
 
+    app.run()

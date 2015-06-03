@@ -45,8 +45,11 @@ setup(
     ],
     extras_require={
         'examples': [
+            'flask',
             'flask-ripozo',
-            'ripozo-sqlalchemy'
+            'ripozo-sqlalchemy',
+            'sqlalchemy',
+            'Flask-SQLAlchemy'
         ],
         'docs': [
             'sphinx'

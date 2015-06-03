@@ -33,19 +33,18 @@ Next we'll need to create our application.
     from flask.ext.sqlalchemy import SQLAlchemy
 
     app = Flask(__name__)
-    app.config['SQLACLEHMY_DATABASE_URI']] = 'sqlite:////tmp/ripozo_example.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/ripozo_example.db'
     db = SQLAlchemy(app)
 
 Then we will setup our models.
 
 .. code-block:: python
 
-    from flask.ext.user import UserMixin
     from sqlalchemy.orm import relationship
 
     class TaskBoard(db.Model):
         id = db.Column(db.Integer, primary_key=True)
-        tasks = relationship('Item', backref='task_board')
+        tasks = relationship('Task', backref='task_board')
         title = db.Column(db.String(50), nullable=False)
 
     class Task(db.Model):

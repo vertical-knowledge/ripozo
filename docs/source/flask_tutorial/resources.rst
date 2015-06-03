@@ -11,7 +11,7 @@ manager.
 
     from ripozo import restmixins, ListRelationship, Relationship
 
-    class TaskBoardResourceList(restmixins.ResourceList):
+    class TaskBoardResourceList(restmixins.RetrieveList):
         _manager = TaskBoardManager
         _resource_name = 'taskboard'
         _relationships = [
