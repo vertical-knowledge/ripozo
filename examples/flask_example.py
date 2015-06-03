@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask_ripozo import FlaskDispatcher
-from ripozo import restmixins, ListRelationship, Relationship, adapters
+from ripozo import restmixins, ListRelationship, Relationship, adapters, apimethod
 from ripozo_sqlalchemy import AlchemyManager
 from sqlalchemy.orm import relationship
 
@@ -55,12 +55,19 @@ class TaskBoardResource(restmixins.CreateRetrieveListUpdateDelete):
         ListRelationship('tasks', relation='TaskResource'),
     )
 
+    @apimethod(route='/addtask', methods=['POST'])
+    def add_task(cls, request):
+        body_args = request.body_args
+        body_args['task_board_id'] = request.get('id')
+        request.body_args = body_args
+        return TaskResource.create(request)
+
 class TaskResource(restmixins.CreateRetrieveUpdateDelete):
     _manager = TaskManager
     _resource_name = 'task'
     _pks = ('id',)
     _relationships = [
-        Relationship('task_board', relation='TaskBoardResource')
+        Relationship('task_board', property_map=dict(task_board_id='id'), relation='TaskBoardResource')
     ]
 
 dispatcher = FlaskDispatcher(app, url_prefix='/api')

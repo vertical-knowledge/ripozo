@@ -116,7 +116,7 @@ class Delete(ResourceBase):
     def delete(cls, request, *args, **kwargs):
         logger.debug('Deleting the resource using manager {0}'.format(cls._manager))
         props = cls.manager.delete(request.url_params)
-        return cls(properties=props, status_code=204)
+        return cls(properties=props)
 
 
 class RetrieveUpdate(Retrieve, Update):
