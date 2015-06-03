@@ -4,7 +4,8 @@ CHANGELOG
 0.3.2 (unreleased)
 ==================
 
-- Nothing changed yet.
+- ResourceList now compatible with Single resource rest mixins
+- Relationships now take a no pks parameter which specifies that the resource in question should not use the pks (helpful for RetrieveList and such)
 
 
 0.3.1 (2015-05-29)

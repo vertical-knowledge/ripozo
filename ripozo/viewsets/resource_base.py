@@ -62,7 +62,7 @@ class ResourceBase(object):
     _postprocessors = None
     _links = None
 
-    def __init__(self, properties=None, errors=None, meta=None,
+    def __init__(self, properties=None, errors=None, meta=None, no_pks=False,
                  status_code=200, query_args=None, include_relationships=True):
         """
         Initializes a response
@@ -82,6 +82,7 @@ class ResourceBase(object):
         self.meta = meta or {}
         self.query_args = query_args or {}
         self._url = None
+        self.no_pks = no_pks
 
         if include_relationships:
             self.related_resources = self._generate_links(self.relationships, self.properties)
@@ -140,7 +141,8 @@ class ResourceBase(object):
         :rtype: unicode
         """
         if not self._url:
-            url = create_url(self.base_url, **self.item_pks)
+            base_url = self.base_url_sans_pks if self.no_pks else self.base_url
+            url = create_url(base_url, **self.item_pks)
             query_string = '&'.join('{0}={1}'.format(x, y) for x, y in six.iteritems(self.query_args))
             if query_string:
                 url = '{0}?{1}'.format(url, query_string)

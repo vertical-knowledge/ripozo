@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.viewsets.relationships.relationship import Relationship
+from ripozo.viewsets.relationships.list_relationship import ListRelationship
 from ripozo.decorators import apimethod, translate, classproperty
 from ripozo.viewsets.resource_base import ResourceBase
 
@@ -41,10 +42,26 @@ class Create(ResourceBase):
         return links + (Relationship('created', relation=cls.__name__, embedded=True), )
 
 
-class RetrieveList(ResourceBase):
+class Retrieve(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['GET'])
+    @translate(manager_field_validators=True)
+    def retrieve(cls, request, *args, **kwargs):
+        logger.debug('Retrieving a resource using the manager {0}'.format(cls._manager))
+        props = cls.manager.retrieve(request.url_params)
+        return cls(properties=props, status_code=200)
+
+
+class RetrieveList(Retrieve):
+    __abstract__ = True
+    _indv_name = None
+
+    @classproperty
+    def indv_name(cls):
+        return cls._indv_name or cls.resource_name
+
+    @apimethod(methods=['GET'], no_pks=True)
     @translate(manager_field_validators=True, validate=False)
     def retrieve_list(cls, request, *args, **kwargs):
         logger.debug('Retrieving list of resources using manager {0}'.format(cls._manager))
@@ -66,16 +83,18 @@ class RetrieveList(ResourceBase):
         return links + (Relationship('next', relation=cls.__name__),
                         Relationship('previous', relation=cls.__name__),)
 
+    @classproperty
+    def relationships(cls):
+        """
+        Appends the ListRelationship relationship that corresponds
+        to the items returned.
 
-class Retrieve(ResourceBase):
-    __abstract__ = True
-
-    @apimethod(methods=['GET'])
-    @translate(manager_field_validators=True)
-    def retrieve(cls, request, *args, **kwargs):
-        logger.debug('Retrieving a resource using the manager {0}'.format(cls._manager))
-        props = cls.manager.retrieve(request.url_params)
-        return cls(properties=props, status_code=200)
+        :return: The relationships on the class plus the
+            cls.__name__
+        :rtype:
+        """
+        relationships = cls._relationships or tuple()
+        return relationships + (ListRelationship(cls.indv_name, relation=cls.__name__),)
 
 
 class Update(ResourceBase):
@@ -117,4 +136,8 @@ class CreateRetrieveUpdate(Create, Retrieve, Update):
 
 
 class CreateRetrieveUpdateDelete(Create, Retrieve, Update, Delete):
+    __abstract__ = True
+
+
+class CreateRetrieveListUpdateDelete(Create, RetrieveList, Update, Delete):
     __abstract__ = True

@@ -47,6 +47,7 @@ setup(
         'examples': [
             'flask',
             'flask-ripozo',
+            'requests',
             'ripozo-sqlalchemy',
             'sqlalchemy',
             'Flask-SQLAlchemy'

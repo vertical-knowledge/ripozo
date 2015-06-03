@@ -20,3 +20,19 @@ To start up this application, we just need to run:
 .. code-block:: python
 
     app.run()
+
+Using the api
+=============
+
+We'll be using the requests package to access the
+api.
+
+.. code-block:: bash
+
+    pip install requests
+
+First we'll create a task board
+
+.. code-block:: python
+
+    >>> resp = requests.post('http://127.0.0.1:5000/api/taskboard/', data=dict(title='My First Board'))

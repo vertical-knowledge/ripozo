@@ -46,20 +46,14 @@ class TaskManager(AlchemyManager):
     paginate_by = 20
 
 
-class TaskBoardResourceList(restmixins.RetrieveList):
+class TaskBoardResource(restmixins.CreateRetrieveListUpdateDelete):
     _manager = TaskBoardManager
     _resource_name = 'taskboard'
-    _relationships = [
-        ListRelationship('taskboard', relation='TaskBoardResource')
-    ]
-
-class TaskBoardResource(restmixins.CreateRetrieveUpdateDelete):
-    _manager = TaskBoardManager
-    _resource_name = 'taskboard'
+    _indv_name = 'taskboard'
     _pks = ('id',)
-    _relationships = [
-        ListRelationship('tasks', relation='TaskResource')
-    ]
+    _relationships = (
+        ListRelationship('tasks', relation='TaskResource'),
+    )
 
 class TaskResource(restmixins.CreateRetrieveUpdateDelete):
     _manager = TaskManager
@@ -70,7 +64,7 @@ class TaskResource(restmixins.CreateRetrieveUpdateDelete):
     ]
 
 dispatcher = FlaskDispatcher(app, url_prefix='/api')
-dispatcher.register_resources(TaskBoardResourceList, TaskBoardResource, TaskResource)
+dispatcher.register_resources(TaskBoardResource, TaskResource)
 dispatcher.register_adapters(adapters.SirenAdapter, adapters.HalAdapter)
 
 if __name__ == '__main__':
