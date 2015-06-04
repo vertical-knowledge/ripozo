@@ -284,7 +284,7 @@ class DictField(BaseField):
         obj = super(DictField, self).translate(obj, **kwargs)
         if obj is None:
             return obj
-        translated_dict = {}
+        translated_dict = obj.copy()
         for field in self.field_list:
             key = field.name
             value = obj.get(key, None)

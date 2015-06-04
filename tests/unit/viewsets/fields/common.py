@@ -219,3 +219,15 @@ class TestDictField(python2base.TestBase, unittest.TestCase):
         input_vals = dict(field1='hey', field2='5')
         resp = field.translate(input_vals, validate=True)
         self.assertDictEqual(dict(field1='hey', field2=5), resp)
+
+    def test_translate_keeps_undefined_fields(self):
+        """
+        Tests that any fields not in the defined dictionary
+        are still included.
+        """
+        field_dict = [StringField('field1'), IntegerField('field2')]
+        field = DictField('f', required=True, field_list=field_dict)
+
+        input_vals = dict(field1='hey', field2='5', field3='Who Cares?')
+        resp = field.translate(input_vals, validate=True)
+        self.assertIn('field3', resp)

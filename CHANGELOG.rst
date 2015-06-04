@@ -6,6 +6,7 @@ CHANGELOG
 
 - ResourceList now compatible with Single resource rest mixins
 - Relationships now take a no pks parameter which specifies that the resource in question should not use the pks (helpful for RetrieveList and such)
+- Fixed bug in DictField that removed key-value pairs not explicitly specified.
 
 
 0.3.1 (2015-05-29)
