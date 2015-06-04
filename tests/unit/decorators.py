@@ -13,6 +13,7 @@ from ripozo.viewsets.resource_base import ResourceBase
 from ripozo.tests.python2base import TestBase
 
 import mock
+import six
 import unittest
 
 
@@ -114,6 +115,23 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
             def fake(cls):
                 return cls
         self.assertEqual(MyClass.fake(), MyClass)
+
+    def test_apiclassmethod_getter(self):
+        """
+        Tests the __get__ method on the
+        apiclassmethod class.
+        """
+        mck = mock.Mock(return_value='HEY', __name__=str('blah'), func_dict=dict())
+        clsmethod = _apiclassmethod(mck)
+        resp = clsmethod.__get__(1)
+        func_resp = resp()
+        self.assertEqual(mck.call_count, 1)
+        self.assertEqual(mck.call_args_list[0][0][0], int)
+
+        resp = clsmethod.__get__('string')
+        func_resp = resp('string')
+        self.assertEqual(mck.call_args_list[1][0][0], six.text_type)
+        self.assertEqual(mck.call_args_list[1][0][1], 'string')
 
     def test_nested_apiclassmethod(self):
         """
