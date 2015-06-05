@@ -46,7 +46,7 @@ class TaskManager(AlchemyManager):
     paginate_by = 20
 
 
-class TaskBoardResource(restmixins.CreateRetrieveListUpdateDelete):
+class TaskBoardResource(restmixins.CreateRetrieveRetrieveListUpdateDelete):
     _manager = TaskBoardManager
     _resource_name = 'taskboard'
     _indv_name = 'taskboard'

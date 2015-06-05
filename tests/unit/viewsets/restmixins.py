@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 
 from ripozo.viewsets.constructor import ResourceMetaClass
 from ripozo.viewsets.restmixins import Create, Retrieve, Update, Delete, RetrieveUpdateDelete, \
-    RetrieveUpdate, RetrieveList
+    RetrieveUpdate, RetrieveRetrieveList
 
 from ripozo.tests.python2base import TestBase
 
@@ -51,7 +51,7 @@ class TestMixins(TestBase, unittest.TestCase):
         manager2 = mock.MagicMock()
         manager2.retrieve_list = mock.MagicMock(return_value=(mock.MagicMock(), mock.MagicMock()))
 
-        class T1(RetrieveList):
+        class T1(RetrieveRetrieveList):
             manager = manager2
 
         request = mock.MagicMock()

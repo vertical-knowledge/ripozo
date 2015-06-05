@@ -4,8 +4,9 @@ CHANGELOG
 0.3.2 (unreleased)
 ==================
 
-- ResourceList now compatible with Single resource rest mixins
-- Relationships now take a no pks parameter which specifies that the resource in question should not use the pks (helpful for RetrieveList and such)
+- RetrieveList now compatible with Single resource rest mixins
+- Added RetrieveRetrieveList restmixin.
+- Relationships now take a no pks parameter which specifies that the resource in question should not use the pks (helpful for RetrieveRetrieveList and such)
 - Fixed bug in DictField that removed key-value pairs not explicitly specified.
 - Added update_fields class property to Base Manager.
 
@@ -19,7 +20,7 @@ CHANGELOG
 0.3.0 (2015-05-29)
 ==================
 
-- Fixes for RetrieveList bad translation.
+- Fixes for RetrieveRetrieveList bad translation.
 - Added DictField which can translate and validate dictionary fields (and their subfields)
 
 
@@ -102,7 +103,7 @@ CHANGELOG
 0.1.18 (2015-03-16)
 ===================
 
-- Fixed bug with RetrieveList mixin
+- Fixed bug with RetrieveRetrieveList mixin
 - Added ``picky_processor`` which specifically includes processors to include or exclude.
 - pre and post processors now get the name of the function being called. before running
 

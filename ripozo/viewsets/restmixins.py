@@ -53,13 +53,8 @@ class Retrieve(ResourceBase):
         return cls(properties=props, status_code=200)
 
 
-class RetrieveList(Retrieve):
+class RetrieveList(ResourceBase):
     __abstract__ = True
-    _indv_name = None
-
-    @classproperty
-    def indv_name(cls):
-        return cls._indv_name or cls.resource_name
 
     @apimethod(methods=['GET'], no_pks=True)
     @translate(manager_field_validators=True, validate=False)
@@ -83,6 +78,8 @@ class RetrieveList(Retrieve):
         return links + (Relationship('next', relation=cls.__name__),
                         Relationship('previous', relation=cls.__name__),)
 
+
+class RetrieveRetrieveList(RetrieveList, Retrieve):
     @classproperty
     def relationships(cls):
         """
@@ -94,7 +91,7 @@ class RetrieveList(Retrieve):
         :rtype:
         """
         relationships = cls._relationships or tuple()
-        return relationships + (ListRelationship(cls.indv_name, relation=cls.__name__),)
+        return relationships + (ListRelationship(cls.resource_name, relation=cls.__name__),)
 
 
 class Update(ResourceBase):
@@ -139,5 +136,5 @@ class CreateRetrieveUpdateDelete(Create, Retrieve, Update, Delete):
     __abstract__ = True
 
 
-class CreateRetrieveListUpdateDelete(Create, RetrieveList, Update, Delete):
+class CreateRetrieveRetrieveListUpdateDelete(Create, RetrieveRetrieveList, Update, Delete):
     __abstract__ = True

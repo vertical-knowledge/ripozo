@@ -29,7 +29,7 @@ to the Create mixin the following are available:
 - Retrieve
 - Update
 - Delete
-- RetrieveList
+- RetrieveRetrieveList
 - CreateRetrieveList
 - RetrieveUpdate
 - RetrieveUpdateDelete
