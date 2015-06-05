@@ -33,8 +33,15 @@ class BaseManager(object):
         This gets overridden by pagination_count_query_arg
     :param list order_by: A list of the fields to order the results by.
         This may be restricted in certain databases
-    :param list fields: A list of the fields that are able to be manipulated
-        or retrieved by the manager
+    :param list _fields: A list of the fields that are able to be manipulated
+        or retrieved by the manager.  These are the default fields if
+        _create_fields, _list_fields, or _update_fields are not defined.
+    :param list _create_fields: The fields to use if a model is being
+        created.  Fields not in this list will not be applied
+    :param list _list_fields: The fields to use if a list of models
+        are being retrieved. If not defined, cls.fields will be used instead.
+    :param list _update_fields: The fields to use if the model is
+        being updated.  Fields not in this list will not be used.
     :param type model: The model that is being managed.
         This is the individual model that is set by the user.
         For any type of base class this should be None.
@@ -49,6 +56,7 @@ class BaseManager(object):
     _fields = None
     _create_fields = None
     _list_fields = None
+    _update_fields = None
     model = None
     arg_parser = None
     _field_validators = None
@@ -197,6 +205,18 @@ class BaseManager(object):
         :rtype: list
         """
         return cls._list_fields or cls.fields
+
+    @classproperty
+    def update_fields(cls):
+        """
+        These are the valid fields for updating a model.
+        If the cls._update_fields is defined then it
+        returns that list, otherwise it returns cls.fields
+
+        :return: The list of fields to use when updating a model.
+        :rtype: list
+        """
+        return cls._update_fields or cls.fields
 
     @classproperty
     def field_validators(cls):
