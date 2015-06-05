@@ -1,8 +1,8 @@
 CHANGELOG
 =========
 
-0.3.2 (unreleased)
-==================
+0.4.0b1 (2015-06-05)
+====================
 
 - RetrieveList now compatible with Single resource rest mixins
 - Added RetrieveRetrieveList restmixin.
