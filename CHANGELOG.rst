@@ -4,7 +4,7 @@ CHANGELOG
 0.4.1 (unreleased)
 ==================
 
-- Nothing changed yet.
+- Fields default to checking the Query string, request body and url parameters for argument if no arg_type is specified.
 
 
 0.4.0 (2015-06-07)

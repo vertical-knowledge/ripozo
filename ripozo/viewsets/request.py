@@ -115,7 +115,6 @@ class RequestContainer(object):
             return self.query_args.get(name)
         return self.body_args.get(name, default)
 
-
     def translate(self, fields, skip_required=False, validate=False):
         """
         TODO
