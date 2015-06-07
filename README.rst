@@ -199,6 +199,6 @@ If you have any issues, comments, or complaints post them there.  Additionally, 
 are definitely accepting pull requests (hint: we almost always love more tests and
 documentation).  We do have just a few requests:
 
-* Every method, function, and docstring should have a thorough docstring
+* Every method, function, and class should have a thorough docstring
 * There should be at least one unit test for each function and method
 * Keep your pull requests to one issue. (Preferably open an issue on github first for record keeping)
