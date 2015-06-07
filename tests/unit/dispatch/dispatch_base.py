@@ -73,10 +73,10 @@ class TestDispatchBase(TestBase, unittest.TestCase):
     @mock.patch.object(FakeDispatcher, 'register_route')
     def test_register_class_routes(self, mck):
         """
-        Tests whether the ``AdapterBase().register_class_routes`` method
+        Tests whether the ``AdapterBase()._register_class_routes`` method
         properly call the ``AdapterBase().register_route`` method
         """
-        self.dispatcher.register_class_routes(self.mockKlass)
+        self.dispatcher._register_class_routes(self.mockKlass)
         self.assertEqual(mck.call_count, 3)
 
     @mock.patch.object(FakeDispatcher, 'register_route')
@@ -104,3 +104,26 @@ class TestDispatchBase(TestBase, unittest.TestCase):
 
         disp = Fake()
         self.assertIsNone(disp.register_route('fake'))
+
+    def test_get_adapter_for_type_not_available(self):
+        """
+        Tests that the get_adapter_for_type returns the default
+        adapter if None of the accepted mimetypes are available.
+        """
+        disp = FakeDispatcher()
+        disp.register_adapters(SirenAdapter, HalAdapter)
+        adapter = disp.get_adapter_for_type(['application/json', 'text/html'])
+        self.assertEqual(adapter, SirenAdapter)
+
+    def test_get_adapter_for_type_is_available(self):
+        """
+        Tests that the get_adapter_for_type returns
+        the appropriate adapter if the format type
+        is available.
+        """
+        disp = FakeDispatcher()
+        disp.register_adapters(SirenAdapter, HalAdapter)
+        adapter = disp.get_adapter_for_type(['application/vnd.siren+json', 'application/hal+json'])
+        self.assertEqual(adapter, SirenAdapter)
+        adapter2 = disp.get_adapter_for_type(['application/hal+json', 'application/vnd.siren+json'])
+        self.assertEqual(adapter2, HalAdapter)

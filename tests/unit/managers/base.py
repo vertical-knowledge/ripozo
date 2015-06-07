@@ -112,3 +112,18 @@ class TestManager(TestBase, unittest.TestCase):
             pass
 
         self.assertIsNone(super(Manager, Manager()).get_field_type('blah'))
+
+    def test_update_fields(self):
+        """
+        Tests the update_fields class property
+        """
+        class Manager(InMemoryManager):
+            fields = ('id', 'another', 'final')
+            _update_fields = ('another', 'final')
+
+        self.assertListEqual(Manager.update_fields, Manager._update_fields)
+
+        class Manager(InMemoryManager):
+            fields = ('id', 'another', 'final',)
+
+        self.assertListEqual(Manager.fields, Manager.update_fields)

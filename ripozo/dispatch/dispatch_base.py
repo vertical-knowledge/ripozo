@@ -115,9 +115,9 @@ class DispatcherBase(object):
             registered with this dispatcher.
         """
         for klass in classes:
-            self.register_class_routes(klass)
+            self._register_class_routes(klass)
 
-    def register_class_routes(self, klass):
+    def _register_class_routes(self, klass):
         """
         Register a subclass of the ResourceBase on the framework
         implementation.  This is so that the actual actions on the
@@ -154,7 +154,7 @@ class DispatcherBase(object):
         """
         pass
 
-    def dispatch(self, endpoint_func, format_type, *args, **kwargs):
+    def dispatch(self, endpoint_func, accepted_mimetypes, *args, **kwargs):
         """
         A helper to dispatch the endpoint_func, get the ResourceBase
         subclass instance, get the appropriate AdapterBase subclass
@@ -162,8 +162,9 @@ class DispatcherBase(object):
 
         :param method endpoint_func: The endpoint_func is responsible
             for actually get the ResourceBase response
-        :param unicode format_type: The format_type for the response
-            format that should be returned.
+        :param list accepted_mimetypes: The mime types accepted by
+            the client.  If none of the mimetypes provided are
+            available the default adapter will be used.
         :param list args: a list of args that wll be passed
             to the endpoint_func
         :param dict kwargs: a dictionary of keyword args to
@@ -175,21 +176,26 @@ class DispatcherBase(object):
         logger.info('Dispatching request to endpoint function: {0} with args:'
                     ' {1} and kwargs: {2}'.format(endpoint_func, args, kwargs))
         result = endpoint_func(*args, **kwargs)
-        adapter_class = self.get_adapter_for_type(format_type)
+        adapter_class = self.get_adapter_for_type(accepted_mimetypes)
         logger.info('Using adapter {0} to format response for format'
-                    ' type {1}'.format(adapter_class, format_type))
+                    ' type {1}'.format(adapter_class, accepted_mimetypes))
         adapter = adapter_class(result, base_url=self.base_url)
         return adapter
 
-    def get_adapter_for_type(self, format_type):
+    def get_adapter_for_type(self, accept_mimetypes):
         """
         Gets the appropriate adapter class for the specified format
         type.  For example, if the format_type was siren it would
         return the SirenAdapter.  Returns the default adapter
         If it cannot not find an adapter for the format_type.
 
-        :param unicode format_type:
-        :return:
+        :param list accept_mimetypes: A list of the mime types accepted
+            by the client.
+        :return: A BaseAdapter subclass for the best matched
+            accept type.
         :rtype: type
         """
-        return self.adapter_formats.get(format_type, self.default_adapter)
+        for mimetype in accept_mimetypes:
+            if mimetype in self.adapter_formats:
+                return self.adapter_formats.get(mimetype)
+        return self.default_adapter
