@@ -53,9 +53,7 @@ Example
 
 .. code-block:: python
 
-    from ripozo.decorators import apimethod
-    from ripozo.dispatch.adapters import SirenAdapter, HalAdapter
-    from ripozo.viewsets import ResourceBase
+    from ripozo import apimethod, adapters, ResourceBase
     # import the dispatcher class for your preferred webframework
 
     class MyResource(ResourceBase):
@@ -65,7 +63,7 @@ Example
 
     # initialize the dispatcher for your framework
     # e.g. dispatcher = MyDispatcherImplementation()
-    dispatcher.register_adapters(SirenAdapter, HalAdapter)
+    dispatcher.register_adapters(adapters.SirenAdapter, adapters.HalAdapter)
     dispatcher.register_resources(MyResource)
 
 And just like that, you have an api that can return either Siren or Hal
