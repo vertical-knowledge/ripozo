@@ -10,7 +10,7 @@ CHANGELOG
 0.4.0 (2015-06-07)
 ==================
 
-- Nothing changed yet.
+- Using Accept-Types instead of Content-Type.
 
 
 0.4.0b1 (2015-06-05)
