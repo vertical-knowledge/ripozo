@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.viewsets.fields.base import translate_fields
+from ripozo.viewsets.constants import input_categories
 
 
 class RequestContainer(object):
@@ -95,7 +96,7 @@ class RequestContainer(object):
     def content_type(self, value):
         self._headers['Content-Type'] = value
 
-    def get(self, name, default=None):
+    def get(self, name, default=None, location=None):
         """
         Attempts to retrieve the parameter with the
         name in the url_params, query_args and then
@@ -109,18 +110,50 @@ class RequestContainer(object):
         :rtype: object
         :raises: KeyError
         """
-        if name in self.url_params:
+        if not location and name in self._url_params or location == input_categories.URL_PARAMS:
             return self.url_params.get(name)
-        elif name in self.query_args:
-            return self.query_args.get(name)
-        return self.body_args.get(name, default)
+        elif not location and name in self._query_args or location == input_categories.QUERY_ARGS:
+            return self._query_args.get(name)
+        elif not location and name in self._body_args or location == input_categories.BODY_ARGS:
+            return self._body_args.get(name, default)
+        return default
+
+    def set(self, name, value, location=None):
+        """
+        Attempts to set the field with the specified name.
+        in the location specified.  Searches through all
+        the fields if location is not specified.  Raises
+        a KeyError if no location is set and the name is
+        not found in any of the locations.
+
+        :param unicode name: The name of the field
+        :param unicode location: The location of the
+            field to get. I.e. QUERY_ARGS.
+        :return: The field that was requestedor None.
+        :rtype: object
+        """
+        # TODO test this more thoroughly.
+        if not location and name in self._url_params or location == input_categories.URL_PARAMS:
+            self._url_params[name] = value
+            return
+        elif not location and name in self._query_args or location == input_categories.QUERY_ARGS:
+            self._query_args[name] = value
+            return
+        elif not location and name in self._body_args or location == input_categories.BODY_ARGS:
+            self._body_args[name] = value
+            return
+        raise KeyError('Location was not specified and the parameter {0} '
+                       'could not be found on the request object'.format(name))
+
+    def __contains__(self, item):
+        if item in self._url_params or item in self._body_args or item in self._query_args:
+            return True
+        return False
 
     def translate(self, fields, skip_required=False, validate=False):
         """
         TODO
         :param list fields:
         """
-        self._url_params, self._query_args, self._body_args = translate_fields(
-            self._url_params, self._query_args, self._body_args,
-            fields=fields, validate=validate, skip_required=skip_required
-        )
+        # TODO just dump this method.
+        translate_fields(self, fields=fields, validate=validate, skip_required=skip_required)

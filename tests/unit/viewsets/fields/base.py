@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 from ripozo.exceptions import ValidationException, TranslationException, RestException
 from ripozo.viewsets.constants import input_categories
 from ripozo.viewsets.fields.base import BaseField, translate_fields
+from ripozo import RequestContainer
 
 from ripozo.tests.bases.field import FieldTestBase
 from ripozo.tests.python2base import TestBase
@@ -54,10 +55,12 @@ class TestTranslateFields(TestBase, unittest.TestCase):
 
     def test_required(self):
         field = BaseField('field', required=True)
-        self.assertRaises(ValidationException, translate_fields, {}, {}, {},
+        req = RequestContainer()
+        self.assertRaises(ValidationException, translate_fields, req,
                           fields=[field], validate=True)
         test_body = dict(nothere='this')
-        url, query, body = translate_fields({}, {}, test_body, fields=[field], validate=True, skip_required=True)
+        req = RequestContainer(body_args=test_body)
+        url, query, body = translate_fields(req, fields=[field], validate=True, skip_required=True)
         self.assertEqual(body, test_body)
 
     def test_input_category_types(self):
@@ -66,26 +69,32 @@ class TestTranslateFields(TestBase, unittest.TestCase):
 
         # URL_PARAMS
         field = BaseField('field', required=True, arg_type=input_categories.URL_PARAMS)
-        url, query, body = translate_fields(test_input, {}, {}, fields=[field], validate=True)
+        req = RequestContainer(url_params=test_input)
+        url, query, body = translate_fields(req, fields=[field], validate=True)
         self.assertEqual(url, test_input)
-        self.assertRaises(ValidationException, translate_fields, {}, test_input, test_input,
+        req = RequestContainer(query_args=test_input, body_args=test_input)
+        self.assertRaises(ValidationException, translate_fields, req,
                           fields=[field], validate=True)
 
         # QUERY_ARGS
         field = BaseField('field', required=True, arg_type=input_categories.QUERY_ARGS)
-        url, query, body = translate_fields({}, test_input, {}, fields=[field], validate=True)
+        req = RequestContainer(query_args=test_input)
+        url, query, body = translate_fields(req, fields=[field], validate=True)
         self.assertEqual(query, test_input)
-        self.assertRaises(ValidationException, translate_fields, test_input, {}, test_input,
+        req = RequestContainer(url_params=test_input, body_args=test_input)
+        self.assertRaises(ValidationException, translate_fields, req,
                           fields=[field], validate=True)
 
         # BODY_ARGS
         field = BaseField('field', required=True, arg_type=input_categories.BODY_ARGS)
-        url, query, body = translate_fields({}, {}, test_input, fields=[field], validate=True)
+        req = RequestContainer(body_args=test_input)
+        url, query, body = translate_fields(req, fields=[field], validate=True)
         self.assertEqual(body, test_input)
-        self.assertRaises(ValidationException, translate_fields, test_input, test_input, {},
+        req = RequestContainer(query_args=test_input, url_params=test_input)
+        self.assertRaises(ValidationException, translate_fields, req,
                           fields=[field], validate=True)
 
         # Non-existent input type
         field = BaseField('field', required=True, arg_type='fake')
-        self.assertRaises(RestException, translate_fields, test_input, test_input, test_input,
-                          fields=[field], validate=True)
+        req = RequestContainer(query_args=test_input, url_params=test_input, body_args=test_input)
+        self.assertRaises(RestException, translate_fields, req, fields=[field], validate=True)

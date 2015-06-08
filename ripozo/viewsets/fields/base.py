@@ -19,8 +19,7 @@ class BaseField(object):
     field_type = object
 
     def __init__(self, name, required=False, maximum=None,
-                 minimum=None, arg_type=input_categories.BODY_ARGS,
-                 error_message=None):
+                 minimum=None, arg_type=None, error_message=None):
         self.name = name
         self.required = required
         self.maximum = maximum
@@ -142,17 +141,13 @@ class BaseField(object):
         raise ValidationException(self.error_message or msg)
 
 
-def translate_fields(url_params, query_args, body_args, fields=None, skip_required=False, validate=False):
+def translate_fields(request, fields=None, skip_required=False, validate=False):
     """
     Performs the specified action on the field.  The action can be a string of
      either _translate, _validate, or translate.
 
-    :param dict url_params: The url parameters.  Typically this is going
-        to be things like primary keys and such
-    :param dict query_args: The query args.  Typically these are going to be
-        filters on lists and such
-    :param dict body_args: The arguments in the body.  This may be for
-        updates and creations
+    :param RequestContainer request: The request that you are attempting to
+        translate from.
     :param list fields: The list of BaseField instances that are supposed
         to be validated.  Only items in this list will be translated
         and validated
@@ -167,25 +162,17 @@ def translate_fields(url_params, query_args, body_args, fields=None, skip_requir
     :raises: ValidationException
     :raises: TranslationException
     """
-    updated_url_params = url_params.copy()
-    updated_query_args = query_args.copy()
-    updated_body_args = body_args.copy()
+    updated_url_params = request.url_params
+    updated_query_args = request.query_args
+    updated_body_args = request.body_args
     fields = fields or []
     for field in fields:
-        if field.arg_type == input_categories.URL_PARAMS:
-            args = updated_url_params
-        elif field.arg_type == input_categories.QUERY_ARGS:
-            args = updated_query_args
-        elif field.arg_type == input_categories.BODY_ARGS:
-            args = updated_body_args
-        else:
-            raise RestException('Invalid arg_type, {0}, on Field {1}'.format(field.arg_type, field.name))
-
-        if field.name not in args and skip_required:
+        field_name_in_request = field.name in request
+        if not field_name_in_request and skip_required:
             continue
-        field_value = field.translate(args.get(field.name, None),
+        field_value = field.translate(request.get(field.name, None, location=field.arg_type),
                                       skip_required=skip_required, validate=validate)
-        if field.name in args:
-            args[field.name] = field_value
+        if field_name_in_request:
+            request.set(field.name, field_value, location=field.arg_type)
 
     return updated_url_params, updated_query_args, updated_body_args

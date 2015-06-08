@@ -3,6 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from ripozo.viewsets.constants.input_categories import BODY_ARGS
 from ripozo.viewsets.request import RequestContainer
 
 from ripozo.tests.python2base import TestBase
@@ -84,3 +85,11 @@ class TestRequestContainer(TestBase, unittest.TestCase):
         r = RequestContainer()
         self.assertEqual(r.get('fake', 'hey'), 'hey')
         self.assertEqual(r.get('fak'), None)
+
+    def test_set_key_error(self):
+        """
+        Asserts that set raises a key error
+        when the value cannot be found.
+        """
+        req = RequestContainer(query_args=dict(x=1))
+        self.assertRaises(KeyError, req.set, 'blah', 'blah')
