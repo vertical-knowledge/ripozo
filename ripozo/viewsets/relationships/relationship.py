@@ -22,7 +22,8 @@ class Relationship(object):
     """
     _resource_meta_class = ResourceMetaClass
 
-    def __init__(self, name, property_map=None, relation=None, embedded=False, required=False, no_pks=False):
+    def __init__(self, name, property_map=None, relation=None, embedded=False,
+                 required=False, no_pks=False, query_args=None):
         """
         :param unicode name:
         :param dict property_map: A map of the parent's property name
@@ -39,6 +40,7 @@ class Relationship(object):
             Otherwise, a more basic representation will be used (e.g.
             a link or id)
         """
+        self.query_args = query_args or tuple()
         self.property_map = property_map or {}
         self._relation = relation
         self.embedded = embedded
@@ -64,7 +66,7 @@ class Relationship(object):
         """
         return self._resource_meta_class.registered_names_map[self._relation]
 
-    def construct_resource(self, properties, query_args=None):
+    def construct_resource(self, properties):
         """
         Takes the properties from the parent and
         and maps them to the named properties for the
@@ -79,7 +81,7 @@ class Relationship(object):
         related_properties = self._map_pks(properties)
         resource = None
         if related_properties:
-            resource = self.relation(properties=related_properties, query_args=query_args,
+            resource = self.relation(properties=related_properties, query_args=self.query_args,
                                      include_relationships=self.embedded, no_pks=self.no_pks)
         if self.required and (not resource or not resource.has_all_pks):
             raise RestException('The relationship {0} could not construct a valid {1}'
