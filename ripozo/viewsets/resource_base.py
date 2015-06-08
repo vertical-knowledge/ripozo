@@ -143,7 +143,13 @@ class ResourceBase(object):
         if not self._url:
             base_url = self.base_url_sans_pks if self.no_pks else self.base_url
             url = create_url(base_url, **self.item_pks)
-            query_string = '&'.join('{0}={1}'.format(x, y) for x, y in six.iteritems(self.query_args))
+            query_parts = []
+            for field in self.query_args:
+                value = self.properties.get(field)
+                if value:
+                    part = '{0}={1}'.format(field, value)
+                    query_parts.append(part)
+            query_string = '&'.join(query_parts)
             if query_string:
                 url = '{0}?{1}'.format(url, query_string)
             self._url = url
