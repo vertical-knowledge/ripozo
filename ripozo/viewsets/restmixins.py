@@ -75,8 +75,12 @@ class RetrieveList(ResourceBase):
         :rtype: tuple
         """
         links = cls._links or tuple()
-        return links + (Relationship('next', relation=cls.__name__, query_args=cls.manager.fields),
-                        Relationship('previous', relation=cls.__name__, query_args=cls.manager.fields),)
+        if cls.manager:
+            fields = cls.manager.fields
+        else:
+            fields = []
+        return links + (Relationship('next', relation=cls.__name__, query_args=fields),
+                        Relationship('previous', relation=cls.__name__, query_args=fields),)
 
 
 class RetrieveRetrieveList(RetrieveList, Retrieve):
