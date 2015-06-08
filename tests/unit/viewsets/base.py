@@ -410,7 +410,7 @@ class TestResourceBase(TestBase, unittest.TestCase):
         class Fake(ResourceBase):
             _resource_name = 'fake'
 
-        res = Fake(query_args=dict(param=2, other=4))
+        res = Fake(properties=dict(param=2, other=4), query_args=['param', 'other'])
         self.assertIn(res.url, ['/fake?other=4&param=2', '/fake?param=2&other=4'])
 
     def test_base_url_sans_pks(self):
