@@ -76,7 +76,8 @@ class RetrieveList(ResourceBase):
         """
         links = cls._links or tuple()
         if cls.manager:
-            fields = cls.manager.fields
+            fields = tuple(cls.manager.fields)
+            fields += (cls.manager.pagination_pk_query_arg, cls.manager.pagination_count_query_arg)
         else:
             fields = []
         return links + (Relationship('next', relation=cls.__name__, query_args=fields),
