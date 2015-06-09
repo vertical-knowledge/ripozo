@@ -66,9 +66,9 @@ class TaskResource(restmixins.CreateRetrieveUpdateDelete):
     manager = TaskManager(session_handler)
     _resource_name = 'task'
     _pks = ('id',)
-    _relationships = [
-        Relationship('task_board', property_map=dict(task_board_id='id'), relation='TaskBoardResource')
-    ]
+    _relationships = (
+        Relationship('task_board', property_map=dict(task_board_id='id'), relation='TaskBoardResource'),
+    )
 
 dispatcher = FlaskDispatcher(app, url_prefix='/api')
 dispatcher.register_resources(TaskBoardResource, TaskResource)
