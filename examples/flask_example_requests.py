@@ -39,8 +39,5 @@ if __name__ == '__main__':
 
     deleted = task.delete()
 
-    deleted = deleted.retrieve()
-    print(deleted)
-
     original_task = task.retrieve()
     print(original_task)
