@@ -3,15 +3,13 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import unittest2
+
 from ripozo.exceptions import ValidationException, TranslationException, RestException
 from ripozo.viewsets.constants import input_categories
 from ripozo.viewsets.fields.base import BaseField, translate_fields
 from ripozo import RequestContainer
-
-from ripozo.tests.bases.field import FieldTestBase
-from ripozo.tests.python2base import TestBase
-
-import unittest
+from tests.bases.field import FieldTestBase
 
 
 class FieldTestBase2(FieldTestBase):
@@ -19,7 +17,7 @@ class FieldTestBase2(FieldTestBase):
     translation_exception = TranslationException
 
 
-class TestBaseField(FieldTestBase2, unittest.TestCase):
+class TestBaseField(FieldTestBase2, unittest2.TestCase):
     field_type = BaseField
     instance_type = object
 
@@ -48,7 +46,7 @@ class TestBaseField(FieldTestBase2, unittest.TestCase):
         self.assertIsNone(output)
 
 
-class TestTranslateFields(TestBase, unittest.TestCase):
+class TestTranslateFields(unittest2.TestCase):
     """
     For testing the translate_fields method.
     """

@@ -3,17 +3,17 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import json
+
+import six
+import unittest2
+
 from ripozo.dispatch.adapters.boring_json import BoringJSONAdapter
 from ripozo.viewsets.request import RequestContainer
-from ripozo.tests.python2base import TestBase
-from ripozo.tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
-
-import json
-import six
-import unittest
+from tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
 
 
-class TestBoringJSONAdapter(TestBase, unittest.TestCase):
+class TestBoringJSONAdapter(unittest2.TestCase):
     """
     Tests whether the BoringJSONAdapter appropriately creates
     a response for a resource

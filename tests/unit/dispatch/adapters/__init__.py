@@ -3,4 +3,4 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from tests.unit.dispatch.adapters import base, boring_json, hal, siren, html
+from tests.unit.dispatch.adapters import base, boring_json, hal, siren

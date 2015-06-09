@@ -3,10 +3,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.tests.python2base import TestBase
 
-
-class FieldTestBase(TestBase):
+class FieldTestBase(object):
     field_type = None
     instance_type = None
     translation_failures = []

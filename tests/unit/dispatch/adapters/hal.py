@@ -3,19 +3,19 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import json
+
+import six
+import unittest2
+
 from ripozo import ResourceBase
 from ripozo.dispatch.adapters.hal import HalAdapter
 from ripozo.viewsets.constructor import ResourceMetaClass
 from ripozo.viewsets.request import RequestContainer
-from ripozo.tests.python2base import TestBase
-from ripozo.tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
-
-import json
-import six
-import unittest
+from tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
 
 
-class TestHalAdapter(TestBase, unittest.TestCase):
+class TestHalAdapter(unittest2.TestCase):
     """
     Tests whether the HalAdapter appropriately creates
     a response for a resource

@@ -3,16 +3,17 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import datetime
+import re
+
+import six
+import unittest2
+
 from ripozo.exceptions import ValidationException, TranslationException
 from ripozo.viewsets.fields.common import StringField, BooleanField, FloatField,\
     DateTimeField, IntegerField, ListField, DictField
-from ripozo.tests.bases.field import FieldTestBase
-from ripozo.tests import python2base
+from tests.bases.field import FieldTestBase
 
-import datetime
-import re
-import six
-import unittest
 
 
 # TODO test validating, translating, etc on multiple fields.
@@ -26,7 +27,7 @@ class FieldTestBase2(FieldTestBase):
 
 
 
-class StringFieldTest(FieldTestBase2, unittest.TestCase):
+class StringFieldTest(FieldTestBase2, unittest2.TestCase):
     field_type = StringField
     instance_type = six.text_type
     translation_success = ['', 'another', 1, True]
@@ -43,7 +44,7 @@ class StringFieldTest(FieldTestBase2, unittest.TestCase):
         self.assertEqual(original, new)
 
 
-class IntegerFieldTest(FieldTestBase2, unittest.TestCase):
+class IntegerFieldTest(FieldTestBase2, unittest2.TestCase):
     field_type = IntegerField
     instance_type = int
     translation_success = [1, '123', 1.5]
@@ -53,7 +54,7 @@ class IntegerFieldTest(FieldTestBase2, unittest.TestCase):
         self.size_test_helper(1, 7, 12)
 
 
-class FloatFieldTest(FieldTestBase2, unittest.TestCase):
+class FloatFieldTest(FieldTestBase2, unittest2.TestCase):
     field_type = FloatField
     instance_type = float
     translation_success = [1, '1', 1.5]
@@ -63,14 +64,14 @@ class FloatFieldTest(FieldTestBase2, unittest.TestCase):
         self.size_test_helper(1.0, 7.0, 12.0)
 
 
-class BoolFieldTest(FieldTestBase2, unittest.TestCase):
+class BoolFieldTest(FieldTestBase2, unittest2.TestCase):
     field_type = BooleanField
     instance_type = bool
     translation_success = [True, False, 'True', 'False', 'true', 'false', 'TRUE', 'FALSE']
     translation_failures = ['somethingelse', 0]  # everything should be convertable to a string
 
 
-class DatetimeFieldTest(FieldTestBase2, unittest.TestCase):
+class DatetimeFieldTest(FieldTestBase2, unittest2.TestCase):
     field_type = DateTimeField
     instance_type = datetime.datetime
     translation_success = [datetime.datetime.now(), '2015-02-10T18:15:15.123456Z']
@@ -97,7 +98,7 @@ class DatetimeFieldTest(FieldTestBase2, unittest.TestCase):
         self.assertRaises(TranslationException, f._translate, '15/12/2015')
 
 
-class TestListField(FieldTestBase2, unittest.TestCase):
+class TestListField(FieldTestBase2, unittest2.TestCase):
     field_type = ListField
     instance_type = list
     translation_success = [(1, 2,), [1, 2]]
@@ -144,7 +145,7 @@ class TestListField(FieldTestBase2, unittest.TestCase):
         self.assertRaises(ValidationException, l.translate, items, validate=True)
 
 
-class TestDictField(python2base.TestBase, unittest.TestCase):
+class TestDictField(unittest2.TestCase):
     def test_required(self):
         """
         Tests that a validation exception is raised

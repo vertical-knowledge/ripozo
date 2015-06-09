@@ -10,13 +10,11 @@ from ripozo.viewsets.relationships import ListRelationship
 from ripozo.viewsets.request import RequestContainer
 from ripozo.viewsets.resource_base import ResourceBase
 
-from ripozo.tests.python2base import TestBase
-
 import mock
-import unittest
+import unittest2
 
 
-class TestResourceIntegration(TestBase, unittest.TestCase):
+class TestResourceIntegration(unittest2.TestCase):
     def test_validate_with_manager_field_validators(self):
         fake_manager = mock.MagicMock()
         fake_manager.field_validators = [BaseField('first', required=True), BaseField('second', required=False)]

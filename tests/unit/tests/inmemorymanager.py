@@ -3,17 +3,20 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.tests.bases.manager import TestManagerMixin
-from ripozo.tests.helpers.inmemory_manager import InMemoryManager
-from ripozo.tests.python2base import TestBase
+import unittest2
 
-import unittest
+from tests.bases.manager import TestManagerMixin
+from tests.helpers.inmemory_manager import InMemoryManager
+from tests.helpers.util import random_string
 
 
 class InMemoryManagerBaseTestMixin(TestManagerMixin):
     @property
     def manager(self):
         return self._manager
+
+    def random_string(self, length=50):
+        return random_string(length=length)
 
     @property
     def model_pks(self):
@@ -39,7 +42,7 @@ class InMemoryManagerBaseTestMixin(TestManagerMixin):
         raise NotImplementedError
 
 
-class TestInMemoryManager(InMemoryManagerBaseTestMixin, unittest.TestCase):
+class TestInMemoryManager(InMemoryManagerBaseTestMixin, unittest2.TestCase):
     def get_values(self, defaults=None):
         values = dict(id=self.random_string(), value1=self.random_string(), value2=self.random_string())
         if defaults:
@@ -68,7 +71,7 @@ class TestInMemoryManager(InMemoryManagerBaseTestMixin, unittest.TestCase):
             self.assertEqual(defaults['value1'], r['value1'])
 
 
-class TestBaseMixinCoverageFake(TestBase, unittest.TestCase):
+class TestBaseMixinCoverageFake(unittest2.TestCase):
     """
     Just to call the NotImplemented so that
     this shit doesn't get annoying.
@@ -76,8 +79,18 @@ class TestBaseMixinCoverageFake(TestBase, unittest.TestCase):
 
     def test_not_implemented(self):
         manager_mixin = TestManagerMixin()
-        self.assertPropertyRaises(NotImplementedError, manager_mixin, 'manager')
-        self.assertPropertyRaises(NotImplementedError, manager_mixin, 'model_pks')
+        try:
+            manager_mixin.manager
+        except NotImplementedError:
+            pass
+        else:
+            assert False
+        try:
+            manager_mixin.model_pks
+        except NotImplementedError:
+            pass
+        else:
+            assert False
         self.assertRaises(NotImplementedError, manager_mixin.assertValuesEqualModel, None, None)
         self.assertRaises(NotImplementedError, manager_mixin.assertValuesNotEqualsModel, None, None)
         self.assertRaises(NotImplementedError, manager_mixin.create_model)

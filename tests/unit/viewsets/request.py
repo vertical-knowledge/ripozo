@@ -5,12 +5,10 @@ from __future__ import unicode_literals
 
 from ripozo.viewsets.request import RequestContainer
 
-from ripozo.tests.python2base import TestBase
-
-import unittest
+import unittest2
 
 
-class TestRequestContainer(TestBase, unittest.TestCase):
+class TestRequestContainer(unittest2.TestCase):
     """
     Tests for the RequestContainer
     """

@@ -3,15 +3,11 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import unittest
-
 from ripozo.dispatch.adapters.base import AdapterBase
 from ripozo.viewsets.relationships import Relationship, ListRelationship
 from ripozo.viewsets.resource_base import ResourceBase
 
-from ripozo.tests.python2base import TestBase
-
-__author__ = 'Tim Martin'
+import unittest2
 
 
 class TestAdapter(AdapterBase):
@@ -26,7 +22,7 @@ class TestAdapter(AdapterBase):
         return super(TestAdapter, self).extra_headers
 
 
-class TestAdapterBase(TestBase, unittest.TestCase):
+class TestAdapterBase(unittest2.TestCase):
     def get_related_resource_class(self):
         class Related(ResourceBase):
             _resource_name = 'related'

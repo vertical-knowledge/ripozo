@@ -4,10 +4,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.dispatch.adapters.base import AdapterBase
-from ripozo.viewsets.relationships.list_relationship import ListRelationship
 
 import json
-import six
 
 _content_type = 'application/hal+json'
 
