@@ -9,7 +9,7 @@ import six
 from ripozo.dispatch.adapters.base import AdapterBase
 from ripozo.utilities import titlize_endpoint
 from ripozo.viewsets.resource_base import create_url
-from ripozo.viewsets.constants import status, input_categories
+from ripozo.viewsets.constants import input_categories
 
 
 _content_type = 'application/vnd.siren+json'

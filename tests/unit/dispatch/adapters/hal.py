@@ -115,3 +115,32 @@ class TestHalAdapter(unittest2.TestCase):
         resp = adapter._generate_relationship([rel1, rel2], True)
         self.assertEqual(len(resp), 1)
         self.assertEqual(resp[0], props1)
+
+    def test_generate_relationshi_embedded(self):
+        """
+        Tests that embedded relationships are
+        appropriately constructed.
+        """
+        class Fake(ResourceBase):
+            pass
+
+        res = Fake(properties=dict(x=1, y=2))
+        relation_list = [(res, 'res', True,)]
+        adapter = HalAdapter(Fake())
+        embedded, links = adapter.generate_relationship(relation_list)
+        self.assertDictEqual(embedded['res'], res.properties)
+
+    def test_missing_generate_relationship(self):
+        """
+        Tests attempting to generate a relationship
+        when not all of the pks are available.
+        """
+        class Fake(ResourceBase):
+            _pks = ('id',)
+
+        res = Fake(properties=dict(x=1, y=2))
+        relation_list = [(res, 'res', True,)]
+        adapter = HalAdapter(Fake())
+        embedded, links = adapter.generate_relationship(relation_list)
+        self.assertDictEqual(embedded, {})
+        self.assertDictEqual(links, {})
