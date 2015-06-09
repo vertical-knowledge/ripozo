@@ -14,7 +14,9 @@ This allows us to actually call our endpoints.
     dispatcher.register_resources(TaskBoardResourceList, TaskBoardResource, TaskResource)
     dispatcher.register_adapters(adapters.SirenAdapter, adapters.HalAdapter)
 
-We now have a functioning RESTful api that serves both.
+We now have a functioning RESTful api that serves both
+Siren and HAL protocls.
+
 To start up this application, we just need to run:
 
 .. code-block:: python
