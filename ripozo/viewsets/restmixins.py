@@ -61,7 +61,8 @@ class RetrieveList(ResourceBase):
     def retrieve_list(cls, request, *args, **kwargs):
         logger.debug('Retrieving list of resources using manager {0}'.format(cls._manager))
         props, meta = cls.manager.retrieve_list(request.query_args)
-        return cls(properties={cls.resource_name: props}, meta=meta, status_code=200, query_args=cls.manager.fields)
+        return cls(properties=request.query_args.update({cls.resource_name: props}),
+                   meta=meta, status_code=200, query_args=cls.manager.fields)
 
     @classproperty
     def links(cls):
