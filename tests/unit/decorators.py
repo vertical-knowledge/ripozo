@@ -70,7 +70,7 @@ class TestApiMethodDecorator(unittest2.TestCase):
         fields = [1, 2]
 
         @translate(fields=fields)
-        def fake(*args, **kwargs):
+        def fake(cls, *args, **kwargs):
             return mkc()
 
         self.assertIsInstance(fake.fields(None), list)

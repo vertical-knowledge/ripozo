@@ -360,7 +360,8 @@ class TestResourceBase(unittest2.TestCase):
         class MyResource(ResourceBase):
             @apimethod(methods=['GET'])
             @apimethod(methods=['POST'])
-            def fake(*args, **kwargs):
+            def fake(cls, *args, **kwargs):
+                args = (cls,) + args
                 return args, kwargs
 
         count = 0

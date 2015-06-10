@@ -17,14 +17,7 @@ class HalAdapter(AdapterBase):
     `HAL Specification <http://stateless.co/hal_specification.html>`_
     """
     formats = ['hal', _content_type]
-
-    @property
-    def extra_headers(self):
-        """
-        :return: Just returns a single header for the Content-Type
-        :rtype: dict
-        """
-        return {'Content-Type': _content_type}
+    extra_headers = {'Content-Type': _content_type}
 
     @property
     def formatted_body(self):

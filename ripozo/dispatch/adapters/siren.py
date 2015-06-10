@@ -22,6 +22,7 @@ class SirenAdapter(AdapterBase):
     `SIREN specification <https://github.com/kevinswiber/siren>`_
     """
     formats = ['siren', _content_type]
+    extra_headers = {'Content-Type': _content_type}
 
     @property
     def formatted_body(self):
@@ -128,14 +129,3 @@ class SirenAdapter(AdapterBase):
                 ent['properties'] = resource.properties
                 ent['links'] = [dict(rel=['self'], href=resource_url)]
             yield ent
-
-    @property
-    def extra_headers(self):
-        """
-        The headers that should be appended to the response
-
-        :return: a dictionary of the headers to be set on the
-            response
-        :rtype: dict
-        """
-        return {'Content-Type': _content_type}
