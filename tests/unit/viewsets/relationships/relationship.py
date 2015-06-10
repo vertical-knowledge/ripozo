@@ -6,13 +6,12 @@ from __future__ import unicode_literals
 from ripozo.exceptions import RestException
 from ripozo.viewsets.relationships.relationship import Relationship
 from ripozo.viewsets.resource_base import ResourceBase
-from ripozo.tests.python2base import TestBase
 
 import mock
-import unittest
+import unittest2
 
 
-class TestRelationship(TestBase, unittest.TestCase):
+class TestRelationship(unittest2.TestCase):
     """
     A TestCase for testing relationships and
     their various properties.

@@ -3,20 +3,19 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.utilities import serialize_fields, titlize_endpoint, join_url_parts, \
-    picky_processor, convert_to_underscore, make_json_safe
-
-from ripozo.tests.python2base import TestBase
-from ripozo.tests.bases.manager import generate_random_name
-
 import datetime
 import decimal
+
 import mock
 import six
-import unittest
+import unittest2
+
+from ripozo.utilities import serialize_fields, titlize_endpoint, join_url_parts, \
+    picky_processor, convert_to_underscore, make_json_safe
+from tests.bases.manager import generate_random_name
 
 
-class UtilitiesTestCase(TestBase, unittest.TestCase):
+class UtilitiesTestCase(unittest2.TestCase):
 
     def test_convert_to_underscore(self):
         camel_case_names = ['CamelCase', 'camelCase', 'camel_case', '_CamelCase',

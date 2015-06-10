@@ -3,9 +3,9 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-DELETED = 'DELETED'
-UPDATED = 'UPDATED'
-REPLACED = 'REPLACED'
-CREATED = 'CREATED'
-RETRIEVED = 'RETRIEVED'
-ERRORED = 'ERRORED'
+import random
+import string
+
+
+def random_string(length=50):
+    return ''.join(random.choice(string.ascii_letters) for _ in range(length))

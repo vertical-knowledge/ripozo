@@ -4,18 +4,16 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from mock import Mock, MagicMock
+import mock
+import unittest2
 
 from ripozo.dispatch.adapters import BoringJSONAdapter, HalAdapter, SirenAdapter
 from ripozo.dispatch.dispatch_base import DispatcherBase
 from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
-from ripozo.tests.python2base import TestBase
-from ripozo.tests.helpers.dispatcher import FakeDispatcher
-
-import mock
-import unittest
+from tests.helpers.dispatcher import FakeDispatcher
 
 
-class TestDispatchBase(TestBase, unittest.TestCase):
+class TestDispatchBase(unittest2.TestCase):
     """
     This class is responsible for testing
     the reusable portions of the dispatcher

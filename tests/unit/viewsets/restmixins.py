@@ -4,16 +4,13 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.viewsets.constructor import ResourceMetaClass
-from ripozo.viewsets.restmixins import Create, Retrieve, Update, Delete, RetrieveUpdateDelete, \
-    RetrieveUpdate, RetrieveRetrieveList
-
-from ripozo.tests.python2base import TestBase
+from ripozo.viewsets.restmixins import Create, Retrieve, Update, Delete, RetrieveRetrieveList
 
 import mock
-import unittest
+import unittest2
 
 
-class TestMixins(TestBase, unittest.TestCase):
+class TestMixins(unittest2.TestCase):
 
     def setUp(self):
         ResourceMetaClass.registered_names_map = {}

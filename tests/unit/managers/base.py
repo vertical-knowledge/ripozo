@@ -3,15 +3,14 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.tests.python2base import TestBase
-from ripozo.tests.helpers.inmemory_manager import InMemoryManager
-
 import mock
 import six
-import unittest
+import unittest2
+
+from tests.helpers.inmemory_manager import InMemoryManager
 
 
-class TestManager(TestBase, unittest.TestCase):
+class TestManager(unittest2.TestCase):
     @property
     def manager(self):
         """
@@ -121,9 +120,9 @@ class TestManager(TestBase, unittest.TestCase):
             fields = ('id', 'another', 'final')
             _update_fields = ('another', 'final')
 
-        self.assertListEqual(Manager.update_fields, Manager._update_fields)
+        self.assertTupleEqual(Manager.update_fields, Manager._update_fields)
 
         class Manager(InMemoryManager):
             fields = ('id', 'another', 'final',)
 
-        self.assertListEqual(Manager.fields, Manager.update_fields)
+        self.assertTupleEqual(Manager.fields, Manager.update_fields)

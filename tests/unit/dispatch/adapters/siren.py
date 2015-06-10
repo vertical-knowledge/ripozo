@@ -8,12 +8,13 @@ from ripozo.exceptions import RestException
 from ripozo.viewsets.relationships import Relationship, ListRelationship
 from ripozo.viewsets.request import RequestContainer
 from ripozo.viewsets.resource_base import ResourceBase
+from ripozo.viewsets.constants import input_categories
 
-from ripozo.tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
-
+from tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
 from tests.unit.dispatch.adapters.base import TestAdapterBase
 
 import json
+import mock
 import six
 
 
@@ -213,3 +214,26 @@ class TestSirenAdapter(TestAdapterBase):
         # Ensure that it is an empty generator
         for r in resp:
             assert False
+
+    def test_generate_fields_for_endpoint_func_empty_no_fields(self):
+        """
+        Tests that an empty list is returned if
+        the fields cannot be found.
+        """
+        def fake(*args, **kwargs):
+            return
+
+        adapter = SirenAdapter(object())
+        func_fields = adapter.generate_fields_for_endpoint_funct(fake)
+        self.assertListEqual([], func_fields)
+
+    def test_generate_field_for_endpoint_func_url_params(self):
+        """
+        Tests that url params are not a part of the
+        fields returned.
+        """
+        fields_method = mock.Mock(return_value=[mock.Mock(arg_type=input_categories.URL_PARAMS)])
+        endpoint_func = mock.Mock(fields=fields_method)
+        adapter = SirenAdapter(mock.MagicMock())
+        fields_found = adapter.generate_fields_for_endpoint_funct(endpoint_func)
+        self.assertListEqual(fields_found, [])

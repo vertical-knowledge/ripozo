@@ -3,19 +3,19 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import json
+
+import six
+import unittest2
+
 from ripozo import ResourceBase
 from ripozo.dispatch.adapters.hal import HalAdapter
 from ripozo.viewsets.constructor import ResourceMetaClass
 from ripozo.viewsets.request import RequestContainer
-from ripozo.tests.python2base import TestBase
-from ripozo.tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
-
-import json
-import six
-import unittest
+from tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
 
 
-class TestHalAdapter(TestBase, unittest.TestCase):
+class TestHalAdapter(unittest2.TestCase):
     """
     Tests whether the HalAdapter appropriately creates
     a response for a resource
@@ -115,3 +115,32 @@ class TestHalAdapter(TestBase, unittest.TestCase):
         resp = adapter._generate_relationship([rel1, rel2], True)
         self.assertEqual(len(resp), 1)
         self.assertEqual(resp[0], props1)
+
+    def test_generate_relationshi_embedded(self):
+        """
+        Tests that embedded relationships are
+        appropriately constructed.
+        """
+        class Fake(ResourceBase):
+            pass
+
+        res = Fake(properties=dict(x=1, y=2))
+        relation_list = [(res, 'res', True,)]
+        adapter = HalAdapter(Fake())
+        embedded, links = adapter.generate_relationship(relation_list)
+        self.assertDictEqual(embedded['res'], res.properties)
+
+    def test_missing_generate_relationship(self):
+        """
+        Tests attempting to generate a relationship
+        when not all of the pks are available.
+        """
+        class Fake(ResourceBase):
+            _pks = ('id',)
+
+        res = Fake(properties=dict(x=1, y=2))
+        relation_list = [(res, 'res', True,)]
+        adapter = HalAdapter(Fake())
+        embedded, links = adapter.generate_relationship(relation_list)
+        self.assertDictEqual(embedded, {})
+        self.assertDictEqual(links, {})

@@ -10,14 +10,12 @@ from ripozo.viewsets.fields.common import IntegerField
 from ripozo.viewsets.request import RequestContainer
 from ripozo.viewsets.resource_base import ResourceBase
 
-from ripozo.tests.python2base import TestBase
-
 import mock
 import six
-import unittest
+import unittest2
 
 
-class TestApiMethodDecorator(TestBase, unittest.TestCase):
+class TestApiMethodDecorator(unittest2.TestCase):
     def test_init(self):
         route = 'something'
         endpoint = 'endpoint'
@@ -72,7 +70,7 @@ class TestApiMethodDecorator(TestBase, unittest.TestCase):
         fields = [1, 2]
 
         @translate(fields=fields)
-        def fake(*args, **kwargs):
+        def fake(cls, *args, **kwargs):
             return mkc()
 
         self.assertIsInstance(fake.fields(None), list)

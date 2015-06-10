@@ -7,7 +7,7 @@ from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask_ripozo import FlaskDispatcher
 from ripozo import restmixins, ListRelationship, Relationship, adapters, apimethod
-from ripozo_sqlalchemy import AlchemyManager
+from ripozo_sqlalchemy import AlchemyManager, SessionHandler
 from sqlalchemy.orm import relationship
 
 app = Flask(__name__)
@@ -30,24 +30,24 @@ class Task(db.Model):
     completed = db.Column(db.Boolean, default=False)
 
 db.create_all()
+session_handler = SessionHandler(db.session)
+
 
 class TaskBoardManager(AlchemyManager):
     _fields = ('id', 'title', 'tasks.id',)
     _list_fields = ('id', 'title',)
     _update_fields = ('title',)
     model = TaskBoard
-    session = db.session
     paginate_by = 10
 
 class TaskManager(AlchemyManager):
     _fields = ('id', 'task_board_id', 'title', 'description', 'completed',)
     model = Task
-    session = db.session
     paginate_by = 20
 
 
 class TaskBoardResource(restmixins.CreateRetrieveRetrieveListUpdateDelete):
-    _manager = TaskBoardManager
+    manager = TaskBoardManager(session_handler)
     _resource_name = 'taskboard'
     _indv_name = 'taskboard'
     _pks = ('id',)
@@ -63,12 +63,12 @@ class TaskBoardResource(restmixins.CreateRetrieveRetrieveListUpdateDelete):
         return TaskResource.create(request)
 
 class TaskResource(restmixins.CreateRetrieveUpdateDelete):
-    _manager = TaskManager
+    manager = TaskManager(session_handler)
     _resource_name = 'task'
     _pks = ('id',)
-    _relationships = [
-        Relationship('task_board', property_map=dict(task_board_id='id'), relation='TaskBoardResource')
-    ]
+    _relationships = (
+        Relationship('task_board', property_map=dict(task_board_id='id'), relation='TaskBoardResource'),
+    )
 
 dispatcher = FlaskDispatcher(app, url_prefix='/api')
 dispatcher.register_resources(TaskBoardResource, TaskResource)

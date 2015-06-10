@@ -61,7 +61,8 @@ class RetrieveList(ResourceBase):
     def retrieve_list(cls, request, *args, **kwargs):
         logger.debug('Retrieving list of resources using manager {0}'.format(cls._manager))
         props, meta = cls.manager.retrieve_list(request.query_args)
-        return cls(properties={cls.resource_name: props}, meta=meta, status_code=200)
+        return cls(properties=request.query_args.update({cls.resource_name: props}),
+                   meta=meta, status_code=200, query_args=cls.manager.fields)
 
     @classproperty
     def links(cls):
@@ -75,8 +76,13 @@ class RetrieveList(ResourceBase):
         :rtype: tuple
         """
         links = cls._links or tuple()
-        return links + (Relationship('next', relation=cls.__name__),
-                        Relationship('previous', relation=cls.__name__),)
+        if cls.manager:
+            fields = tuple(cls.manager.fields)
+            fields += (cls.manager.pagination_pk_query_arg, cls.manager.pagination_count_query_arg)
+        else:
+            fields = []
+        return links + (Relationship('next', relation=cls.__name__, query_args=fields),
+                        Relationship('previous', relation=cls.__name__, query_args=fields),)
 
 
 class RetrieveRetrieveList(RetrieveList, Retrieve):

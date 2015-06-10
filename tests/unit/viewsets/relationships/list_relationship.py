@@ -6,12 +6,10 @@ from __future__ import unicode_literals
 from ripozo.viewsets.relationships.list_relationship import ListRelationship
 from ripozo.viewsets.resource_base import ResourceBase
 
-from ripozo.tests.python2base import TestBase
-
-import unittest
+import unittest2
 
 
-class TestListRelationship(TestBase, unittest.TestCase):
+class TestListRelationship(unittest2.TestCase):
     """
     Tests the ListRelationship class
     """

@@ -12,18 +12,21 @@ Defining managers is actually very simple:
 
     from ripozo_sqlalchemy import AlchemyManager
 
+    # This is the most basic session handler.
+    # It simply passes the db.session object and
+    # lets Flask-SQLAlchemy handle the rest.
+    session_handler = SessionHandler(db.session)
+
     class TaskBoardManager(AlchemyManager):
         _fields = ('id', 'title', 'tasks.id',)
         _list_fields = ('id', 'title',)
         _update_fields = ('title',)
         model = TaskBoard
-        session = db.session
         paginate_by = 10
 
     class TaskManager(AlchemyManager):
         _fields = ('id', 'task_board_id', 'title', 'description', 'completed',)
         model = Task
-        session = db.session
         paginate_by = 20
 
 And that's it.  This provided a common interface for

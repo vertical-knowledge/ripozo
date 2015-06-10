@@ -3,10 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import ripozo
-
 from ripozo.exceptions import NotFoundException
-from ripozo.tests.python2base import TestBase
 
 import logging
 import random
@@ -23,7 +20,7 @@ def generate_random_name():
     return ''.join(random.choice(string.ascii_letters) for _ in range(15))
 
 
-class TestManagerMixin(TestBase):
+class TestManagerMixin(object):
     """
     manager, does_not_exist_exception, and all_person_models proeprties need to be implemented
     get_person_model_by_id method needs to be implemented

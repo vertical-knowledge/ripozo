@@ -7,12 +7,10 @@ from ripozo.exceptions import RestException, BaseRestEndpointAlreadyExists, Disp
     TranslationException, ValidationException, AdapterFormatAlreadyRegisteredException, FieldException, \
     ManagerException, NoResourceNameDeclaredException
 
-from ripozo.tests.python2base import TestBase
-
-import unittest
+import unittest2
 
 
-class TestExceptions(TestBase, unittest.TestCase):
+class TestExceptions(unittest2.TestCase):
     """
     Seems stupid, but I've screwed it up multiple times.
     Long story short, test coverage, no matter how trivial,

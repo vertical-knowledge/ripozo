@@ -27,8 +27,7 @@ setup(
     description='An tool for easily making RESTful interfaces',
     # long_description=long_description,
     install_requires=[
-        'six>=1.4.1,!=1.7.1',
-        'jinja2'
+        'six>=1.4.1,!=1.7.1'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -57,6 +56,7 @@ setup(
         ]
     },
     tests_require=[
+        'unittest2',
         'tox',
         'mock'
     ],

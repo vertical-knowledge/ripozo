@@ -3,15 +3,12 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.viewsets.constants.input_categories import BODY_ARGS
 from ripozo.viewsets.request import RequestContainer
 
-from ripozo.tests.python2base import TestBase
-
-import unittest
+import unittest2
 
 
-class TestRequestContainer(TestBase, unittest.TestCase):
+class TestRequestContainer(unittest2.TestCase):
     """
     Tests for the RequestContainer
     """

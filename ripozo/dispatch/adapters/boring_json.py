@@ -36,15 +36,7 @@ class BoringJSONAdapter(AdapterBase):
     }
     """
     formats = ['json', content_type]
-
-    @property
-    def extra_headers(self):
-        """
-        :return: A dictionary of headers that should be included
-            in the response
-        :rtype: dict
-        """
-        return {'Content-Type': content_type}
+    extra_headers = {'Content-Type': content_type}
 
     @property
     def formatted_body(self):

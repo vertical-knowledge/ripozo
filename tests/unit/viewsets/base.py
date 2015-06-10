@@ -3,19 +3,18 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import logging
+import types
+
+import mock
+import six
+import unittest2
+
 from ripozo.decorators import apimethod
-from ripozo.exceptions import BaseRestEndpointAlreadyExists
 from ripozo.viewsets.constructor import ResourceMetaClass
 from ripozo.viewsets.relationships import Relationship, ListRelationship
 from ripozo.viewsets.resource_base import ResourceBase, _get_apimethods
-from ripozo.tests.helpers.inmemory_manager import InMemoryManager
-from ripozo.tests.python2base import TestBase
-
-import mock
-import logging
-import six
-import types
-import unittest
+from tests.helpers.inmemory_manager import InMemoryManager
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +33,7 @@ class TestResource(ResourceBase):
     _namespace = name_space
 
 
-class TestResourceBase(TestBase, unittest.TestCase):
+class TestResourceBase(unittest2.TestCase):
     def setUp(self):
         ResourceMetaClass.registered_resource_classes.clear()
 
@@ -361,7 +360,8 @@ class TestResourceBase(TestBase, unittest.TestCase):
         class MyResource(ResourceBase):
             @apimethod(methods=['GET'])
             @apimethod(methods=['POST'])
-            def fake(*args, **kwargs):
+            def fake(cls, *args, **kwargs):
+                args = (cls,) + args
                 return args, kwargs
 
         count = 0
@@ -410,7 +410,7 @@ class TestResourceBase(TestBase, unittest.TestCase):
         class Fake(ResourceBase):
             _resource_name = 'fake'
 
-        res = Fake(query_args=dict(param=2, other=4))
+        res = Fake(properties=dict(param=2, other=4), query_args=['param', 'other'])
         self.assertIn(res.url, ['/fake?other=4&param=2', '/fake?param=2&other=4'])
 
     def test_base_url_sans_pks(self):

@@ -4,10 +4,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.dispatch.adapters.base import AdapterBase
-from ripozo.viewsets.relationships.list_relationship import ListRelationship
 
 import json
-import six
 
 _content_type = 'application/hal+json'
 
@@ -19,14 +17,7 @@ class HalAdapter(AdapterBase):
     `HAL Specification <http://stateless.co/hal_specification.html>`_
     """
     formats = ['hal', _content_type]
-
-    @property
-    def extra_headers(self):
-        """
-        :return: Just returns a single header for the Content-Type
-        :rtype: dict
-        """
-        return {'Content-Type': _content_type}
+    extra_headers = {'Content-Type': _content_type}
 
     @property
     def formatted_body(self):
