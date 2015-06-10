@@ -1,0 +1,3 @@
+# An ignore file for quantified code
+tests/
+examples/
