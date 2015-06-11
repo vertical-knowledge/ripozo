@@ -6,9 +6,9 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   dispatchers
-   managers
-   processors
-   relationships_and_links
-   resources
-   rest_mixins
+   dispatchers.rst
+   managers.rst
+   processors.rst
+   relationships_and_links.rst
+   resources.rst
+   rest_mixins.rst
