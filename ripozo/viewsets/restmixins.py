@@ -61,8 +61,10 @@ class RetrieveList(ResourceBase):
     def retrieve_list(cls, request, *args, **kwargs):
         logger.debug('Retrieving list of resources using manager {0}'.format(cls._manager))
         props, meta = cls.manager.retrieve_list(request.query_args)
-        return cls(properties=request.query_args.update({cls.resource_name: props}),
-                   meta=meta, status_code=200, query_args=cls.manager.fields)
+        return_props = {cls.resource_name: props}
+        return_props.update(request.query_args)
+        return cls(properties=return_props, meta=meta, status_code=200,
+                   query_args=cls.manager.fields)
 
     @classproperty
     def links(cls):
@@ -81,8 +83,8 @@ class RetrieveList(ResourceBase):
             fields += (cls.manager.pagination_pk_query_arg, cls.manager.pagination_count_query_arg)
         else:
             fields = []
-        return links + (Relationship('next', relation=cls.__name__, query_args=fields),
-                        Relationship('previous', relation=cls.__name__, query_args=fields),)
+        return links + (Relationship('next', relation=cls.__name__, query_args=fields, no_pks=True),
+                        Relationship('previous', relation=cls.__name__, query_args=fields, no_pks=True),)
 
 
 class RetrieveRetrieveList(RetrieveList, Retrieve):
@@ -144,3 +146,8 @@ class CRUD(Create, Retrieve, Update, Delete):
 
 class CRUDL(Create, RetrieveRetrieveList, Update, Delete):
     __abstract__ = True
+
+    @classproperty
+    def links(cls):
+        links = cls._links or tuple()
+        return links + super(Create, cls).links + super(RetrieveRetrieveList, cls).links

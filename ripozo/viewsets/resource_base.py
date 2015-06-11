@@ -131,6 +131,19 @@ class ResourceBase(object):
                 return False
         return True
 
+    def get_query_arg_dict(self):
+        # TODO docstring and test
+        queries = {}
+        for field in self.query_args:
+            value = self.properties.get(field)
+            if value is not None:
+                queries[field] = value
+        return queries
+
+    @property
+    def query_string(self):
+        return '&'.join('{0}={1}'.format(f, v) for f, v in self.get_query_arg_dict().items())
+
     @property
     def url(self):
         """
@@ -143,13 +156,7 @@ class ResourceBase(object):
         if not self._url:
             base_url = self.base_url_sans_pks if self.no_pks else self.base_url
             url = create_url(base_url, **self.item_pks)
-            query_parts = []
-            for field in self.query_args:
-                value = self.properties.get(field)
-                if value:
-                    part = '{0}={1}'.format(field, value)
-                    query_parts.append(part)
-            query_string = '&'.join(query_parts)
+            query_string = self.query_string
             if query_string:
                 url = '{0}?{1}'.format(url, query_string)
             self._url = url

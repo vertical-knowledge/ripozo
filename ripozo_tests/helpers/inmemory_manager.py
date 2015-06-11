@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 
 from ripozo.exceptions import NotFoundException
 from ripozo.managers.base import BaseManager
+from ripozo.viewsets.fields.base import BaseField
 from uuid import uuid1
 import six
 
@@ -57,12 +58,10 @@ class InMemoryManager(BaseManager):
             links[self.pagination_next] = {self.pagination_pk_query_arg: original_page + 1,
                                            self.pagination_count_query_arg: pagination_count}
 
-
         return values, {'links': links}
 
     @property
     def queryset(self):
-        super(InMemoryManager, self).queryset
         return self.objects
 
     def retrieve(self, lookup_keys, *args, **kwargs):
@@ -81,9 +80,9 @@ class InMemoryManager(BaseManager):
         self.queryset[lookup_keys['id']] = obj
         return obj
 
-    def get_field_type(self, name):
-        super(InMemoryManager, self).get_field_type(name)
-        pass
+    @classmethod
+    def get_field_type(cls, name):
+        return BaseField(name)
 
     def delete(self, lookup_keys, *args, **kwargs):
         super(InMemoryManager, self).delete(lookup_keys, *args, **kwargs)

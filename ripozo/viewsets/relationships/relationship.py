@@ -88,7 +88,8 @@ class Relationship(object):
                                 ' with all of its pks.  Properties'
                                 ' {2}'.format(self.name, self.relation, related_properties))
         elif not resource or not resource.has_all_pks:
-            return None
+            if resource and not resource.no_pks:
+                return None
         return resource
 
     def remove_child_resource_properties(self, properties):
