@@ -39,7 +39,11 @@ class Create(ResourceBase):
         :rtype: tuple
         """
         links = cls._links or tuple()
-        return links + (Relationship('created', relation=cls.__name__, embedded=True), )
+        return links + Create.get_base_links(cls)
+
+    @staticmethod
+    def get_base_links(actual_class):
+        return (Relationship('created', relation=actual_class.__name__, embedded=True), )
 
 
 class Retrieve(ResourceBase):
@@ -78,13 +82,17 @@ class RetrieveList(ResourceBase):
         :rtype: tuple
         """
         links = cls._links or tuple()
-        if cls.manager:
-            fields = tuple(cls.manager.fields)
-            fields += (cls.manager.pagination_pk_query_arg, cls.manager.pagination_count_query_arg)
+        return links + cls.get_base_links(cls)
+
+    @staticmethod
+    def get_base_links(actual_class):
+        if actual_class.manager:
+            fields = tuple(actual_class.manager.fields)
+            fields += (actual_class.manager.pagination_pk_query_arg, actual_class.manager.pagination_count_query_arg)
         else:
             fields = []
-        return links + (Relationship('next', relation=cls.__name__, query_args=fields, no_pks=True),
-                        Relationship('previous', relation=cls.__name__, query_args=fields, no_pks=True),)
+        return (Relationship('next', relation=actual_class.__name__, query_args=fields, no_pks=True),
+                Relationship('previous', relation=actual_class.__name__, query_args=fields, no_pks=True),)
 
 
 class RetrieveRetrieveList(RetrieveList, Retrieve):
@@ -150,4 +158,4 @@ class CRUDL(Create, RetrieveRetrieveList, Update, Delete):
     @classproperty
     def links(cls):
         links = cls._links or tuple()
-        return links + super(Create, cls).links + super(RetrieveRetrieveList, cls).links
+        return links + Create.get_base_links(cls) + RetrieveRetrieveList.get_base_links(cls)

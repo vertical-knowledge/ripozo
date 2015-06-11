@@ -147,8 +147,8 @@ class BaseManager(object):
         """
         pass
 
-    @abstractmethod
-    def get_field_type(self, name):
+    @classmethod
+    def get_field_type(cls, name):
         """
         Returns the BaseField instance (or subclass) instance
         that corresponds to the named attribute on the model.

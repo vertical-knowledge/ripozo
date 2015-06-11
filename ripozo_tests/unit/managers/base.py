@@ -7,6 +7,7 @@ import mock
 import six
 import unittest2
 
+from ripozo.viewsets.fields.base import BaseField
 from ripozo_tests.helpers.inmemory_manager import InMemoryManager
 
 
@@ -110,7 +111,7 @@ class TestManager(unittest2.TestCase):
         class Manager(InMemoryManager):
             pass
 
-        self.assertIsNone(super(Manager, Manager()).get_field_type('blah'))
+        self.assertIsInstance(super(Manager, Manager()).get_field_type('blah'), BaseField)
 
     def test_update_fields(self):
         """

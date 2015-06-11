@@ -62,6 +62,7 @@ class InMemoryManager(BaseManager):
 
     @property
     def queryset(self):
+        super(InMemoryManager, self).queryset
         return self.objects
 
     def retrieve(self, lookup_keys, *args, **kwargs):
@@ -82,6 +83,7 @@ class InMemoryManager(BaseManager):
 
     @classmethod
     def get_field_type(cls, name):
+        super(InMemoryManager, cls).get_field_type(name)
         return BaseField(name)
 
     def delete(self, lookup_keys, *args, **kwargs):
