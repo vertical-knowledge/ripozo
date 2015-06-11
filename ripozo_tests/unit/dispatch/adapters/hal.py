@@ -12,7 +12,7 @@ from ripozo import ResourceBase
 from ripozo.dispatch.adapters.hal import HalAdapter
 from ripozo.viewsets.constructor import ResourceMetaClass
 from ripozo.viewsets.request import RequestContainer
-from tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
+from ripozo_tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
 
 
 class TestHalAdapter(unittest2.TestCase):

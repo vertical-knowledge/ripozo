@@ -10,7 +10,7 @@ import unittest2
 from ripozo.dispatch.adapters import BoringJSONAdapter, HalAdapter, SirenAdapter
 from ripozo.dispatch.dispatch_base import DispatcherBase
 from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
-from tests.helpers.dispatcher import FakeDispatcher
+from ripozo_tests.helpers.dispatcher import FakeDispatcher
 
 
 class TestDispatchBase(unittest2.TestCase):

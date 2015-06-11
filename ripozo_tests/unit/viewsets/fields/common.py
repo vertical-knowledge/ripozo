@@ -12,7 +12,7 @@ import unittest2
 from ripozo.exceptions import ValidationException, TranslationException
 from ripozo.viewsets.fields.common import StringField, BooleanField, FloatField,\
     DateTimeField, IntegerField, ListField, DictField
-from tests.bases.field import FieldTestBase
+from ripozo_tests.bases.field import FieldTestBase
 
 
 

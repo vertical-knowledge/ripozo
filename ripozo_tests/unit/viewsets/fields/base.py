@@ -9,7 +9,7 @@ from ripozo.exceptions import ValidationException, TranslationException, RestExc
 from ripozo.viewsets.constants import input_categories
 from ripozo.viewsets.fields.base import BaseField, translate_fields
 from ripozo import RequestContainer
-from tests.bases.field import FieldTestBase
+from ripozo_tests.bases.field import FieldTestBase
 
 
 class FieldTestBase2(FieldTestBase):

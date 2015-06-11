@@ -10,7 +10,7 @@ import unittest2
 
 from ripozo.dispatch.adapters.boring_json import BoringJSONAdapter
 from ripozo.viewsets.request import RequestContainer
-from tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
+from ripozo_tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
 
 
 class TestBoringJSONAdapter(unittest2.TestCase):

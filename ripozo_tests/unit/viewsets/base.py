@@ -14,7 +14,7 @@ from ripozo.decorators import apimethod
 from ripozo.viewsets.constructor import ResourceMetaClass
 from ripozo.viewsets.relationships import Relationship, ListRelationship
 from ripozo.viewsets.resource_base import ResourceBase, _get_apimethods
-from tests.helpers.inmemory_manager import InMemoryManager
+from ripozo_tests.helpers.inmemory_manager import InMemoryManager
 
 logger = logging.getLogger(__name__)
 

@@ -8,7 +8,7 @@ from ripozo.viewsets.relationships.relationship import Relationship
 from ripozo.viewsets.fields.common import StringField
 from ripozo.viewsets.resource_base import ResourceBase
 from ripozo.viewsets.constructor import ResourceMetaClass
-from tests.helpers.inmemory_manager import InMemoryManager
+from ripozo_tests.helpers.inmemory_manager import InMemoryManager
 
 
 class MM1(InMemoryManager):

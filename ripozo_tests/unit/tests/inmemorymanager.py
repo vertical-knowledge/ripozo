@@ -5,9 +5,9 @@ from __future__ import unicode_literals
 
 import unittest2
 
-from tests.bases.manager import TestManagerMixin
-from tests.helpers.inmemory_manager import InMemoryManager
-from tests.helpers.util import random_string
+from ripozo_tests.bases.manager import TestManagerMixin
+from ripozo_tests.helpers.inmemory_manager import InMemoryManager
+from ripozo_tests.helpers.util import random_string
 
 
 class InMemoryManagerBaseTestMixin(TestManagerMixin):

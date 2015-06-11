@@ -7,7 +7,7 @@ import mock
 import six
 import unittest2
 
-from tests.helpers.inmemory_manager import InMemoryManager
+from ripozo_tests.helpers.inmemory_manager import InMemoryManager
 
 
 class TestManager(unittest2.TestCase):

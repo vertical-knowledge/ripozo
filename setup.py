@@ -57,5 +57,5 @@ setup(
         'tox',
         'mock'
     ],
-    test_suite="tests"
+    test_suite="ripozo_tests"
 )

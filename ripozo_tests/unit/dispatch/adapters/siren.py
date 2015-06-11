@@ -10,8 +10,8 @@ from ripozo.viewsets.request import RequestContainer
 from ripozo.viewsets.resource_base import ResourceBase
 from ripozo.viewsets.constants import input_categories
 
-from tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
-from tests.unit.dispatch.adapters.base import TestAdapterBase
+from ripozo_tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
+from ripozo_tests.unit.dispatch.adapters.base import TestAdapterBase
 
 import json
 import mock

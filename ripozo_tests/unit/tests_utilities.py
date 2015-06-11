@@ -12,7 +12,7 @@ import unittest2
 
 from ripozo.utilities import serialize_fields, titlize_endpoint, join_url_parts, \
     picky_processor, convert_to_underscore, make_json_safe
-from tests.bases.manager import generate_random_name
+from ripozo_tests.bases.manager import generate_random_name
 
 
 class UtilitiesTestCase(unittest2.TestCase):

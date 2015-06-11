@@ -138,9 +138,9 @@ class CreateRetrieveUpdate(Create, Retrieve, Update):
     __abstract__ = True
 
 
-class CreateRetrieveUpdateDelete(Create, Retrieve, Update, Delete):
+class CRUD(Create, Retrieve, Update, Delete):
     __abstract__ = True
 
 
-class CreateRetrieveRetrieveListUpdateDelete(Create, RetrieveRetrieveList, Update, Delete):
+class CRUDL(Create, RetrieveRetrieveList, Update, Delete):
     __abstract__ = True
