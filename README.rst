@@ -38,6 +38,8 @@ efficiently.
 
 `full ripozo documentation <https://ripozo.readthedocs.org/>`_
 
+Looking for the `flask/SQLAlchemy tutorial <http://flask-ripozo.readthedocs.org/en/latest/flask_tutorial/setup.html>`_?
+
 **NOTE:**
 ripozo is in a beta stage until version 1.0.0.
 
