@@ -1,5 +1,5 @@
-Tutorial Part 6: CRUD Basics
-============================
+Rest Mixins
+===========
 
 We get it.  Most of the time, you want some basic
 CRUD+L (Create, Retrieve, Update, Delete and Lists).
@@ -68,4 +68,3 @@ actually create two resources.
         _resource_name = 'resource'
         _manager = MyManager
         _pks = ['id']
-

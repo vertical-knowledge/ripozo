@@ -1,5 +1,5 @@
-Tutorial Part 5: Managers
-=========================
+Managers
+========
 
 Managers are the persistence abstraction layer in ripozo.
 They are responsible for all session to session persistence in
@@ -19,5 +19,3 @@ Creating a manager extensions
 -----------------------------
 
 See :doc:`../extending/managers.rst` for more details on extending ripozo
-
-:doc:`tutorial_part_6`

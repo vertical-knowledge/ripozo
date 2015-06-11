@@ -1,5 +1,5 @@
-Tutorial Part 1: Resources
-==========================
+Resources
+=========
 
 Resources are the core of ripozo.  These define
 what can be accessed and the actions you can
@@ -89,8 +89,6 @@ the properties that match the pks and plug them into the ``base_url`` template.
     >>> resource = MyResource(properties=dict(id=3233, secondary='something'))
     >>> resource.url
     '/api/resource/3233/something'
-
-:doc:`tutorial_part_2`
 
 
 .. [#] In ripozo, whenever urls are constructed, they are joined with a '/'.

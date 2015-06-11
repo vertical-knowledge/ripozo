@@ -1,5 +1,5 @@
-Tutorial Part 4: Relationships and Links
-========================================
+Relationships and Links
+=======================
 
 Any good api is going to need references to
 on resources to other references.  For example,
@@ -73,5 +73,3 @@ directly on the child.  A common use case for links is describing next and previ
 links on paginated lists.  The resource is the list and the next and previous is
 not actually an attribute of the resource.  Instead it is meta information about
 the resource.
-
-:doc:`tutorial_part_4`

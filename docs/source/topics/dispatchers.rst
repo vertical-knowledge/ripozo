@@ -1,5 +1,5 @@
-Tutorial Part 4: Dispatchers
-============================
+Dispatchers
+===========
 
 Dispatchers are responsible for translating incoming requests
 and dispatching them to the appropriate resources.  They then
@@ -44,5 +44,3 @@ Implementing a Dispatcher
 If you're interested in building a dispatcher for your python web framework of
 choice please see the :doc:`../extending/dispatchers.rst` for more information
 on extending ripozo.
-
-:doc:`tutorial_part_5.rst`

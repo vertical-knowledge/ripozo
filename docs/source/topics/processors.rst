@@ -1,8 +1,8 @@
 
 .. _preprocessors and postprocessors:
 
-Tutorial Part 2: Preprocessors and Postprocessors
-=================================================
+Preprocessors and Postprocessors
+================================
 
 Sometimes, you want to run a certain piece of code before/after every
 request to a resource.  For example, maybe the resource is only accessible
@@ -89,4 +89,3 @@ pre/postprocessors
     In pre2
     goodbye
 
-:doc:`tutorial_part_3`
