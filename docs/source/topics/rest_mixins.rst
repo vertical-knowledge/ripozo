@@ -44,3 +44,10 @@ They can be mixed and matched as you please.
         _resource_name = 'resource'
         _manager = MyManager
         _pks = ('id',)
+
+
+ Rest Mixins API
+ ---------------
+
+ .. automodule:: ripozo.resources.restmixins
+    :members:

@@ -1,5 +1,0 @@
-Extending ripozo managers
-=========================
-
-TODO
-

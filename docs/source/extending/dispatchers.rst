@@ -1,5 +1,0 @@
-Extending ripozo dispatchers
-============================
-
-TODO
-

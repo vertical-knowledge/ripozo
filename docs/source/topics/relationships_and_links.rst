@@ -73,3 +73,13 @@ directly on the child.  A common use case for links is describing next and previ
 links on paginated lists.  The resource is the list and the next and previous is
 not actually an attribute of the resource.  Instead it is meta information about
 the resource.
+
+Relationships API
+-----------------
+
+.. autoclass:: ripozo.resources.relationships.relationship.Relationship
+    :members:
+
+
+.. autoclass:: ripozo.resources.relationships.list_relationship.ListRelationship
+    :members:

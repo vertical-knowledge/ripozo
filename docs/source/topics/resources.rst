@@ -91,6 +91,17 @@ the properties that match the pks and plug them into the ``base_url`` template.
     '/api/resource/3233/something'
 
 
+ResourceBase API
+================
+
+.. autoclass:: ripozo.decorators.apimethod
+    :members:
+
+
+.. automodule:: ripozo.resources.resource_base
+    :members:
+
+
 .. [#] In ripozo, whenever urls are constructed, they are joined with a '/'.
    However, it will not allow multiple slashes in a row.  For example, if you
    had a namespace of '/api/' and resource_name of '/myresource', it would

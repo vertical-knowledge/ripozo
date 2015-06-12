@@ -41,6 +41,10 @@ I wasn't lying, it's pretty basic.
 Implementing a Dispatcher
 -------------------------
 
-If you're interested in building a dispatcher for your python web framework of
-choice please see the :doc:`../extending/dispatchers.rst` for more information
-on extending ripozo.
+.. todo:: Need to go into detail on how to implement one.
+
+Dispatcher API
+==============
+
+.. automodule:: ripozo.dispatchers.dispatcher
+    :members:

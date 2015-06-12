@@ -19,3 +19,9 @@ Creating a manager extensions
 -----------------------------
 
 See :doc:`../extending/managers.rst` for more details on extending ripozo
+
+Base Manager API
+----------------
+
+.. autoclass:: ripozo.managers.base.BaseManager
+    :members:
