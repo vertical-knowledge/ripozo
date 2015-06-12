@@ -12,7 +12,9 @@ logger = logging.getLogger(__name__)
 class ResourceMetaClass(type):
     """
     A metaclass that is used for registering ResourceBase
-    and its subclasses
+    and its subclasses  It is primarily responsible
+    for creating a registry of the available Resources
+    so that they can map relationships and links.
 
     :param dict registered_resource_classes: A dictionary mapping
         the classes instantiated by this meta class to their

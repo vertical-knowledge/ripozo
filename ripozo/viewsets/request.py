@@ -3,7 +3,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.viewsets.fields.base import translate_fields
 from ripozo.viewsets.constants import input_categories
 
 
@@ -28,6 +27,8 @@ class RequestContainer(object):
             should be a adictionary
         :param dict body_args: The arguments in the body.
         :param dict headers: A dictionary of the headers and their values
+        :param unicode method: The method that was used to make
+            the request.
         """
         self._url_params = url_params or {}
         self._query_args = query_args or {}
@@ -146,14 +147,15 @@ class RequestContainer(object):
                        'could not be found on the request object'.format(name))
 
     def __contains__(self, item):
+        """
+        Checks if the item is available in any of
+        the url_params, body_args, or query_args
+
+        :param unicode item: The key to look for in the
+            various parameter dictionaries.
+        :return: Whether the object was actually found.
+        :rtype: bool
+        """
         if item in self._url_params or item in self._body_args or item in self._query_args:
             return True
         return False
-
-    def translate(self, fields, skip_required=False, validate=False):
-        """
-        TODO
-        :param list fields:
-        """
-        # TODO just dump this method.
-        translate_fields(self, fields=fields, validate=validate, skip_required=skip_required)
