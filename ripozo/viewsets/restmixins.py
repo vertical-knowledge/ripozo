@@ -22,6 +22,17 @@ class Create(ResourceBase):
     @apimethod(methods=['POST'], no_pks=True)
     @translate(manager_field_validators=True, validate=True)
     def create(cls, request, *args, **kwargs):
+        """
+        Creates a new resource using the cls.manager.create
+        method.  Returns the resource that was just created
+        as an instance of the class that created it.
+
+        :param RequestContainer request: The request in the standardized
+            ripozo style.
+        :return: An instance of the class
+            that was called.
+        :rtype: Update
+        """
         logger.debug('Creating a resource using manager {0}'.format(cls._manager))
         props = cls.manager.create(request.body_args)
         meta = dict(links=dict(created=props))
@@ -52,6 +63,16 @@ class Retrieve(ResourceBase):
     @apimethod(methods=['GET'])
     @translate(manager_field_validators=True)
     def retrieve(cls, request, *args, **kwargs):
+        """
+        Retrieves an individual resource.
+
+        :param RequestContainer request: The request in the standardized
+            ripozo style.
+        :return: An instance of the class
+            that was called.
+        :rtype: Retrieve
+        :raises: NotFoundException
+        """
         logger.debug('Retrieving a resource using the manager {0}'.format(cls._manager))
         props = cls.manager.retrieve(request.url_params)
         return cls(properties=props, status_code=200)
@@ -63,6 +84,15 @@ class RetrieveList(ResourceBase):
     @apimethod(methods=['GET'], no_pks=True)
     @translate(manager_field_validators=True, validate=False)
     def retrieve_list(cls, request, *args, **kwargs):
+        """
+        A resource that contains the other resources as properties.
+
+        :param RequestContainer request: The request in the standardized
+            ripozo style.
+        :return: An instance of the class
+            that was called.
+        :rtype: RetrieveList
+        """
         logger.debug('Retrieving list of resources using manager {0}'.format(cls._manager))
         props, meta = cls.manager.retrieve_list(request.query_args)
         return_props = {cls.resource_name: props}
@@ -104,7 +134,7 @@ class RetrieveRetrieveList(RetrieveList, Retrieve):
 
         :return: The relationships on the class plus the
             cls.__name__
-        :rtype:
+        :rtype: tuple
         """
         relationships = cls._relationships or tuple()
         return relationships + (ListRelationship(cls.resource_name, relation=cls.__name__),)
@@ -116,6 +146,16 @@ class Update(ResourceBase):
     @apimethod(methods=['PATCH'])
     @translate(manager_field_validators=True, skip_required=True, validate=True)
     def update(cls, request, *args, **kwargs):
+        """
+        Updates the resource using the manager
+        and then returns the resource.
+
+        :param RequestContainer request: The request in the standardized
+            ripozo style.
+        :return: An instance of the class
+            that was called.
+        :rtype: Create
+        """
         logger.debug('Updating a resource using the manager {0}'.format(cls._manager))
         props = cls.manager.update(request.url_params, request.body_args)
         return cls(properties=props, status_code=200)
@@ -127,6 +167,14 @@ class Delete(ResourceBase):
     @apimethod(methods=['DELETE'])
     @translate(manager_field_validators=True)
     def delete(cls, request, *args, **kwargs):
+        """
+
+        :param RequestContainer request: The request in the standardized
+            ripozo style.
+        :return: An instance of the class
+            that was called.
+        :rtype: Create
+        """
         logger.debug('Deleting the resource using manager {0}'.format(cls._manager))
         props = cls.manager.delete(request.url_params)
         return cls(properties=props)
@@ -149,10 +197,19 @@ class CreateRetrieveUpdate(Create, Retrieve, Update):
 
 
 class CRUD(Create, Retrieve, Update, Delete):
+    """
+    Short cut for Create, Retrieve, Update, and Delete.
+    In other words the single resource operations
+    """
     __abstract__ = True
 
 
 class CRUDL(Create, RetrieveRetrieveList, Update, Delete):
+    """
+    Short cut for inheriting from Create, RetrieveRetrieveList,
+    Update, and Delete.  This is a full CRUD+L implementation.
+    Requires that the manager is set on the class.
+    """
     __abstract__ = True
 
     @classproperty

@@ -24,24 +24,48 @@ url_part_finder = re.compile(r'<([^>]+)>')
 @six.add_metaclass(ResourceMetaClass)
 class ResourceBase(object):
     """
-    The core of ripozo.
+    ResourceBase makes up the core of ripozo.  This is the class
+    responsible for actually handling requests and appropriately
+    constructing resources to return as a request.  This class
+    is not responsible for actually formatting the response, only
+    for providing a standard resource that can be translated into
+    the appropriate response by an adapter.
+
+    The @apimethod decorated methods are the endpoints that will
+    be exposed in the api.  @apimethod's are classmethods that generally
+    perform some action (such as updating a resource) and then generate
+    instances of the class representing that resource.  They take the
+    class and a RequestContainer object as the arguments.
+
+    A minimal example would be
+
+    .. code-block:: python
+
+        class MyResource(ResourceBase):
+            @apimethod()
+            def hello_world(cls, request):
+                return cls(properties=dict(hello='world'))
+
 
     :param bool __abstract__: abstract classes are not registered
-        by the ResourceMetaClass
-    :param dict _relationships: The relationships that will be
-        constructed by instances
-    :param list _pks: The pks for this resource.  These, along
+        by the ResourceMetaClass.  In other words, their @apimethod
+        decorated methods will not be exposed unless another class
+        inherits from it.  __abstract__ is not inherited.
+    :param list _relationships: The relationships that will be
+        constructed by instances.  The actual related resources
+        will be contained in the instances related_resources list.
+    :param list pks: The pks for this resource.  These, along
         with the ``namespace`` and ``resource_name`` are combined
-        to generate the url
-    :param type _manager: The BaseManager subclass that is responsible
+        to generate the base url for the class.
+    :param ManagerBase manager: The BaseManager subclass that is responsible
         for persistence within the applictation.  I.E. the AlchemyManager
         from ripozo-sqlalchemy
-    :param unicode _namespace: The namespace of this resource.  This is
+    :param unicode namespace: The namespace of this resource.  This is
         prepended to the resource_name and pks to create the url
-    :param unicode _resource_name: The name of the resource.
-    :param list _preprocessors: A list of functions that will be run before
+    :param unicode resource_name: The name of the resource.
+    :param list preprocessors: A list of functions that will be run before
         any apimethod is called.
-    :param list _postprocessors: A list of functions that will be run after
+    :param list postprocessors: A list of functions that will be run after
         any apimethod from this class is called.
     :param dict _links: Works similarly to relationships.  The primary
         difference between this and links is that links will assume the
@@ -54,26 +78,35 @@ class ResourceBase(object):
 
     __abstract__ = True
     _relationships = None
-    _pks = None
-    _manager = None
-    _namespace = '/'
-    _resource_name = None
-    _preprocessors = None
-    _postprocessors = None
+    pks = ()
+    manager = None
+    namespace = '/'
+    preprocessors = tuple()
+    postprocessors = tuple()
     _links = None
 
     def __init__(self, properties=None, errors=None, meta=None, no_pks=False,
                  status_code=200, query_args=None, include_relationships=True):
         """
-        Initializes a response
+        Initializes a resource to pass to an adapter typically.
+        An ResourceBase instance is supposed to fully represent the
+        resource.
 
-        :param dict properties:
-        :param int status_code:
-        :param list errors:
-        :param dict meta:
+        :param dict properties: The properties on
+        :param int status_code: The http status code that should be returned
+        :param list errors: A list of error that occurred.  Typically not used.
+        :param dict meta: Meta information about the resource (for example
+            the next page in a paginated list)
+        :param bool no_pks: Whether the resource should have primary keys
+            or not.  Helpful when returning a list of resources for example.
         :param bool include_relationships: If not True, then this resource
             will not include relationships or links.  This is primarily used
             to increase performance with linked resources.
+        :param list|tuple query_args: A list of the arguments that should
+            be appended to the query string if necessary.
+        :param bool include_relationships:  This flag is available to prevent
+            infinite loops in resources that each have a relationship to
+            the other.
         """
         # TODO finish out the docstring
         self.properties = properties or {}
@@ -115,6 +148,10 @@ class ResourceBase(object):
 
     @property
     def has_error(self):
+        """
+        :return: Whether or not the instance has an error
+        :rtype: bool
+        """
         return len(self.errors) > 0 or self.status_code >= 400
 
     @property
@@ -132,7 +169,12 @@ class ResourceBase(object):
         return True
 
     def get_query_arg_dict(self):
-        # TODO docstring and test
+        """
+        :return: Gets the query args that are available
+            in the properties.  This allows the user
+            to quickly get the query args out.
+        :rtype: dict
+        """
         queries = {}
         for field in self.query_args:
             value = self.properties.get(field)
@@ -142,6 +184,10 @@ class ResourceBase(object):
 
     @property
     def query_string(self):
+        """
+        :return: The generated query string for this resource
+        :rtype: str\unicode
+        """
         return '&'.join('{0}={1}'.format(f, v) for f, v in self.get_query_arg_dict().items())
 
     @property
@@ -237,28 +283,6 @@ class ResourceBase(object):
         return cls._links or ()
 
     @classproperty
-    def manager(cls):
-        if cls._manager is None:
-            return None
-        return cls._manager()
-
-    @classproperty
-    def namespace(cls):
-        return cls._namespace or ''
-
-    @classproperty
-    def pks(cls):
-        return cls._pks or []
-
-    @classproperty
-    def postprocessors(cls):
-        return cls._postprocessors or []
-
-    @classproperty
-    def preprocessors(cls):
-        return cls._preprocessors or []
-
-    @classproperty
     def relationships(cls):
         """
         This should be overridden in __abstract__
@@ -283,12 +307,20 @@ class ResourceBase(object):
         :return: The name of the resource for this class
         :rtype: unicode
         """
-        if cls._resource_name:
-            return cls._resource_name
         return convert_to_underscore(cls.__name__)
 
 
 def _generate_endpoint_dict(cls):
+    """
+    Generates a dictionary of the endpoints on the class
+    which are @apimethod decorated.
+
+    :param ResourceMetaClass cls: The ResourceBase subclass that you
+        are trying to get the endpoints from.
+    :type cls:
+    :return:
+    :rtype:
+    """
     # TODO test and doc string
     endpoint_dictionary = {}
     for name, method in _get_apimethods(cls):
@@ -308,7 +340,7 @@ def _get_apimethods(cls):
     A generator that yields tuples of the name and method of
     all ``@apimethod`` decorated methods on the class.
 
-    :param type cls: The instance of a ResourceMetaClass
+    :param ResourceMetaClass cls: The instance of a ResourceMetaClass
         that you wish to retrieve the apimethod decorated methods
         from.
     :type cls:
@@ -320,6 +352,15 @@ def _get_apimethods(cls):
 
 
 def _apimethod_predicate(obj):
+    """
+    The predicate for determining if the object
+    is an @apimethod decorated method.
+
+    :param object obj: The object to check
+    :return: A bool indicating if the object
+        was an @apimethod decorated method.
+    :rtype: bool
+    """
     return getattr(obj, 'rest_route', False) or getattr(obj, '__rest_route__', False)
 
 

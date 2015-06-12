@@ -17,8 +17,8 @@ class RequestContainer(object):
 
     def __init__(self, url_params=None, query_args=None, body_args=None, headers=None, method=None):
         """
-        Safely generate a Request object.  There should be reasonable defaults
-        for every parameter.  No parameter is guaranteed.
+        Create a new request container.  Typically this is constructed
+        in the dispatcher.
 
         :param dict url_params: The url parameters that are a part of the
             request.  These are the variable parts of the url.  For example,
