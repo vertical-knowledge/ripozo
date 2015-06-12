@@ -7,6 +7,7 @@ CHANGELOG
 - Fields default to checking the Query string, request body and url parameters for argument if no arg_type is specified.
 - Query args can be specified in relationships.  Every argument available will be appended to the query string
 - query args on a resource is now a list that simply pulls from the properties.
+- Removed translate method from request container.  Instead the request object is now injected into the translate_fields method from ripozo.viewsets.fields.base module
 
 
 0.4.0 (2015-06-07)
