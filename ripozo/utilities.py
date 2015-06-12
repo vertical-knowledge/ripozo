@@ -17,7 +17,12 @@ _all_cap_re = re.compile('([a-z0-9])([A-Z])')
 
 def convert_to_underscore(toconvert):
     """
-    Converts a string from CamelCase to underscore
+    Converts a string from CamelCase to underscore.
+
+    .. code-block:: python
+
+        >>> convert_to_underscore('CamelCase')
+        'camel_case'
 
     :param toconvert: The string to convert from CamelCase to underscore (i.e. camel_case)
     :type toconvert: str
@@ -36,21 +41,6 @@ def convert_to_underscore(toconvert):
     if prefix is not None:
         return '{0}{1}'.format(prefix, s2)
     return s2
-
-
-def serialize_fields(field_names, field_values):
-    """
-    Takes two lists and iterates through them to combine them into a dictionary
-
-    :param field_names: The names of the fields that were retrieved.  Order is important.
-      These will be the dictionary keys
-    :type field_names: list
-    :param field_values: The values that were retrieved. These will be the dictionary values
-    :type field_values: list
-    :return: A dictionary of the combined lists
-    :rtype: dict
-    """
-    return dict(zip(field_names, field_values))
 
 
 def titlize_endpoint(endpoint):
@@ -77,6 +67,11 @@ def join_url_parts(*parts):
     Additionally, it prevents something like 'something/' and
     '/another' from turning into 'something//another' instead
     it will return 'something/another'.
+
+    .. code-block:: python
+
+        >>> join_url_parts('first', 'second', 'last')
+        'first/second/last'
 
     :param list parts: a list of strings to join together with a '/'
     :return: The url
@@ -106,6 +101,15 @@ def picky_processor(processor, include=None, exclude=None):
     the resource that does have the same name as the strings in the
     exclude list
 
+    .. code-block:: python
+
+        def my_preprocessor(resource_class, func_name, request):
+            # Do something
+
+        class MyResource(CRUD):
+            # Only gets run on create and delete
+            _preprocessors = [picky_processor(my_preprocessor, include=['create', 'delete'])]
+
     :param method processor: A pre or post processor on a ResourceBase subclass.
         This is the function that will be run if the it passes the include
         and exclude parameters
@@ -132,10 +136,11 @@ def make_json_safe(obj):
     """
     Makes an object json serializable.
     This is designed to take a list or dictionary,
-    and is fairly limited.
+    and is fairly limited.  This is primarily for
+    the managers when creating objects.
 
     :param object obj:
-    :return:
+    :return: The json safe dictionary.
     :rtype: object|six.text_type|list|dict
     """
     if isinstance(obj, dict):
