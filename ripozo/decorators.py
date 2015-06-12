@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 
 from functools import wraps, update_wrapper
 
-from ripozo.viewsets.fields.base import translate_fields
+from ripozo.resources.fields.base import translate_fields
 
 import logging
 import six

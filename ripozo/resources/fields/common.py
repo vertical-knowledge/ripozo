@@ -5,8 +5,8 @@ from __future__ import unicode_literals
 
 from datetime import datetime
 from ripozo.exceptions import ValidationException, TranslationException
-from ripozo.viewsets.constants.input_categories import BODY_ARGS
-from ripozo.viewsets.fields.base import BaseField
+from ripozo.resources.constants.input_categories import BODY_ARGS
+from ripozo.resources.fields.base import BaseField
 
 import six
 

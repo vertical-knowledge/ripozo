@@ -5,10 +5,10 @@ from __future__ import unicode_literals
 
 from ripozo.decorators import translate, apimethod
 from ripozo.exceptions import ValidationException
-from ripozo.viewsets.fields import BaseField
-from ripozo.viewsets.relationships import ListRelationship
-from ripozo.viewsets.request import RequestContainer
-from ripozo.viewsets.resource_base import ResourceBase
+from ripozo.resources.fields import BaseField
+from ripozo.resources.relationships import ListRelationship
+from ripozo.resources.request import RequestContainer
+from ripozo.resources.resource_base import ResourceBase
 
 import mock
 import unittest2

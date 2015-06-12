@@ -4,11 +4,11 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from abc import ABCMeta, abstractmethod, abstractproperty
-from ripozo.dispatch.adapters.base import AdapterBase
-from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
-
 import logging
+
 import six
+
+from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
 
 logger = logging.getLogger(__name__)
 

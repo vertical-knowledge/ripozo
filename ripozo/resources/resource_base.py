@@ -8,7 +8,7 @@ from collections import namedtuple
 
 from six.moves.urllib import parse
 from ripozo.decorators import classproperty
-from ripozo.viewsets.constructor import ResourceMetaClass
+from ripozo.resources.constructor import ResourceMetaClass
 from ripozo.utilities import convert_to_underscore, join_url_parts
 
 import inspect

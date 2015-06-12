@@ -6,9 +6,9 @@ from __future__ import unicode_literals
 from ripozo.decorators import apimethod, translate, _apiclassmethod, \
     classproperty, ClassPropertyDescriptor
 from ripozo.exceptions import TranslationException
-from ripozo.viewsets.fields.common import IntegerField
-from ripozo.viewsets.request import RequestContainer
-from ripozo.viewsets.resource_base import ResourceBase
+from ripozo.resources.fields.common import IntegerField
+from ripozo.resources.request import RequestContainer
+from ripozo.resources.resource_base import ResourceBase
 
 import mock
 import six

@@ -6,8 +6,8 @@ from __future__ import unicode_literals
 import unittest2
 
 from ripozo.exceptions import ValidationException, TranslationException, RestException
-from ripozo.viewsets.constants import input_categories
-from ripozo.viewsets.fields.base import BaseField, translate_fields
+from ripozo.resources.constants import input_categories
+from ripozo.resources.fields.base import BaseField, translate_fields
 from ripozo import RequestContainer
 from ripozo_tests.bases.field import FieldTestBase
 

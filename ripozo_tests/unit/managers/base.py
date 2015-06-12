@@ -7,7 +7,7 @@ import mock
 import six
 import unittest2
 
-from ripozo.viewsets.fields.base import BaseField
+from ripozo.resources.fields.base import BaseField
 from ripozo_tests.helpers.inmemory_manager import InMemoryManager
 
 

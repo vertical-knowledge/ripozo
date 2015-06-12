@@ -3,19 +3,19 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.dispatch.adapters.siren import SirenAdapter
-from ripozo.exceptions import RestException
-from ripozo.viewsets.relationships import Relationship, ListRelationship
-from ripozo.viewsets.request import RequestContainer
-from ripozo.viewsets.resource_base import ResourceBase
-from ripozo.viewsets.constants import input_categories
-
-from ripozo_tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
-from ripozo_tests.unit.dispatch.adapters.base import TestAdapterBase
-
 import json
+
 import mock
 import six
+
+from ripozo.adapters import SirenAdapter
+from ripozo.exceptions import RestException
+from ripozo.resources.relationships import Relationship, ListRelationship
+from ripozo.resources.request import RequestContainer
+from ripozo.resources.resource_base import ResourceBase
+from ripozo.resources.constants import input_categories
+from ripozo_tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
+from ripozo_tests.unit.dispatch.adapters.base import TestAdapterBase
 
 
 class TestSirenAdapter(TestAdapterBase):

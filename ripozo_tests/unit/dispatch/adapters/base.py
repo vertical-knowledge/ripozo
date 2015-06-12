@@ -3,11 +3,11 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.dispatch.adapters.base import AdapterBase
-from ripozo.viewsets.relationships import Relationship, ListRelationship
-from ripozo.viewsets.resource_base import ResourceBase
-
 import unittest2
+
+from ripozo.adapters import AdapterBase
+from ripozo.resources.relationships import Relationship, ListRelationship
+from ripozo.resources.resource_base import ResourceBase
 
 
 class TestAdapter(AdapterBase):

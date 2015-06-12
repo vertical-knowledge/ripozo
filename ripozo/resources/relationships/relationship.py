@@ -4,7 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.exceptions import RestException
-from ripozo.viewsets.constructor import ResourceMetaClass
+from ripozo.resources.constructor import ResourceMetaClass
 
 import logging
 import six

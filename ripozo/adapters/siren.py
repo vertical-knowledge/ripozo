@@ -6,10 +6,10 @@ import json
 
 import six
 
-from ripozo.dispatch.adapters.base import AdapterBase
+from ripozo.adapters import AdapterBase
 from ripozo.utilities import titlize_endpoint
-from ripozo.viewsets.resource_base import create_url
-from ripozo.viewsets.constants import input_categories
+from ripozo.resources.resource_base import create_url
+from ripozo.resources.constants import input_categories
 
 
 _content_type = 'application/vnd.siren+json'

@@ -11,9 +11,9 @@ import six
 import unittest2
 
 from ripozo.decorators import apimethod
-from ripozo.viewsets.constructor import ResourceMetaClass
-from ripozo.viewsets.relationships import Relationship, ListRelationship
-from ripozo.viewsets.resource_base import ResourceBase, _get_apimethods
+from ripozo.resources.constructor import ResourceMetaClass
+from ripozo.resources.relationships import Relationship, ListRelationship
+from ripozo.resources.resource_base import ResourceBase, _get_apimethods
 from ripozo_tests.helpers.inmemory_manager import InMemoryManager
 
 logger = logging.getLogger(__name__)

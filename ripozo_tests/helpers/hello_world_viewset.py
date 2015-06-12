@@ -4,10 +4,10 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.decorators import apimethod, translate
-from ripozo.viewsets.relationships.relationship import Relationship
-from ripozo.viewsets.fields.common import StringField
-from ripozo.viewsets.resource_base import ResourceBase
-from ripozo.viewsets.constructor import ResourceMetaClass
+from ripozo.resources.relationships.relationship import Relationship
+from ripozo.resources.fields.common import StringField
+from ripozo.resources.resource_base import ResourceBase
+from ripozo.resources.constructor import ResourceMetaClass
 from ripozo_tests.helpers.inmemory_manager import InMemoryManager
 
 

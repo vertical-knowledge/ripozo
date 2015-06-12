@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.viewsets.request import RequestContainer
+from ripozo.resources.request import RequestContainer
 
 import unittest2
 

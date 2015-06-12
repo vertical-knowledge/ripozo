@@ -4,7 +4,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.exceptions import ValidationException
-from ripozo.viewsets.constants import input_categories
+from ripozo.resources.constants import input_categories
 from ripozo.exceptions import RestException
 
 import six

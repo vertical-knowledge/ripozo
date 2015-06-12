@@ -1,1 +1,1 @@
-from . import dispatch, managers, viewsets, decorators, exceptions, tests_utilities, tests
+from . import dispatch, managers, resources, decorators, exceptions, tests_utilities, tests

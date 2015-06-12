@@ -3,8 +3,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.viewsets.constructor import ResourceMetaClass
-from ripozo.viewsets.restmixins import Create, Retrieve, Update, Delete, RetrieveRetrieveList
+from ripozo.resources.constructor import ResourceMetaClass
+from ripozo.resources.restmixins import Create, Retrieve, Update, Delete, RetrieveRetrieveList
 
 import mock
 import unittest2

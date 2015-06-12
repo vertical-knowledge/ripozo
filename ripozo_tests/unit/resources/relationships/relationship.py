@@ -4,8 +4,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.exceptions import RestException
-from ripozo.viewsets.relationships.relationship import Relationship
-from ripozo.viewsets.resource_base import ResourceBase
+from ripozo.resources.relationships.relationship import Relationship
+from ripozo.resources.resource_base import ResourceBase
 
 import mock
 import unittest2

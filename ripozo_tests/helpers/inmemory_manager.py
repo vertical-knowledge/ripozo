@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 
 from ripozo.exceptions import NotFoundException
 from ripozo.managers.base import BaseManager
-from ripozo.viewsets.fields.base import BaseField
+from ripozo.resources.fields.base import BaseField
 from uuid import uuid1
 import six
 
