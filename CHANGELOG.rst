@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-0.4.1 (unreleased)
+0.5.0 (unreleased)
 ==================
 
 - Fields default to checking the Query string, request body and url parameters for argument if no arg_type is specified.
