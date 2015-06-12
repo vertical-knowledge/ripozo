@@ -21,6 +21,14 @@ ripozo.viewsets.constructor module
     :undoc-members:
     :show-inheritance:
 
+ripozo.viewsets.request module
+------------------------------
+
+.. automodule:: ripozo.viewsets.request
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 ripozo.viewsets.resource_base module
 ------------------------------------
 

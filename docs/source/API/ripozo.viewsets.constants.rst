@@ -12,14 +12,6 @@ ripozo.viewsets.constants.input_categories module
     :undoc-members:
     :show-inheritance:
 
-ripozo.viewsets.constants.status module
----------------------------------------
-
-.. automodule:: ripozo.viewsets.constants.status
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Module contents
 ---------------

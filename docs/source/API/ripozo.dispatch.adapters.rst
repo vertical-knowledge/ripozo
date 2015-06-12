@@ -20,14 +20,6 @@ ripozo.dispatch.adapters.boring_json module
     :undoc-members:
     :show-inheritance:
 
-ripozo.dispatch.adapters.contructor module
-------------------------------------------
-
-.. automodule:: ripozo.dispatch.adapters.contructor
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 ripozo.dispatch.adapters.hal module
 -----------------------------------
 
