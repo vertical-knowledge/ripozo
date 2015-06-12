@@ -27,14 +27,6 @@ class NoResourceNameDeclaredException(RestException):
     pass
 
 
-class BaseRestEndpointAlreadyExists(RestException):
-    """
-    This exception is raised when the ResourceBaseMetaClass
-    finds an endpoint has already been registered for the application
-    """
-    pass
-
-
 class ManagerException(RestException):
     """
     A base exception for when the manager has an exception specific
