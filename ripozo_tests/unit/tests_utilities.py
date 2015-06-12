@@ -22,7 +22,7 @@ class UtilitiesTestCase(unittest2.TestCase):
                             'APICamelCase', 'CamelCaseAPI', 'Camel2Case',
                             'CamelCase2', 'CamelCase2API2']
 
-        underscore_names = ['camel_case', 'camel_case', 'camel_case', '_camel_case',
+        underscore_names = ['camel_case', 'camel_case', 'camel_case', '__camel_case',
                             'api_camel_case', 'camel_case_api', 'camel2_case',
                             'camel_case2', 'camel_case2_api2']
         if len(camel_case_names) != len(underscore_names):

@@ -18,7 +18,10 @@ def profileit(func):
         retval = prof.runcall(func, *args, **kwargs)
         prof.disable()
         stats = pstats.Stats(prof)
-        stats.sort_stats('cumtime').print_stats()
+        stats.sort_stats('tottime').print_stats(20)
+        print()
+        print()
+        stats.sort_stats('cumtime').print_stats(20)
         return retval
 
     return wrapper

@@ -428,3 +428,18 @@ class TestResourceBase(unittest2.TestCase):
             namespace = '/api'
 
         self.assertEqual(Fake4.base_url_sans_pks, '/api/fake4')
+
+    def test_inherit_resource_name(self):
+        """
+        Tests that the resource_name property gets
+        reset when inheritied.
+        """
+        class Resource1(ResourceBase):
+            pass
+        self.assertEqual(Resource1.resource_name, 'resource1')
+
+        class Resource2(Resource1):
+            pass
+        self.assertEqual(Resource2.resource_name, 'resource2')
+        self.assertEqual(Resource1.resource_name, 'resource1')
+        self.assertEqual(ResourceBase.resource_name, 'resource_base')

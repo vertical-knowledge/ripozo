@@ -29,18 +29,8 @@ def convert_to_underscore(toconvert):
     :return: The converted string
     :rtype: str
     """
-    i = 0
-    while toconvert[i] == '_':
-        i += 1
-    prefix = None
-    if i > 0:
-        prefix = toconvert[0:i]
-        toconvert = toconvert[i:]
     s1 = _first_cap_re.sub(r'\1_\2', toconvert)
-    s2 = _all_cap_re.sub(r'\1_\2', s1).lower()
-    if prefix is not None:
-        return '{0}{1}'.format(prefix, s2)
-    return s2
+    return _all_cap_re.sub(r'\1_\2', s1).lower()
 
 
 def titlize_endpoint(endpoint):
