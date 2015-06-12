@@ -91,7 +91,7 @@ class TestHalAdapter(unittest2.TestCase):
 
     def test_not_all_pks(self):
         class Fake(ResourceBase):
-            _pks = ['id']
+            pks = ['id']
 
         props = dict(val=1)
         adapter = HalAdapter(None)
@@ -136,7 +136,7 @@ class TestHalAdapter(unittest2.TestCase):
         when not all of the pks are available.
         """
         class Fake(ResourceBase):
-            _pks = ('id',)
+            pks = ('id',)
 
         res = Fake(properties=dict(x=1, y=2))
         relation_list = [(res, 'res', True,)]

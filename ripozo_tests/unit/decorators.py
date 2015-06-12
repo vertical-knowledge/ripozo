@@ -22,7 +22,7 @@ class TestApiMethodDecorator(unittest2.TestCase):
         api = apimethod(route=route, endpoint=endpoint, another=True, and_another=False)
         self.assertEqual(route, api.route)
         self.assertEqual(endpoint, api.endpoint)
-        self.assertDictEqual(dict(another=True, and_another=False), api.options)
+        self.assertDictEqual(dict(another=True, and_another=False, no_pks=False, methods=['GET']), api.options)
 
     def test_call(self):
         route = 'something'
@@ -37,13 +37,13 @@ class TestApiMethodDecorator(unittest2.TestCase):
         routes = getattr(wrapped, 'routes')
         self.assertIsInstance(routes, list)
         self.assertEqual(len(routes), 1)
-        self.assertEqual((route, endpoint, {}), routes[0])
+        self.assertEqual((route, endpoint, dict(methods=['GET'], no_pks=False)), routes[0])
         api2 = apimethod(route='another', endpoint='thing')
 
         wrapped = api2(wrapped)
         routes = getattr(wrapped, 'routes')
         self.assertEqual(len(routes), 2)
-        self.assertEqual(('another', 'thing', {}), routes[1])
+        self.assertEqual(('another', 'thing', dict(methods=['GET'], no_pks=False)), routes[1])
 
     def test_preprocessors_and_postprocessors(self):
         pre1 = mock.MagicMock()
@@ -65,24 +65,6 @@ class TestApiMethodDecorator(unittest2.TestCase):
         self.assertEqual(post1.call_count, 1)
         self.assertEqual(post2.call_count, 1)
 
-    def test_translate(self):
-        mkc = mock.MagicMock()
-        fields = [1, 2]
-
-        @translate(fields=fields)
-        def fake(cls, *args, **kwargs):
-            return mkc()
-
-        self.assertIsInstance(fake.fields(None), list)
-        self.assertListEqual(fake.fields(None), [1, 2])
-
-        request = mock.Mock()
-        x = fake(mock.MagicMock(), request)
-        self.assertEqual(mkc.call_count, 1)
-        self.assertEqual(request.translate.call_count, 1)
-        x = request.translate.call_args_list
-        self.assertListEqual(x[0][0][0], fields)
-
     def test_wrapping_apimethod(self):
         """
         Tests wrapping an apimethod and calling it.
@@ -94,14 +76,14 @@ class TestApiMethodDecorator(unittest2.TestCase):
         mck = mock.MagicMock()
 
         class MyFakeResource(ResourceBase):
-            @translate(fields=[1, 2])
+            @translate(fields=[])
             @apimethod(methods=['GET'])
             def fake(*args, **kwargs):
                 return mck
 
         rsp = MyFakeResource.fake(mock.MagicMock())
         self.assertEqual(rsp, mck)
-        self.assertEqual([('', None, dict(methods=['GET']),)], MyFakeResource.fake.routes)
+        self.assertEqual([('', None, dict(methods=['GET'], no_pks=False),)], MyFakeResource.fake.routes)
 
     def test_calling_apiclassmethod(self):
         """

@@ -206,7 +206,7 @@ class TestSirenAdapter(TestAdapterBase):
 
     def test_generate_entity_not_all_pks(self):
         class Fake(ResourceBase):
-            _pks = ['id']
+            pks = ('id',)
 
         f = Fake(properties=dict(val='something'))
         adapter = SirenAdapter(f)

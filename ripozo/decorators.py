@@ -8,8 +8,6 @@ from __future__ import unicode_literals
 
 from functools import wraps, update_wrapper
 
-from ripozo.resources.fields.base import translate_fields
-
 import logging
 import six
 
@@ -243,6 +241,7 @@ class translate(object):
         @wraps(f)
         def action(cls, request, *args, **kwargs):
             # TODO This is so terrible.  I really need to fix this.
+            from ripozo.resources.fields.base import translate_fields
             translate_fields(request, self.fields(cls.manager),
                              skip_required=self.skip_required, validate=self.validate)
             return f(cls, request,  *args, **kwargs)

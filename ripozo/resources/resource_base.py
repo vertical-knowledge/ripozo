@@ -186,7 +186,7 @@ class ResourceBase(object):
     def query_string(self):
         """
         :return: The generated query string for this resource
-        :rtype: str\unicode
+        :rtype: str|unicode
         """
         return '&'.join('{0}={1}'.format(f, v) for f, v in self.get_query_arg_dict().items())
 

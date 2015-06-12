@@ -33,7 +33,7 @@ class Create(ResourceBase):
             that was called.
         :rtype: Update
         """
-        logger.debug('Creating a resource using manager {0}'.format(cls._manager))
+        logger.debug('Creating a resource using manager {0}'.format(cls.manager))
         props = cls.manager.create(request.body_args)
         meta = dict(links=dict(created=props))
         return cls(properties=props, meta=meta, status_code=201)
@@ -73,7 +73,7 @@ class Retrieve(ResourceBase):
         :rtype: Retrieve
         :raises: NotFoundException
         """
-        logger.debug('Retrieving a resource using the manager {0}'.format(cls._manager))
+        logger.debug('Retrieving a resource using the manager {0}'.format(cls.manager))
         props = cls.manager.retrieve(request.url_params)
         return cls(properties=props, status_code=200)
 
@@ -93,7 +93,7 @@ class RetrieveList(ResourceBase):
             that was called.
         :rtype: RetrieveList
         """
-        logger.debug('Retrieving list of resources using manager {0}'.format(cls._manager))
+        logger.debug('Retrieving list of resources using manager {0}'.format(cls.manager))
         props, meta = cls.manager.retrieve_list(request.query_args)
         return_props = {cls.resource_name: props}
         return_props.update(request.query_args)
@@ -156,7 +156,7 @@ class Update(ResourceBase):
             that was called.
         :rtype: Create
         """
-        logger.debug('Updating a resource using the manager {0}'.format(cls._manager))
+        logger.debug('Updating a resource using the manager {0}'.format(cls.manager))
         props = cls.manager.update(request.url_params, request.body_args)
         return cls(properties=props, status_code=200)
 
@@ -175,7 +175,7 @@ class Delete(ResourceBase):
             that was called.
         :rtype: Create
         """
-        logger.debug('Deleting the resource using manager {0}'.format(cls._manager))
+        logger.debug('Deleting the resource using manager {0}'.format(cls.manager))
         props = cls.manager.delete(request.url_params)
         return cls(properties=props)
 

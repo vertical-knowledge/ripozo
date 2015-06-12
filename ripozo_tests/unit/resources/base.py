@@ -28,9 +28,9 @@ name_space = '/mynamspace/'
 
 class TestResource(ResourceBase):
     __abstract__ = True
-    _manager = MM1
-    _resource_name = 'myresource'
-    _namespace = name_space
+    manager = MM1()
+    resource_name = 'myresource'
+    namespace = name_space
 
 
 class TestResourceBase(unittest2.TestCase):
@@ -52,24 +52,13 @@ class TestResourceBase(unittest2.TestCase):
         resourcename = 'myresource'
 
         class T1(TestResource):
-            __resource_name__ = resourcename
+            resource_name = resourcename
         self.assertEqual(resourcename, T1.resource_name)
-
-    def test_resource_name2(self):
-        """
-        Tests whether the resource_name is properly retrieved from
-        manager if the resource_name is not specified.
-        """
-        class T2(TestResource):
-            _resource_name = None
-
-            __manager__ = MM1
-        self.assertEqual(T2.resource_name, 't2')
 
     def test_manager_property(self):
         """Tests whether the manager instance is properly instantiated"""
         class T1(TestResource):
-            __manager__ = MM1
+            manager = MM1()
         self.assertIsInstance(T1.manager, MM1)
 
     def test_base_url(self):
@@ -90,12 +79,12 @@ class TestResourceBase(unittest2.TestCase):
         self.assertEqual('/some_resource', SomeResource.base_url)
 
         class AnotherResource(ResourceBase):
-            _resource_name = 'another_resource'
+            resource_name = 'another_resource'
 
         self.assertEqual('/another_resource', AnotherResource.base_url)
 
         class FinalResource(ResourceBase):
-            _namespace = '/api'
+            namespace = '/api'
 
         self.assertEqual('/api/final_resource', FinalResource.base_url)
 
@@ -103,22 +92,22 @@ class TestResourceBase(unittest2.TestCase):
         """Tests whether the ResourceBase always appropriately replaces
         forward slashes on urls"""
         class DoubleSlash(ResourceBase):
-            _namespace = '/'
-            _resource_name = '/'
+            namespace = '/'
+            resource_name = '/'
 
         self.assertEqual('/', DoubleSlash.base_url)
         ResourceMetaClass.registered_resource_classes.clear()
 
         class DoublSlash2(ResourceBase):
-            _namespace = '//'
-            _resource_name = '/double_slash'
+            namespace = '//'
+            resource_name = '/double_slash'
 
         self.assertEqual('/double_slash', DoublSlash2.base_url)
         ResourceMetaClass.registered_resource_classes.clear()
 
         class DoubleMiddleSlash(ResourceBase):
-            _namespace = 'api/'
-            _resource_name = '//another_resource/'
+            namespace = 'api/'
+            resource_name = '//another_resource/'
 
         self.assertEqual('/api/another_resource/', DoubleMiddleSlash.base_url)
 
@@ -151,7 +140,7 @@ class TestResourceBase(unittest2.TestCase):
         class T1(TestResource):
             namespace = '/api'
             pks = ['pk']
-            _resource_name = 'my_resource'
+            resource_name = 'my_resource'
 
         x = T1(properties={'pk': 1})
         self.assertEqual(x.url, '/api/my_resource/1')
@@ -395,7 +384,7 @@ class TestResourceBase(unittest2.TestCase):
         self.assertTrue(res.has_all_pks)
 
         class Fake2(ResourceBase):
-            _pks = ['id', 'pk']
+            pks = ('id', 'pk',)
 
         res = Fake2(properties=dict(id=1, pk=2))
         self.assertTrue(res.has_all_pks)
@@ -420,22 +409,22 @@ class TestResourceBase(unittest2.TestCase):
         ResourceBase class
         """
         class Fake(ResourceBase):
-            _resource_name = 'api'
+            resource_name = 'api'
 
         self.assertEqual(Fake.base_url_sans_pks, '/api')
 
         class Fake2(ResourceBase):
-            _namespace = 'api'
+            namespace = 'api'
 
         self.assertEqual(Fake2.base_url_sans_pks, '/api/fake2')
 
         class Fake3(ResourceBase):
-            _resource_name = 'fake'
-            _namespace = 'api'
+            resource_name = 'fake'
+            namespace = 'api'
 
         self.assertEqual(Fake3.base_url_sans_pks, '/api/fake')
 
         class Fake4(ResourceBase):
-            _namespace = '/api'
+            namespace = '/api'
 
         self.assertEqual(Fake4.base_url_sans_pks, '/api/fake4')

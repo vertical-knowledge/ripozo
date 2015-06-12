@@ -10,7 +10,7 @@ import mock
 import six
 import unittest2
 
-from ripozo.utilities import serialize_fields, titlize_endpoint, join_url_parts, \
+from ripozo.utilities import titlize_endpoint, join_url_parts, \
     picky_processor, convert_to_underscore, make_json_safe
 from ripozo_tests.bases.manager import generate_random_name
 
@@ -32,19 +32,6 @@ class UtilitiesTestCase(unittest2.TestCase):
             old_name = camel_case_names[i]
             new_name = convert_to_underscore(old_name)
             self.assertEqual(underscore_names[i], new_name)
-
-    def test_serialize_fields(self):
-        """
-        Tests whether the fields are properly serialized
-        """
-        t = dict()
-        for i in six.moves.range(10):
-            t[generate_random_name()] = generate_random_name()
-        t2 = t.copy()
-        t3 = serialize_fields(six.iterkeys(t2), six.itervalues(t2))
-        self.assertDictEqual(t2, t3)
-        t4 = serialize_fields(list(six.iterkeys(t2)), list(six.itervalues(t2)))
-        self.assertDictEqual(t2, t4)
 
     def test_titlelize_endpoint(self):
         """

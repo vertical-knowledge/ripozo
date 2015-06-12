@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 
 import unittest2
 
-from ripozo.adapters import AdapterBase
+from ripozo.adapters.base import AdapterBase
 from ripozo.resources.relationships import Relationship, ListRelationship
 from ripozo.resources.resource_base import ResourceBase
 
