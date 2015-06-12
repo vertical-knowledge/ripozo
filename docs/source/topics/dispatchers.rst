@@ -46,5 +46,5 @@ Implementing a Dispatcher
 Dispatcher API
 ==============
 
-.. automodule:: ripozo.dispatchers.dispatcher
+.. automodule:: ripozo.dispatch.dispatch_base
     :members:

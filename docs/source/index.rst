@@ -12,7 +12,6 @@ Contents:
    :maxdepth: 2
 
    topics/index
-   API/modules
 
 .. include:: ../../README.rst
 

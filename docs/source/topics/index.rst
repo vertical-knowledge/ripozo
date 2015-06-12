@@ -14,3 +14,5 @@ Contents:
     relationships_and_links.rst
     resources.rst
     rest_mixins.rst
+    utilities.rst
+

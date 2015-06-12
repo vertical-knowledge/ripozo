@@ -6,7 +6,7 @@ Resource Example
     from ripozo.viewsets.resource_base import ResourceBase
 
     class MyResource(ResourceBase):
-        _pks = ['id']
+        pks = ['id']
 
 
 .. code-block:: python
@@ -23,9 +23,9 @@ Resource Example
     from ripozo.viewsets.resource_base import ResourceBase
 
     class MyResource(ResourceBase):
-        _namespace = '/api'
-        _pks = ['id']
-        _resource_name = 'resource/'
+        namespace = '/api'
+        pks = ['id']
+        resource_name = 'resource/'
 
 
 .. code-block:: python
@@ -45,9 +45,9 @@ Resource Example
     from ripozo.viewsets.resource_base import ResourceBase
 
     class MyResource(ResourceBase):
-        _namespace = '/api'
-        _pks = ['id']
-        _resource_name = 'resource'
+        namespace = '/api'
+        pks = ['id']
+        resource_name = 'resource'
 
         @apimethod(methods=['GET'])
         def hello_world(cls, request):
@@ -74,9 +74,9 @@ Resource Example
     from ripozo.viewsets.resource_base import ResourceBase
 
     class MyResource(ResourceBase):
-        _namespace = '/api'
-        _pks = ['id']
-        _resource_name = 'resource'
+        namespace = '/api'
+        pks = ['id']
+        resource_name = 'resource'
 
         @apimethod(methods=['GET'])
         @translate(fields=[IntegerField('id', required=True, arg_type=URL_PARAMS)], validate=True)
@@ -103,9 +103,9 @@ Resource Example
     from ripozo.viewsets.resource_base import ResourceBase
 
     class MyResource(ResourceBase):
-        _namespace = '/api'
-        _pks = ['id']
-        _resource_name = 'resource'
+        namespace = '/api'
+        pks = ['id']
+        resource_name = 'resource'
         _relationships = [
             Relationship('related', relation='RelatedResource')
         ]
