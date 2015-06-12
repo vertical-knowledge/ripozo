@@ -92,7 +92,7 @@ the properties that match the pks and plug them into the ``base_url`` template.
 
 
 ResourceBase API
-================
+----------------
 
 .. autoclass:: ripozo.decorators.apimethod
     :members:

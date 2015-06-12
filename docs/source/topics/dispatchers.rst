@@ -44,7 +44,7 @@ Implementing a Dispatcher
 .. todo:: Need to go into detail on how to implement one.
 
 Dispatcher API
-==============
+--------------
 
 .. automodule:: ripozo.dispatch.dispatch_base
     :members:
