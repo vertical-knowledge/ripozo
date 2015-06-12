@@ -17,19 +17,17 @@ class StringField(BaseField):
     """
     field_type = six.text_type
 
-    def __init__(self, name, required=False, maximum=None, minimum=None,
-                 arg_type=BODY_ARGS, regex=None, error_message=None):
+    def __init__(self, name,  regex=None, **kwargs):
         """
         A field class for validating string inputs.
 
-        :param arg_type:
-        :param int min_length: The minimum legnth of the string
+        :param unicode name: The name of the field
         :param _sre.SRE_Pattern regex: A compiled regular expression that must
             match at least once.
+        :param dict kwargs:  The additional arguments to pass
+            to the super call.
         """
-        super(StringField, self).__init__(name, required=required, maximum=maximum,
-                                          minimum=minimum, arg_type=arg_type,
-                                          error_message=error_message)
+        super(StringField, self).__init__(name, **kwargs)
         self.regex = regex
 
     def _translate(self, obj, skip_required=False):
@@ -72,7 +70,9 @@ class StringField(BaseField):
 
 class IntegerField(BaseField):
     """
-    A field used for translating and validating an integer input
+    A field used for translating and validating an integer input.
+    While translating it will attempt to cast the object provided
+    as an integer.
     """
     field_type = int
 
@@ -97,7 +97,9 @@ class IntegerField(BaseField):
 
 class FloatField(IntegerField):
     """
-    A field used for translating and validating a float input
+    A field used for translating and validating a float input.
+    Pretty much the same as the IntegerField except that it
+    will be cast as an IntegerField.
     """
     field_type = float
 
@@ -118,6 +120,8 @@ class BooleanField(BaseField):
     """
     A field used for translating and validating a boolean input
     It can take either a boolean or a string.
+    If it's a string it checks if it matches 'false' or
+    'true' (case insensitive).
     """
     field_type = bool
 
@@ -218,13 +222,16 @@ class ListField(BaseField):
     field_type = list
 
     # TODO test and finish docs
-    def __init__(self, name, required=False, maximum=None,
-                 minimum=None, arg_type=BODY_ARGS,
-                 error_message=None, indv_field=BaseField('list')):
+    def __init__(self, name, indv_field=BaseField('list'), **kwargs):
+        """
+
+        :param unicode name: The name of the field.
+        :param BaseField indv_field: The field to use when
+            translating and validating individual items
+            in the list.
+        """
         self.indv_field = indv_field
-        super(ListField, self).__init__(name, required=required, maximum=maximum,
-                                        minimum=minimum, arg_type=arg_type,
-                                        error_message=error_message)
+        super(ListField, self).__init__(name, **kwargs)
 
     def translate(self, obj, skip_required=False, validate=False):
         obj = super(ListField, self).translate(obj, skip_required=skip_required, validate=validate)

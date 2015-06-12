@@ -39,6 +39,14 @@ class Relationship(object):
             should be embedded in the parent resource when returned.
             Otherwise, a more basic representation will be used (e.g.
             a link or id)
+        :param bool required: An indicator for whether the relation
+            must be constructed.
+        :param bool no_pks: A flag that indicates that the resources
+            created do not need pks (for example a next link in RetrieveList
+            mixin)
+        :param list[str|tuple] query_args: A list of strings that
+            should be passed to the query_args parameter for resource
+            construction.
         """
         self.query_args = query_args or tuple()
         self.property_map = property_map or {}
