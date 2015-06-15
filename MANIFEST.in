@@ -1,3 +1,2 @@
 include README.rst
 include CHANGELOG.rst
-recursive-include ripozo/html_adapter_formats *
