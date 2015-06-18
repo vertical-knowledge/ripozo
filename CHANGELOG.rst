@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-0.5.0 (unreleased)
+0.5.0 (2015-06-18)
 ==================
 
 - Renamed viewsets package to resources
