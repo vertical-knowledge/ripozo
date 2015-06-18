@@ -78,7 +78,7 @@ class ResourceBase(object):
 
     __abstract__ = True
     _relationships = None
-    pks = ()
+    pks = tuple()
     manager = None
     namespace = '/'
     preprocessors = tuple()
@@ -267,7 +267,6 @@ class ResourceBase(object):
         :return: dictionary of endpoints
         :rtype: dict
         """
-        # TODO update this documentation
         return _generate_endpoint_dict(cls)
 
     @classproperty
@@ -321,7 +320,6 @@ def _generate_endpoint_dict(cls):
     :return:
     :rtype:
     """
-    # TODO test and doc string
     endpoint_dictionary = {}
     for name, method in _get_apimethods(cls):
         logger.debug('Found the apimethod {0} on the class {1}'.format(name, cls.__name__))
