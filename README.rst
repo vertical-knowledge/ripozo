@@ -38,9 +38,9 @@ efficiently.
 
 `full ripozo documentation <https://ripozo.readthedocs.org/>`_
 
-Looking for the `flask/SQLAlchemy tutorial <http://flask-ripozo.readthedocs.org/en/latest/flask_tutorial/setup.html>`_?
+Looking for the `ripozo for flask/SQLAlchemy tutorial <http://flask-ripozo.readthedocs.org/en/latest/flask_tutorial/setup.html>`_?
 
-Or maybe you would prefer to read over the `Django documentation <http://django-ripozo.readthedocs.org/en/latest/tutorial/setup.html>`_
+Or maybe you would prefer to read over the `django-ripozo tutorial <http://django-ripozo.readthedocs.org/en/latest/tutorial/setup.html>`_
 
 **NOTE:**
 ripozo is in a beta stage until version 1.0.0.
