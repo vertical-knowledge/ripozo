@@ -72,12 +72,12 @@ class TestRelationship(unittest2.TestCase):
             _pks = ['pk']
 
         resource = MyResource3(properties=dict(id=1, related=dict(pk=2)))
-        self.assertEqual(resource.properties, dict(id=1))
+        self.assertDictEqual(resource.properties, dict(id=1))
         self.assertEqual(len(resource.related_resources), 1)
         relation = resource.related_resources[0]
         related_res = relation[0]
         self.assertIsInstance(related_res, RelatedResource3)
-        self.assertEqual(related_res.properties, dict(pk=2))
+        self.assertDictEqual(related_res.properties, dict(pk=2))
 
     def test_relationship_generation_with_dict_literal(self):
         """
