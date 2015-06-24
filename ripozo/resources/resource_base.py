@@ -346,7 +346,8 @@ def _get_apimethods(cls):
     :rtype: type.GeneratorType
     """
     for name, obj in inspect.getmembers(cls, predicate=_apimethod_predicate):
-        yield name, obj
+        # getattr necessary for python3.3
+        yield name, getattr(cls, name)
 
 
 def _apimethod_predicate(obj):

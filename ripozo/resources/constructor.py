@@ -60,12 +60,3 @@ class ResourceMetaClass(type):
         """
         mcs.registered_resource_classes[klass] = klass.base_url
         mcs.registered_names_map[klass.__name__] = klass
-
-        # This is necessary for python 3.3
-        for name, method in inspect.getmembers(klass):
-            if getattr(method, '__manager_field_validators__', False) is True \
-                    or getattr(method, 'manager_field_validators', False) is True:
-                if not hasattr(method, 'cls'):
-                    setattr(method, 'cls', klass)
-                    method = classmethod(method)
-                    setattr(klass, name, method)
