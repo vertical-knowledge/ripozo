@@ -1,3 +1,6 @@
+"""
+The class constructor for resources.
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -6,7 +9,7 @@ from __future__ import unicode_literals
 import logging
 import inspect
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 class ResourceMetaClass(type):
@@ -34,14 +37,14 @@ class ResourceMetaClass(type):
         :return: The class
         :rtype: type
         """
-        logger.debug('ResourceMetaClass "{0}" class being created'.format(name))
+        _logger.debug('ResourceMetaClass "%s" class being created', name)
         klass = super(ResourceMetaClass, mcs).__new__(mcs, name, bases, attrs)
         if attrs.get('__abstract__', False) is True:  # Don't register endpoints of abstract classes
-            logger.debug('ResourceMetaClass "{0}" is abstract.  Not being registered'.format(name))
+            _logger.debug('ResourceMetaClass "%s" is abstract.  Not being registered', name)
             return klass
         mcs._register_class(klass)
 
-        logger.debug('ResourceMetaClass "{0}" successfully registered'.format(name))
+        _logger.debug('ResourceMetaClass "%s" successfully registered', name)
         return klass
 
     @classmethod

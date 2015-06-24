@@ -1,3 +1,7 @@
+"""
+Contains common CRUD+L abstract Resource classes,
+for simple and fast use of ripozo.
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -9,19 +13,20 @@ from ripozo.decorators import apimethod, translate, classproperty
 from ripozo.resources.resource_base import ResourceBase
 
 import logging
-import six
 
-logger = logging.getLogger(__name__)
-
-# TODO need to test and doc all of this
+_logger = logging.getLogger(__name__)
 
 
 class Create(ResourceBase):
+    """
+    A base class to extend that allows for
+    adding the create ability to your resource.
+    """
     __abstract__ = True
 
     @apimethod(methods=['POST'], no_pks=True)
     @translate(manager_field_validators=True, validate=True)
-    def create(cls, request, *args, **kwargs):
+    def create(cls, request):
         """
         Creates a new resource using the cls.manager.create
         method.  Returns the resource that was just created
@@ -33,7 +38,7 @@ class Create(ResourceBase):
             that was called.
         :rtype: Update
         """
-        logger.debug('Creating a resource using manager {0}'.format(cls.manager))
+        _logger.debug('Creating a resource using manager %s', cls.manager)
         props = cls.manager.create(request.body_args)
         meta = dict(links=dict(created=props))
         return cls(properties=props, meta=meta, status_code=201)
@@ -58,11 +63,16 @@ class Create(ResourceBase):
 
 
 class Retrieve(ResourceBase):
+    """
+    A base class to extend that allows for
+    adding the retrieve ability to your resource.
+    This is for a single resource retrieval
+    """
     __abstract__ = True
 
     @apimethod(methods=['GET'])
     @translate(manager_field_validators=True)
-    def retrieve(cls, request, *args, **kwargs):
+    def retrieve(cls, request):
         """
         Retrieves an individual resource.
 
@@ -73,17 +83,24 @@ class Retrieve(ResourceBase):
         :rtype: Retrieve
         :raises: NotFoundException
         """
-        logger.debug('Retrieving a resource using the manager {0}'.format(cls.manager))
+        _logger.debug('Retrieving a resource using the manager %s', cls.manager)
         props = cls.manager.retrieve(request.url_params)
         return cls(properties=props, status_code=200)
 
 
 class RetrieveList(ResourceBase):
+    """
+    Retrieving a list of resources with this
+    class.  This class does not automatically assume
+    that there is an individual retrieve function
+    and therefor cannot link between the list
+    and an individual resource.
+    """
     __abstract__ = True
 
     @apimethod(methods=['GET'], no_pks=True)
     @translate(manager_field_validators=True, validate=False)
-    def retrieve_list(cls, request, *args, **kwargs):
+    def retrieve_list(cls, request):
         """
         A resource that contains the other resources as properties.
 
@@ -93,12 +110,12 @@ class RetrieveList(ResourceBase):
             that was called.
         :rtype: RetrieveList
         """
-        logger.debug('Retrieving list of resources using manager {0}'.format(cls.manager))
+        _logger.debug('Retrieving list of resources using manager %s', cls.manager)
         props, meta = cls.manager.retrieve_list(request.query_args)
         return_props = {cls.resource_name: props}
         return_props.update(request.query_args)
-        return cls(properties=return_props, meta=meta, status_code=200,
-                   query_args=cls.manager.fields)
+        return cls(properties=return_props, meta=meta,
+                   status_code=200, query_args=cls.manager.fields)
 
     @classproperty
     def links(cls):
@@ -116,16 +133,30 @@ class RetrieveList(ResourceBase):
 
     @staticmethod
     def get_base_links(actual_class):
+        """
+        Gets the base links for this class.
+        Necessary for properly inheriting links in
+        descendant classes.
+        """
         if actual_class.manager:
             fields = tuple(actual_class.manager.fields)
-            fields += (actual_class.manager.pagination_pk_query_arg, actual_class.manager.pagination_count_query_arg)
+            fields += (actual_class.manager.pagination_pk_query_arg,
+                       actual_class.manager.pagination_count_query_arg)
         else:
             fields = []
-        return (Relationship('next', relation=actual_class.__name__, query_args=fields, no_pks=True),
-                Relationship('previous', relation=actual_class.__name__, query_args=fields, no_pks=True),)
+        return (Relationship('next', relation=actual_class.__name__,
+                             query_args=fields, no_pks=True),
+                Relationship('previous', relation=actual_class.__name__,
+                             query_args=fields, no_pks=True),)
 
 
 class RetrieveRetrieveList(RetrieveList, Retrieve):
+    """
+    Adds ability to link between the list resource
+    and individual resources.  Allow both list
+    retrieval and individual retrieval.
+    """
+
     @classproperty
     def relationships(cls):
         """
@@ -141,11 +172,15 @@ class RetrieveRetrieveList(RetrieveList, Retrieve):
 
 
 class Update(ResourceBase):
+    """
+    Adds the ability to do a partial
+    update of your resource.
+    """
     __abstract__ = True
 
     @apimethod(methods=['PATCH'])
     @translate(manager_field_validators=True, skip_required=True, validate=True)
-    def update(cls, request, *args, **kwargs):
+    def update(cls, request):
         """
         Updates the resource using the manager
         and then returns the resource.
@@ -156,17 +191,20 @@ class Update(ResourceBase):
             that was called.
         :rtype: Create
         """
-        logger.debug('Updating a resource using the manager {0}'.format(cls.manager))
+        _logger.debug('Updating a resource using the manager %s', cls.manager)
         props = cls.manager.update(request.url_params, request.body_args)
         return cls(properties=props, status_code=200)
 
 
 class Delete(ResourceBase):
+    """
+    Adds the ability to delete your resource.
+    """
     __abstract__ = True
 
     @apimethod(methods=['DELETE'])
     @translate(manager_field_validators=True)
-    def delete(cls, request, *args, **kwargs):
+    def delete(cls, request):
         """
 
         :param RequestContainer request: The request in the standardized
@@ -175,7 +213,7 @@ class Delete(ResourceBase):
             that was called.
         :rtype: Create
         """
-        logger.debug('Deleting the resource using manager {0}'.format(cls.manager))
+        _logger.debug('Deleting the resource using manager %s ', cls.manager)
         props = cls.manager.delete(request.url_params)
         return cls(properties=props)
 

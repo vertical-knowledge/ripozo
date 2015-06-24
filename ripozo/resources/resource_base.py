@@ -1,3 +1,6 @@
+"""
+Contains the base class for resources.
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -6,7 +9,6 @@ import re
 
 from collections import namedtuple
 
-from six.moves.urllib import parse
 from ripozo.decorators import classproperty
 from ripozo.resources.constructor import ResourceMetaClass
 from ripozo.utilities import convert_to_underscore, join_url_parts
@@ -15,10 +17,10 @@ import inspect
 import logging
 import six
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
-url_part_finder = re.compile(r'<([^>]+)>')
+_URL_PART_FINDER = re.compile(r'<([^>]+)>')
 
 
 @six.add_metaclass(ResourceMetaClass)
@@ -108,7 +110,6 @@ class ResourceBase(object):
             infinite loops in resources that each have a relationship to
             the other.
         """
-        # TODO finish out the docstring
         self.properties = properties or {}
         self.status_code = status_code
         self.errors = errors or []
@@ -163,8 +164,8 @@ class ResourceBase(object):
         :rtype: bool
         """
         # TODO test
-        for pk in self.pks:
-            if pk not in self.properties:
+        for primary_key in self.pks:
+            if primary_key not in self.properties:
                 return False
         return True
 
@@ -220,8 +221,8 @@ class ResourceBase(object):
         """
         pks = self.pks or []
         pk_dict = {}
-        for pk in pks:
-            pk_dict[pk] = self.properties.get(pk, None)
+        for primary_key in pks:
+            pk_dict[primary_key] = self.properties.get(primary_key, None)
         return pk_dict
 
     @classproperty
@@ -235,7 +236,7 @@ class ResourceBase(object):
         :rtype: unicode
         """
         pks = cls.pks or []
-        parts = list(map(lambda pk: '<{0}>'.format(pk), pks))
+        parts = ['<{0}>'.format(pk) for pk in pks]
         base_url = join_url_parts(cls.base_url_sans_pks, *parts).lstrip('/')
         return '/{0}'.format(base_url)
 
@@ -322,13 +323,13 @@ def _generate_endpoint_dict(cls):
     """
     endpoint_dictionary = {}
     for name, method in _get_apimethods(cls):
-        logger.debug('Found the apimethod {0} on the class {1}'.format(name, cls.__name__))
+        _logger.debug('Found the apimethod %s on the class %s', name, cls.__name__)
         all_routes = []
         for route, endpoint, options in method.routes:
             base_url = cls.base_url_sans_pks if options.get('no_pks', False) else cls.base_url
             route = join_url_parts(base_url, route)
             all_routes.append(dict(route=route, endpoint_func=method, **options))
-        logger.info('Registering routes: {0} as key {1}'.format(all_routes, name))
+        _logger.info('Registering routes: %s as key %s', all_routes, name)
         endpoint_dictionary[name] = all_routes
     return endpoint_dictionary
 
@@ -346,7 +347,7 @@ def _get_apimethods(cls):
     :rtype: type.GeneratorType
     """
     for name, obj in inspect.getmembers(cls, predicate=_apimethod_predicate):
-        yield name, getattr(cls, name)
+        yield name, obj
 
 
 def _apimethod_predicate(obj):
