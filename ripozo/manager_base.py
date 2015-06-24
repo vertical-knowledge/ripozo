@@ -212,16 +212,6 @@ class BaseManager(object):
                 cls._field_validators[field_name] = (cls.get_field_type(field_name))
         return list(cls._field_validators.values())
 
-    @abstractproperty
-    def queryset(self):
-        """
-        Gets the list of models that are valid to operate on
-
-        :return: A list of models
-        :rtype: list
-        """
-        pass
-
     def get_pagination_count(self, filters):
         """
         Get the pagination count from the args

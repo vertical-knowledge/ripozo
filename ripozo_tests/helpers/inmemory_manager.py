@@ -62,7 +62,6 @@ class InMemoryManager(BaseManager):
 
     @property
     def queryset(self):
-        super(InMemoryManager, self).queryset
         return self.objects
 
     def retrieve(self, lookup_keys, *args, **kwargs):
