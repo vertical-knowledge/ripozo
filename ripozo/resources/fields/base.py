@@ -1,13 +1,13 @@
+"""
+Contains the base field that
+every other field should inherits from..
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.exceptions import ValidationException
-from ripozo.resources.constants import input_categories
-from ripozo.exceptions import RestException
-
-import six
 
 
 class BaseField(object):
@@ -137,7 +137,8 @@ class BaseField(object):
         if obj is not None and isinstance(obj, self.field_type):
             return obj
         if msg is None:
-            msg = "obj is not a valid type for field {0}. A type of {1} is required.".format(self.name, self.field_type)
+            msg = ("obj is not a valid type for field {0}. A type of"
+                   " {1} is required.".format(self.name, self.field_type))
         raise ValidationException(self.error_message or msg)
 
 

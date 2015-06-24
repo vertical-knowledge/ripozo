@@ -4,7 +4,7 @@ CHANGELOG
 0.5.1 (unreleased)
 ==================
 
-- Nothing changed yet.
+- pylint shit.
 
 
 0.5.0 (2015-06-18)

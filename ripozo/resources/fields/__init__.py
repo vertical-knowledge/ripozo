@@ -1,3 +1,8 @@
+"""
+Contains the classes for converting
+incoming fields into their appropriate
+type and validating them.
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function

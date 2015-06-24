@@ -1,3 +1,7 @@
+"""
+Contains common field types that
+may be used.
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -5,7 +9,6 @@ from __future__ import unicode_literals
 
 from datetime import datetime
 from ripozo.exceptions import ValidationException, TranslationException
-from ripozo.resources.constants.input_categories import BODY_ARGS
 from ripozo.resources.fields.base import BaseField
 
 import six
@@ -17,7 +20,7 @@ class StringField(BaseField):
     """
     field_type = six.text_type
 
-    def __init__(self, name,  regex=None, **kwargs):
+    def __init__(self, name, regex=None, **kwargs):
         """
         A field class for validating string inputs.
 
@@ -95,7 +98,7 @@ class IntegerField(BaseField):
         return self._validate_size(obj, obj)
 
 
-class FloatField(IntegerField):
+class FloatField(BaseField):
     """
     A field used for translating and validating a float input.
     Pretty much the same as the IntegerField except that it
@@ -108,12 +111,18 @@ class FloatField(IntegerField):
         if obj is None:
             return obj
 
-        obj = super(IntegerField, self)._translate(obj, skip_required=skip_required)
+        obj = super(FloatField, self)._translate(obj, skip_required=skip_required)
         try:
             return float(obj)
         except (ValueError, TypeError):
             raise TranslationException(self.error_message or
                                        'obj is not castable to float: {0}'.format(obj))
+
+    def _validate(self, obj, skip_required=False):
+        obj = super(FloatField, self)._validate(obj, skip_required=skip_required)
+        if self._skip_validation(obj):
+            return obj
+        return self._validate_size(obj, obj)
 
 
 class BooleanField(BaseField):
@@ -156,22 +165,13 @@ class DateTimeField(BaseField):
     field_type = datetime
     valid_formats = ['%Y-%m-%dT%H:%M:%S.%fZ']
 
-    def __init__(self, name, required=False, maximum=None, minimum=None, arg_type=BODY_ARGS,
-                 valid_formats=None, error_message=None):
+    def __init__(self, name, valid_formats=None, **kwargs):
         """
         :param unicode name: The name of the field
-        :param bool required: Whether the field is required
-        :param datetime maximum: The field must be less than the maximum
-        :param datetime minimum: The input must be greater than this
-        :param unicode arg_type: Where the input should be put
         :param list valid_formats: A list of datetime formats that are valid
             for translation. By default it accepts %Y-%m-%dT%H:%M:%S.%fZ
-        :param unicode error_message: The error message to be returned if the
-            validation or translation fails.
         """
-        super(DateTimeField, self).__init__(name, required=required, maximum=maximum,
-                                            minimum=minimum, arg_type=arg_type,
-                                            error_message=error_message)
+        super(DateTimeField, self).__init__(name, **kwargs)
         self.valid_formats = valid_formats or self.valid_formats
 
     def _translate(self, obj, skip_required=False):
@@ -191,9 +191,9 @@ class DateTimeField(BaseField):
         if obj is None or isinstance(obj, datetime):
             return obj
         obj = obj.strip()
-        for f in self.valid_formats:
+        for date_format in self.valid_formats:
             try:
-                return datetime.strptime(obj, f)
+                return datetime.strptime(obj, date_format)
             except ValueError:
                 continue
         raise TranslationException(self.error_message or
@@ -233,21 +233,30 @@ class ListField(BaseField):
         self.indv_field = indv_field
         super(ListField, self).__init__(name, **kwargs)
 
-    def translate(self, obj, skip_required=False, validate=False):
-        obj = super(ListField, self).translate(obj, skip_required=skip_required, validate=validate)
+    def translate(self, obj, **kwargs):
+        """
+        Translates the object into a list.
+
+        :param object obj: The object to translate.
+        :return: The translated/validated object.
+        :rtype: list
+        """
+        obj = super(ListField, self).translate(obj, **kwargs)
         if obj is None:
             return obj
         translated_list = []
-        for f in obj:
-            translated_list.append(self.indv_field.translate(f, skip_required=skip_required, validate=validate))
+        for field in obj:
+            translated_field = self.indv_field.translate(field, **kwargs)
+            translated_list.append(translated_field)
         return translated_list
 
     def _translate(self, obj, skip_required=False):
         if obj is None:  # let the validation handle it.
             return obj
         if not isinstance(obj, (list, set, tuple,)):
-            raise TranslationException(self.error_message or 'A list field must be an instance of a list, '
-                                                             'tuple, or set')
+            raise TranslationException(self.error_message or
+                                       'A list field must be an instance of a list, '
+                                       'tuple, or set')
         return obj
 
     def _validate(self, obj, skip_required=False):
@@ -302,9 +311,10 @@ class DictField(BaseField):
         if obj is None:  # let the validation handle it.
             return obj
         if not hasattr(obj, 'get'):
-            raise TranslationException(self.error_message or 'A dictionary field must have a get method '
-                                                             'that allows for retrieving an item with a default. '
-                                                             'For example a dictionary.')
+            raise TranslationException(self.error_message or
+                                       'A dictionary field must have a get method '
+                                       'that allows for retrieving an item with a default. '
+                                       'For example a dictionary.')
         return obj
 
     def _validate(self, obj, skip_required=False):
