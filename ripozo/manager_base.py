@@ -66,12 +66,7 @@ class BaseManager(object):
         """
         Create a model with the values according to the values dictionary
 
-        :param values: A dictionary of values to create the model according to
-        :type values: dict
-        :param args: Extra arguments
-        :type args: tuple
-        :param kwargs: Extra keyword arguments
-        :type kwargs: dict
+        :param dict values: A dictionary of values to create the model according to
         :return: The dictionary of arguments that should be returned by the serializer
         :rtype: dict
         """
@@ -82,12 +77,7 @@ class BaseManager(object):
         """
         Retrieve a single model and nothing more as a python dictionary
 
-        :param lookup_keys: The lookup keys for the model and the associated values
-        :type lookup_keys: dict
-        :param args: Extra arguments
-        :type args: tuple
-        :param kwargs: Extra keyword arguments
-        :type kwargs: dict
+        :param dict lookup_keys: The lookup keys for the model and the associated values
         :return: The dictionary of arguments that should be returned by the serializer
         :return: A tuple with the first object being a dictionary of key value pairs according to the fields list and
         the second object is the meta data (such as the next url for a paginated list)
@@ -100,12 +90,7 @@ class BaseManager(object):
         """
         Retrieves a list of dictionaries containing the fields for the associated model
 
-        :param lookup_keys: The lookup keys for the model and the associated values
-        :type lookup_keys: dict
-        :param args: Extra arguments
-        :type args: tuple
-        :param kwargs: Extra keyword arguments
-        :type kwargs: dict
+        :param dictlookup_keys: The lookup keys for the model and the associated values
         :return: The dictionary of arguments that should be returned by the serializer
         :return: A a list of dictionaries of key value pairs according to the fields list
         :rtype: list
@@ -118,14 +103,8 @@ class BaseManager(object):
         Updates the model found with the lookup keys according to the updates dictionary where
         the keys are the fields to update and the values are the new values for the field
 
-        :param lookup_keys: The keys to find the object that is to be updated
-        :type lookup_keys: dict
-        :param updates: The fields to update and their associated new update values
-        :type updates: dict
-        :param args: Extra arguments
-        :type args: tuple
-        :param kwargs: Extra keyword arguments
-        :type kwargs: dict
+        :param dict lookup_keys: The keys to find the object that is to be updated
+        :param dict updates: The fields to update and their associated new update values
         :return: A dictionary of the full updated model according to the fields class attribute
         :rtype: dict
         """
@@ -136,12 +115,7 @@ class BaseManager(object):
         """
         Deletes the model found with the lookup keys
 
-        :param lookup_keys: The keys with which to find the model to delete
-        :type lookup_keys: dict
-        :param args: Extra arguments
-        :type args: tuple
-        :param kwargs: Extra keyword arguments
-        :type kwargs: dict
+        :param dict lookup_keys: The keys with which to find the model to delete
         :return: nothing.
         :rtype: NoneType
         """
@@ -157,9 +131,8 @@ class BaseManager(object):
         return an instance of StringField with the appropriate
         requirements.
 
-        :param name: The name of the field on the model
+        :param unicode name: The name of the field on the model
             for which you are getting the field name
-        :type name: unicode
         :return: The BaseField class (or subclass) instance to handle
             the field specified by the name
         :rtype: ripozo.viewsets.fields.base.BaseField
@@ -263,8 +236,7 @@ class BaseManager(object):
         """
         Get the pagination pks from the args
 
-        :param filters: All of the args
-        :type filters: dict
+        :param dict filters: All of the args
         :return: tuple of (pagination_pks, updated_filters
         :rtype: tuple
         """

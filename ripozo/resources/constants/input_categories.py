@@ -1,3 +1,7 @@
+"""
+The various argument type names.
+These refer to request argument types.
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function

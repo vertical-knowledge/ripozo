@@ -1,3 +1,6 @@
+"""
+Module containing the base adapter.
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -89,9 +92,9 @@ class AdapterBase(object):
             http response code
         :rtype: tuple
         """
-        # TODO test
         status_code = getattr(exc, 'status_code', 500)
-        return json.dumps(dict(status=status_code, message=six.text_type(exc))), cls.formats[0], status_code
+        body = json.dumps(dict(status=status_code, message=six.text_type(exc)))
+        return body, cls.formats[0], status_code
 
     @property
     def status_code(self):

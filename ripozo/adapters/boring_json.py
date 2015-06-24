@@ -1,13 +1,17 @@
+"""
+Boring json which is just a basic
+dump of the resource into json format.
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import json
-
 from ripozo.adapters import AdapterBase
 
-content_type = 'application/json'
+import json
+
+_CONTENT_TYPE = 'application/json'
 
 
 class BoringJSONAdapter(AdapterBase):
@@ -33,8 +37,8 @@ class BoringJSONAdapter(AdapterBase):
         ]
     }
     """
-    formats = ['json', content_type]
-    extra_headers = {'Content-Type': content_type}
+    formats = ['json', _CONTENT_TYPE]
+    extra_headers = {'Content-Type': _CONTENT_TYPE}
 
     @property
     def formatted_body(self):
@@ -53,6 +57,15 @@ class BoringJSONAdapter(AdapterBase):
 
     @staticmethod
     def _append_relationships_to_list(rel_dict, relationships):
+        """
+        Dumps the relationship resources provided into
+        a json ready list of dictionaries.
+
+        :param dict rel_dict:
+        :param list relationships:
+        :return: A list of the resources in dictionary format.
+        :rtype: list
+        """
         for resource, name, embedded in relationships:
             if name not in rel_dict:
                 rel_dict[name] = []

@@ -1,13 +1,16 @@
+"""
+HAL adapter.  See `HAL Specification <http://stateless.co/hal_specification.html>`_
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import json
-
 from ripozo.adapters import AdapterBase
 
-_content_type = 'application/hal+json'
+import json
+
+_CONTENT_TYPE = 'application/hal+json'
 
 
 class HalAdapter(AdapterBase):
@@ -16,8 +19,8 @@ class HalAdapter(AdapterBase):
     A description of the HAL format can be found here:
     `HAL Specification <http://stateless.co/hal_specification.html>`_
     """
-    formats = ['hal', _content_type]
-    extra_headers = {'Content-Type': _content_type}
+    formats = ['hal', _CONTENT_TYPE]
+    extra_headers = {'Content-Type': _CONTENT_TYPE}
 
     @property
     def formatted_body(self):
@@ -64,6 +67,17 @@ class HalAdapter(AdapterBase):
         return embedded_dict, links_dict
 
     def _generate_relationship(self, relationship, embedded):
+        """
+        Properly formats the relationship in a HAL ready format.
+
+        :param ResourceBase|list[ResourceBase] relationship: The
+            ResourceBase instance or list of resource bases.
+        :param bool embedded: Whether or not the related resource
+            should be embedded.
+        :return: A list of dictionaries or dictionary representing
+            the relationship(s)
+        :rtype: list|dict
+        """
         if isinstance(relationship, list):
             response = []
             for res in relationship:

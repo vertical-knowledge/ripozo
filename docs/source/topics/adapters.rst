@@ -1,6 +1,17 @@
 Adapters
 ========
 
+Adapters are responsible for transforming a
+Resource instance into a request body string.
+For example, in the SirenAdapter, they would
+put the properties in a dictionary called "properties",
+the related resource in a list called "entities",
+and so on and so forth.  All adapters instantiation
+requires at least a resource instance.
+
+Building your own adapter
+-------------------------
+
 
 Adapters API
 ------------
@@ -8,17 +19,17 @@ Adapters API
 Built in adapters
 ^^^^^^^^^^^^^^^^^
 
-.. automodule:: ripozo.adapters.siren
+.. autoclass:: ripozo.adapters.siren.SirenAdapter
     :members:
 
-.. automodule:: ripozo.adapters.hal
+.. autoclass:: ripozo.adapters.hal.HalAdapter
     :members:
 
-.. automodule:: ripozo.adapters.boring_json
+.. autoclass:: ripozo.adapters.boring_json.BoringJSON
     :members:
 
 Base Adapter
 ^^^^^^^^^^^^
 
-.. automodule:: ripozo.adapters.base
+.. automodule:: ripozo.adapters.base.BaseAdapter
     :members:

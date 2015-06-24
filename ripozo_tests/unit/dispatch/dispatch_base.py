@@ -8,7 +8,7 @@ import mock
 import unittest2
 
 from ripozo.adapters import BoringJSONAdapter, HalAdapter, SirenAdapter
-from ripozo.dispatch.dispatch_base import DispatcherBase
+from ripozo.dispatch_base import DispatcherBase
 from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
 from ripozo_tests.helpers.dispatcher import FakeDispatcher
 

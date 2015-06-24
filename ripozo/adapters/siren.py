@@ -1,18 +1,21 @@
+"""
+Siren protocol adapter.  See `SIREN specification <https://github.com/kevinswiber/siren>`_.
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-import json
-
-import six
 
 from ripozo.adapters import AdapterBase
 from ripozo.utilities import titlize_endpoint
 from ripozo.resources.resource_base import create_url
 from ripozo.resources.constants import input_categories
 
+import json
+import six
 
-_content_type = 'application/vnd.siren+json'
+
+_CONTENT_TYPE = 'application/vnd.siren+json'
 
 
 class SirenAdapter(AdapterBase):
@@ -21,8 +24,8 @@ class SirenAdapter(AdapterBase):
     A description of a SIREN format can be found here:
     `SIREN specification <https://github.com/kevinswiber/siren>`_
     """
-    formats = ['siren', _content_type]
-    extra_headers = {'Content-Type': _content_type}
+    formats = ['siren', _CONTENT_TYPE]
+    extra_headers = {'Content-Type': _CONTENT_TYPE}
 
     @property
     def formatted_body(self):
@@ -65,7 +68,8 @@ class SirenAdapter(AdapterBase):
             route = create_url(base_route, **self.resource.properties)
             route = self.combine_base_url_with_resource_url(route)
             fields = self.generate_fields_for_endpoint_funct(options.get('endpoint_func'))
-            actn = dict(name=endpoint, title=titlize_endpoint(endpoint), method=meth, href=route, fields=fields)
+            actn = dict(name=endpoint, title=titlize_endpoint(endpoint),
+                        method=meth, href=route, fields=fields)
             actions.append(actn)
         return actions
 
@@ -91,7 +95,14 @@ class SirenAdapter(AdapterBase):
         return fields
 
     def generate_links(self):
-        links = [dict(rel=['self'], href=self.combine_base_url_with_resource_url(self.resource.url))]
+        """
+        Generates the Siren links for the resource.
+
+        :return: The list of Siren formatted links.
+        :rtype: list
+        """
+        href = self.combine_base_url_with_resource_url(self.resource.url)
+        links = [dict(rel=['self'], href=href)]
         for link, link_name, embedded in self.resource.linked_resources:
             links.append(dict(rel=[link_name],
                               href=self.combine_base_url_with_resource_url(link.url)))

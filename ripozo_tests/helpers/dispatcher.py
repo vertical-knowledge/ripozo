@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.dispatch.dispatch_base import DispatcherBase
+from ripozo.dispatch_base import DispatcherBase
 
 
 class FakeDispatcher(DispatcherBase):
