@@ -25,7 +25,7 @@ have to change your front-end.  Either way, you
 want some flexibility in how the resource gets formatted.
 
 For an example of a basic adapter check out the built in
-`JSON adapter.<https://github.com/vertical-knowledge/ripozo/blob/master/ripozo/adapters/boring_json.py>`_
+`JSON adapter. <https://github.com/vertical-knowledge/ripozo/blob/master/ripozo/adapters/boring_json.py>`_
 
 Required pieces
 ^^^^^^^^^^^^^^^
@@ -37,10 +37,10 @@ Required pieces
     accept-types with the appropriate adapter.
 
 
-.. automethod:: ripozo.adapters.base.AdapterBase.formatted_body
+.. autoattribute:: ripozo.adapters.base.AdapterBase.formatted_body
 
 
-.. automethod:: ripozo.adapters.base.AdapterBase.extra_headers
+.. autoattribute:: ripozo.adapters.base.AdapterBase.extra_headers
 
 
 Optional pieces
@@ -64,11 +64,11 @@ Built in adapters
 .. autoclass:: ripozo.adapters.hal.HalAdapter
     :members:
 
-.. autoclass:: ripozo.adapters.boring_json.BoringJSON
+.. autoclass:: ripozo.adapters.boring_json.BoringJSONAdapter
     :members:
 
 Base Adapter
 ^^^^^^^^^^^^
 
-.. automodule:: ripozo.adapters.base.BaseAdapter
+.. autoclass:: ripozo.adapters.base.AdapterBase
     :members:

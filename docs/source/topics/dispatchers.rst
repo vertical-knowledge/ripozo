@@ -53,7 +53,7 @@ include the the host, port and base path (e.g. ``'http://localhost:5000/api'``).
 If you absolutely need to make it a method, you will need to overrided the dispatch
 method as well, since it expects it to be a property.
 
-.. automethod:: ripozo.dispatch_base.DispatchBase.base_url
+.. autoattribute:: ripozo.dispatch_base.DispatcherBase.base_url
 
 
 The second piece you'll need to implement is the register_route
@@ -64,11 +64,11 @@ an individual route and relaying it to the webframework.
 
 
 For a real life example of implementing a dispatcher check out the
-`flask dispatcher.<https://github.com/vertical-knowledge/flask-ripozo/blob/master/flask_ripozo/dispatcher.py>`_
+`flask dispatcher. <https://github.com/vertical-knowledge/flask-ripozo/blob/master/flask_ripozo/dispatcher.py>`_
 
 
 Dispatcher API
 --------------
 
-.. automodule:: ripozo.dispatch_base.DispatcherBase
+.. autoclass:: ripozo.dispatch_base.DispatcherBase
     :members:

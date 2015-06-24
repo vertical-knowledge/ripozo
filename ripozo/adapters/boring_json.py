@@ -21,21 +21,23 @@ class BoringJSONAdapter(AdapterBase):
 
     Format:
 
-    <resource_name>: {
-        field1: "value"
-        field2: "value"
-        relationship: {
-            relationship_field: "value"
+    .. code-block:: javascript
+
+        <resource_name>: {
+            field1: "value"
+            field2: "value"
+            relationship: {
+                relationship_field: "value"
+            }
+            list_relationship: [
+                {
+                    relationship_field: "value"
+                }
+                {
+                    relationship_field: "value"
+                }
+            ]
         }
-        list_relationship: [
-            {
-                relationship_field: "value"
-            }
-            {
-                relationship_field: "value"
-            }
-        ]
-    }
     """
     formats = ['json', _CONTENT_TYPE]
     extra_headers = {'Content-Type': _CONTENT_TYPE}
