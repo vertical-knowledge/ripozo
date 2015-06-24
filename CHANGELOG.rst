@@ -1,10 +1,12 @@
 CHANGELOG
 =========
 
-0.5.1 (unreleased)
+0.6.0 (unreleased)
 ==================
 
 - pylint shit.
+- Moved dispatch_base up and removed dispatch package
+- Moved manager_base and removed manager package.
 
 
 0.5.0 (2015-06-18)
