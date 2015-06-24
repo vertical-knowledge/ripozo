@@ -76,10 +76,12 @@ class ResourceBase(object):
         They are not necessarily about this specific resource.  For example,
         next and previous links for a list resource or created links when
         creating a new resource on a list resource.
+    :param bool append_slash: A flag that indicates whether the base urls
+        should include a trailing slash or not.
     """
-
     __abstract__ = True
     _relationships = None
+    append_slash = False
     pks = tuple()
     manager = None
     namespace = '/'
@@ -237,7 +239,7 @@ class ResourceBase(object):
         pks = cls.pks or []
         parts = ['<{0}>'.format(pk) for pk in pks]
         base_url = join_url_parts(cls.base_url_sans_pks, *parts).lstrip('/')
-        return '/{0}'.format(base_url)
+        return '/{0}'.format(base_url) if not cls.append_slash else '/{0}/'.format(base_url)
 
     @classproperty
     def base_url_sans_pks(cls):
@@ -255,7 +257,7 @@ class ResourceBase(object):
         :rtype: unicode
         """
         base_url = join_url_parts(cls.namespace, cls.resource_name).lstrip('/')
-        return '/{0}'.format(base_url)
+        return '/{0}'.format(base_url) if not cls.append_slash else '/{0}/'.format(base_url)
 
     @classmethod
     def endpoint_dictionary(cls):

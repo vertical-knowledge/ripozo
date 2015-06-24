@@ -458,3 +458,29 @@ class TestResourceBase(unittest2.TestCase):
         self.assertEqual(Resource2.resource_name, 'resource2')
         self.assertEqual(Resource1.resource_name, 'resource1')
         self.assertEqual(ResourceBase.resource_name, 'resource_base')
+
+    def test_append_slash(self):
+        """
+        Tests setting append_slash = True
+        """
+        class MyResource(ResourceBase):
+            append_slash = True
+            pks = ('id', 'pk',)
+            namespace = '/api'
+
+        self.assertEqual(MyResource.base_url, '/api/my_resource/<id>/<pk>/')
+        self.assertEqual(MyResource.base_url_sans_pks, '/api/my_resource/')
+
+    def test_dont_append_slash(self):
+        """
+        Tests that a slash is not appended when
+        append_slash = False
+        """
+        class MyResource(ResourceBase):
+            append_slash = False
+            pks = ('id', 'pk',)
+            namespace = '/api'
+
+        self.assertEqual(MyResource.base_url, '/api/my_resource/<id>/<pk>')
+        self.assertEqual(MyResource.base_url_sans_pks, '/api/my_resource')
+
