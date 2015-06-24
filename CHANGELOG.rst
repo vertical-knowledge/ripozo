@@ -7,6 +7,7 @@ CHANGELOG
 - pylint shit.
 - Moved dispatch_base up and removed dispatch package
 - Moved manager_base and removed manager package.
+- Added append_slash class attribute to ResourceBase. Setting this attribute to True automatically appends a slash to the end of the base_url and base_url_sans_pks.  Defaults to False.
 
 
 0.5.0 (2015-06-18)
