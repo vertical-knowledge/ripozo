@@ -1,3 +1,7 @@
+"""
+Contains the list relationship class.
+Extends the relationship class slightly.
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function

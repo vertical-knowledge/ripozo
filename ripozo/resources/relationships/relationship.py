@@ -1,3 +1,6 @@
+"""
+Contains the relationship class.
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -9,7 +12,7 @@ from ripozo.resources.constructor import ResourceMetaClass
 import logging
 import six
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 class Relationship(object):
@@ -85,7 +88,7 @@ class Relationship(object):
             to this related resource
         :rtype: rest.viewsets.resource_base.ResourceBase
         """
-        logger.debug('Constructing resource {0} of type {1}'.format(self.name, self.relation))
+        _logger.debug('Constructing resource %s of type %s', self.name, self.relation)
         related_properties = self._map_pks(properties)
         resource = None
         if related_properties:
