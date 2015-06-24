@@ -234,6 +234,21 @@ class TestResourceBase(unittest2.TestCase):
         r = T1(status_code=400)
         self.assertTrue(r.has_error)
 
+    def test_has_all_pks(self):
+        """
+        Tests that the has_all_pks
+        property works appropriately
+        """
+        class MyResource(ResourceBase):
+            pks = ('id', 'pk',)
+
+        res = MyResource()
+        self.assertFalse(res.has_all_pks)
+        res = MyResource(properties=dict(id=1))
+        self.assertFalse(res.has_all_pks)
+        res = MyResource(properties=dict(id=1, pk=2))
+        self.assertTrue(res.has_all_pks)
+
     def test_links_property(self):
         """
         Tests that the links property appropriately creates link relationships.

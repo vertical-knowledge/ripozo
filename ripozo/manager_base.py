@@ -168,7 +168,6 @@ class BaseManager(object):
             a model using this manager
         :rtype: list
         """
-        # TODO test this explicitly
         return cls._create_fields or cls.fields
 
     @classproperty

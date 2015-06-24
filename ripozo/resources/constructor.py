@@ -7,7 +7,6 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import logging
-import inspect
 
 _logger = logging.getLogger(__name__)
 
@@ -42,13 +41,13 @@ class ResourceMetaClass(type):
         if attrs.get('__abstract__', False) is True:  # Don't register endpoints of abstract classes
             _logger.debug('ResourceMetaClass "%s" is abstract.  Not being registered', name)
             return klass
-        mcs._register_class(klass)
+        mcs.register_class(klass)
 
         _logger.debug('ResourceMetaClass "%s" successfully registered', name)
         return klass
 
     @classmethod
-    def _register_class(mcs, klass):
+    def register_class(mcs, klass):
         """
         Checks if the class is in the registry
         and adds it to the registry if the classes base_url
@@ -60,12 +59,3 @@ class ResourceMetaClass(type):
         """
         mcs.registered_resource_classes[klass] = klass.base_url
         mcs.registered_names_map[klass.__name__] = klass
-
-        # TODO test and doc this
-        for name, method in inspect.getmembers(klass):
-            if getattr(method, '__manager_field_validators__', False) is True \
-                    or getattr(method, 'manager_field_validators', False) is True:
-                if not hasattr(method, 'cls'):
-                    setattr(method, 'cls', klass)
-                    method = classmethod(method)
-                    setattr(klass, name, method)

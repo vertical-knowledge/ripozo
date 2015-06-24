@@ -136,7 +136,6 @@ class RequestContainer(object):
         :return: The field that was requestedor None.
         :rtype: object
         """
-        # TODO test this more thoroughly.
         if not location and name in self._url_params or location == input_categories.URL_PARAMS:
             self._url_params[name] = value
             return

@@ -163,7 +163,6 @@ class ResourceBase(object):
             the ``self.properties`` attribute.
         :rtype: bool
         """
-        # TODO test
         for primary_key in self.pks:
             if primary_key not in self.properties:
                 return False

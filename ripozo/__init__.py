@@ -9,7 +9,6 @@ __version__ = pkg_resources.get_distribution('ripozo').version
 
 
 from ripozo.decorators import apimethod, translate
-from ripozo import adapters
 from ripozo.resources import fields, restmixins
 from ripozo.resources.relationships.list_relationship import ListRelationship
 from ripozo.resources.relationships.relationship import Relationship

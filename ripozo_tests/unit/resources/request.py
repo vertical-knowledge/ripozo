@@ -3,6 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from ripozo.resources.constants.input_categories import *
 from ripozo.resources.request import RequestContainer
 
 import unittest2
@@ -12,6 +13,23 @@ class TestRequestContainer(unittest2.TestCase):
     """
     Tests for the RequestContainer
     """
+
+    def dict_helper(self, name):
+        d = dict(some='object')
+        r = RequestContainer(**{name: d})
+        self.assertDictEqual(d, getattr(r, name))
+        self.assertNotEqual(id(d), id(getattr(r, name)))
+
+        # Test setting the dict
+        d2 = dict(another='object')
+        setattr(r, name, d2)
+        self.assertNotEqual(d, getattr(r, name))
+        self.assertDictEqual(d2, getattr(r, name))
+        self.assertNotEqual(id(d2), id(getattr(r, name)))
+
+        # Test empty dict
+        r = RequestContainer()
+        self.assertIsInstance(getattr(r, name), dict)
 
     def test_url_params(self):
         self.dict_helper('url_params')
@@ -36,24 +54,6 @@ class TestRequestContainer(unittest2.TestCase):
         # set the content type
         r.content_type = 'blah'
         self.assertEqual(r.content_type, 'blah')
-
-
-    def dict_helper(self, name):
-        d = dict(some='object')
-        r = RequestContainer(**{name: d})
-        self.assertDictEqual(d, getattr(r, name))
-        self.assertNotEqual(id(d), id(getattr(r, name)))
-
-        # Test setting the dict
-        d2 = dict(another='object')
-        setattr(r, name, d2)
-        self.assertNotEqual(d, getattr(r, name))
-        self.assertDictEqual(d2, getattr(r, name))
-        self.assertNotEqual(id(d2), id(getattr(r, name)))
-
-        # Test empty dict
-        r = RequestContainer()
-        self.assertIsInstance(getattr(r, name), dict)
 
     def test_get(self):
         """
@@ -90,3 +90,61 @@ class TestRequestContainer(unittest2.TestCase):
         """
         req = RequestContainer(query_args=dict(x=1))
         self.assertRaises(KeyError, req.set, 'blah', 'blah')
+
+    def test_set(self):
+        """
+        Tests the basic set on the request
+        without location specified
+        """
+        original_dict = dict(x=1)
+        req = RequestContainer(query_args=original_dict)
+        req.set('x', 2)
+        self.assertDictEqual(dict(x=2), req.query_args)
+
+        req = RequestContainer(url_params=original_dict)
+        req.set('x', 2)
+        self.assertDictEqual(dict(x=2), req.url_params)
+
+        req = RequestContainer(body_args=original_dict)
+        req.set('x', 2)
+        self.assertDictEqual(dict(x=2), req.body_args)
+
+    def test_set_location_specified(self):
+        """
+        Tests the set on the request container
+        with the location specified.
+        """
+        original_dict = dict(x=1)
+        req = RequestContainer(query_args=original_dict)
+        req.set('x', 2, QUERY_ARGS)
+        self.assertDictEqual(dict(x=2), req.query_args)
+
+        req = RequestContainer(url_params=original_dict)
+        req.set('x', 2, URL_PARAMS)
+        self.assertDictEqual(dict(x=2), req.url_params)
+
+        req = RequestContainer(body_args=original_dict)
+        req.set('x', 2, BODY_ARGS)
+        self.assertDictEqual(dict(x=2), req.body_args)
+
+    def test_set_location_specified_new(self):
+        """
+        Tests the set on the request container
+        when the key is not already available and
+        the location is specified.
+        """
+        original_dict = dict(x=1)
+        req = RequestContainer(url_params=original_dict)
+        req.set('x', 2, QUERY_ARGS)
+        self.assertDictEqual(dict(x=2), req.query_args)
+        self.assertDictEqual(dict(x=1), req.url_params)
+
+        req = RequestContainer(query_args=original_dict)
+        req.set('x', 2, URL_PARAMS)
+        self.assertDictEqual(dict(x=2), req.url_params)
+        self.assertDictEqual(dict(x=1), req.query_args)
+
+        req = RequestContainer(url_params=original_dict)
+        req.set('x', 2, BODY_ARGS)
+        self.assertDictEqual(dict(x=2), req.body_args)
+        self.assertDictEqual(dict(x=1), req.url_params)
