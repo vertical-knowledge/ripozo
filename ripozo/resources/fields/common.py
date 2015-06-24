@@ -221,7 +221,6 @@ class ListField(BaseField):
     """
     field_type = list
 
-    # TODO test and finish docs
     def __init__(self, name, indv_field=BaseField('list'), **kwargs):
         """
 
