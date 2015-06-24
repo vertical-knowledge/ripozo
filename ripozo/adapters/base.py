@@ -48,7 +48,9 @@ class AdapterBase(object):
         """
         This property is the fully qualified and formatted response.
         For example, you might return a Hypermedia formatted response
-        body such as the SIREN hypermedia protocol or HAL
+        body such as the SIREN hypermedia protocol or HAL.  This
+        must be overridden by any subclass.  Additionally, it is
+        a property and must be decorated as such.
 
         :return: The formatted response body.
         :rtype: unicode
@@ -59,7 +61,10 @@ class AdapterBase(object):
     def extra_headers(self):
         """
         Headers that should be added to response.  For example it might be
-        the response-type etc...
+        the content-type etc...  This must be overridden by any
+        subclass since it raises a NotImplementedError. It can
+        also be overridden as a class attribute if it will not
+        be dynamic.
 
         :return: A dictionary of the headers to return.
         :rtype: dict
