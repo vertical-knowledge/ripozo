@@ -41,10 +41,34 @@ I wasn't lying, it's pretty basic.
 Implementing a Dispatcher
 -------------------------
 
-.. todo:: Need to go into detail on how to implement one.
+So you've just discovered the next great python web
+framework.  Unfortunately, nobody has developed a ripozo
+dispatcher implementation for it yet.  Don't despair!  Implementing
+a ripozo dispatcher is theoretically quite simple.  There is only
+one method and one property you need to implement.
+
+The first is the base_url property.  This is base_url
+that is used when constructing urls.  For example, it might
+include the the host, port and base path (e.g. ``'http://localhost:5000/api'``).
+If you absolutely need to make it a method, you will need to overrided the dispatch
+method as well, since it expects it to be a property.
+
+.. automethod:: ripozo.dispatch_base.DispatchBase.base_url
+
+
+The second piece you'll need to implement is the register_route
+method.  This is the method that is responsible for taking
+an individual route and relaying it to the webframework.
+
+.. automethod:: ripozo.dispatch_base.DispatcherBase.register_route
+
+
+For a real life example of implementing a dispatcher check out the
+`flask dispatcher.<https://github.com/vertical-knowledge/flask-ripozo/blob/master/flask_ripozo/dispatcher.py>`_
+
 
 Dispatcher API
 --------------
 
-.. automodule:: ripozo.dispatch.dispatch_base
+.. automodule:: ripozo.dispatch_base.DispatcherBase
     :members:
