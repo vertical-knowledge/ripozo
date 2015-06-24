@@ -79,13 +79,13 @@ class BaseField(object):
         :rtype: object
         :raises: ripozo.exceptions.ValidationException
         """
-        if self.required and obj is None and skip_required is False:
-            raise ValidationException(self.error_message or 'The field "{0}" is required '
-                                                            'and cannot be None'.format(self.name))
+        obj = self._validate_required(obj, skip_required=skip_required)
+        if obj is None:
+            return obj
         obj = self._validate_type(obj)
         return obj
 
-    def _skip_validation(self, obj):
+    def _validate_required(self, obj, skip_required=False):
         """
         Deteremines whether validation should be skipped because
         the input is None and the field is not required.
@@ -95,9 +95,10 @@ class BaseField(object):
             be skipped
         :rtype: bool
         """
-        if obj is None and not self.required:
-            return True
-        return False
+        if self.required and obj is None and skip_required is False:
+            raise ValidationException(self.error_message or 'The field "{0}" is required '
+                                                            'and cannot be None'.format(self.name))
+        return obj
 
     def _validate_size(self, obj, obj_size, msg=None):
         """
@@ -126,15 +127,13 @@ class BaseField(object):
 
     def _validate_type(self, obj, msg=None):
         """
-        Validates that is object matches the classes field_type
+        Validates that is object matches the classes field_type.
 
         :param object obj:
         :return: The validated object
         :rtype: object
         """
-        if obj is None and not self.required:
-            return obj
-        if obj is not None and isinstance(obj, self.field_type):
+        if isinstance(obj, self.field_type):
             return obj
         if msg is None:
             msg = ("obj is not a valid type for field {0}. A type of"

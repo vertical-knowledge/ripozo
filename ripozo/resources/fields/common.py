@@ -60,7 +60,7 @@ class StringField(BaseField):
         :raises: ValidationException
         """
         obj = super(StringField, self)._validate(obj, skip_required=skip_required)
-        if self._skip_validation(obj):
+        if obj is None:
             return obj
         obj = self._validate_size(obj, len(obj))
         if self.regex and not self.regex.match(obj):
@@ -93,7 +93,7 @@ class IntegerField(BaseField):
 
     def _validate(self, obj, skip_required=False):
         obj = super(IntegerField, self)._validate(obj, skip_required=skip_required)
-        if self._skip_validation(obj):
+        if obj is None:
             return obj
         return self._validate_size(obj, obj)
 
@@ -120,7 +120,7 @@ class FloatField(BaseField):
 
     def _validate(self, obj, skip_required=False):
         obj = super(FloatField, self)._validate(obj, skip_required=skip_required)
-        if self._skip_validation(obj):
+        if obj is None:
             return obj
         return self._validate_size(obj, obj)
 
