@@ -1,3 +1,7 @@
+"""
+Various utilities that ripozo
+uses.  More or less a junk drawer
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -11,8 +15,8 @@ import re
 import six
 
 
-_first_cap_re = re.compile('(.)([A-Z][a-z]+)')
-_all_cap_re = re.compile('([a-z0-9])([A-Z])')
+_FIRST_CAP_RE = re.compile('(.)([A-Z][a-z]+)')
+_ALL_CAP_RE = re.compile('([a-z0-9])([A-Z])')
 
 
 def convert_to_underscore(toconvert):
@@ -29,8 +33,8 @@ def convert_to_underscore(toconvert):
     :return: The converted string
     :rtype: str
     """
-    s1 = _first_cap_re.sub(r'\1_\2', toconvert)
-    return _all_cap_re.sub(r'\1_\2', s1).lower()
+    intermediate = _FIRST_CAP_RE.sub(r'\1_\2', toconvert)
+    return _ALL_CAP_RE.sub(r'\1_\2', intermediate).lower()
 
 
 def titlize_endpoint(endpoint):
@@ -112,6 +116,9 @@ def picky_processor(processor, include=None, exclude=None):
     """
     @wraps(processor)
     def wrapped(cls, function_name, *args, **kwargs):
+        """
+        Selectively runs the preprocessor
+        """
         run = True
         if include and function_name not in include:
             run = False

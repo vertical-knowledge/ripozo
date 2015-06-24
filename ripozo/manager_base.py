@@ -1,3 +1,8 @@
+"""
+Contains the BaseManager which must be
+implemented fully in regards to the persistence
+mechanism you are using.
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -9,7 +14,8 @@ from ripozo.decorators import classproperty
 
 import logging
 import six
-logger = logging.getLogger(__name__)
+
+_logger = logging.getLogger(__name__)
 
 
 @six.add_metaclass(ABCMeta)
@@ -79,8 +85,9 @@ class BaseManager(object):
 
         :param dict lookup_keys: The lookup keys for the model and the associated values
         :return: The dictionary of arguments that should be returned by the serializer
-        :return: A tuple with the first object being a dictionary of key value pairs according to the fields list and
-        the second object is the meta data (such as the next url for a paginated list)
+        :return: A tuple with the first object being a dictionary of key value
+            pairs according to the fields list and
+            the second object is the meta data (such as the next url for a paginated list)
         :rtype: tuple
         """
         pass
@@ -227,9 +234,9 @@ class BaseManager(object):
         """
         # get the pagination count or else use the default
         filters = filters.copy()
-        pagination_count_query = filters.pop(self.pagination_count_query_arg, None)
-        pagination_count = int(pagination_count_query) if pagination_count_query else self.paginate_by
-        logger.debug('Paginating list by {0}'.format(pagination_count))
+        pagination_count = filters.pop(self.pagination_count_query_arg, self.paginate_by)
+        pagination_count = int(pagination_count)
+        _logger.debug('Paginating list by %s', pagination_count)
         return pagination_count, filters
 
     def get_pagination_pks(self, filters):
@@ -269,8 +276,8 @@ class BaseManager(object):
         # TODO find a better fucking way
         field_dict = {}
         fields = fields or self.fields
-        for f in fields:
-            field_parts = f.split('.')
+        for field in fields:
+            field_parts = field.split('.')
             current = field_dict
             part = field_parts.pop(0)
             while len(field_parts) > 0:

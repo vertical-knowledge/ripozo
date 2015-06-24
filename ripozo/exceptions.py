@@ -1,3 +1,7 @@
+"""
+Contains the exceptions
+that ripozo explicitly uses.
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -41,7 +45,7 @@ class NotFoundException(ManagerException):
     find a model that was requested.
     """
     def __init__(self, message, status_code=404, *args, **kwargs):
-        super(ManagerException, self).__init__(message, status_code=status_code, *args, **kwargs)
+        super(NotFoundException, self).__init__(message, status_code=status_code, *args, **kwargs)
 
 
 class FieldException(RestException, ValueError):

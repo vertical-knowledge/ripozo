@@ -12,6 +12,9 @@ import logging
 import six
 
 
+_logger = logging.getLogger(__name__)
+
+
 class ClassPropertyDescriptor(object):
     """
     Straight up stolen from stack overflow
@@ -66,19 +69,19 @@ class _apiclassmethod(object):
     """
     __name__ = str('_apiclassmethod')
 
-    def __init__(self, f):
+    def __init__(self, func):
         """
         Initializes the class method.
 
-        :param types.FunctionType f: The function to decorate.
+        :param types.FunctionType func: The function to decorate.
         """
-        update_wrapper(self, f)
-        for key, value in six.iteritems(getattr(f, 'func_dict', {})):
+        update_wrapper(self, func)
+        for key, value in six.iteritems(getattr(func, 'func_dict', {})):
             self.__dict__[key] = value
 
-        self.f = f
-        if hasattr(f, 'func_name'):
-            self.func_name = f.func_name
+        self.func = func
+        if hasattr(func, 'func_name'):
+            self.func_name = func.func_name
 
     def __get__(self, obj, klass=None):
         """
@@ -88,11 +91,16 @@ class _apiclassmethod(object):
         if klass is None:
             klass = type(obj)
 
-        @wraps(self.f)
+        @wraps(self.func)
         def newfunc(*args):
+            """
+            Figures out if an instance was called
+            and if so it injects the class instead
+            of the instance.
+            """
             if len(args) == 0 or not isinstance(args[0], type):
-                return self.f(klass, *args)
-            return self.f(*args)
+                return self.func(klass, *args)
+            return self.func(*args)
         return newfunc
 
     def __call__(self, cls, *args, **kwargs):
@@ -144,8 +152,7 @@ class apimethod(object):
             dependent on the individual dispatcher and web framework that
             you are using.
         """
-        logger = logging.getLogger(__name__)
-        logger.info('Initializing apimethod route: {0} with options {1}'.format(route, options))
+        _logger.info('Initializing apimethod route: %s with options %s', route, options)
         self.route = route
         if not methods:
             methods = ['GET']
@@ -154,7 +161,7 @@ class apimethod(object):
         self.options['no_pks'] = no_pks
         self.endpoint = endpoint
 
-    def __call__(self, f):
+    def __call__(self, func):
         """
         The actual decorator that will be called and returns the method
         that is a ripozo route.
@@ -173,19 +180,22 @@ class apimethod(object):
             any sort of CRUD action.
         :rtype: classmethod
         """
-        setattr(f, '__rest_route__', True)
-        routes = getattr(f, 'routes', [])
+        setattr(func, '__rest_route__', True)
+        routes = getattr(func, 'routes', [])
         routes.append((self.route, self.endpoint, self.options))
-        setattr(f, 'routes', routes)
+        setattr(func, 'routes', routes)
 
         @_apiclassmethod
-        @wraps(f)
+        @wraps(func)
         def wrapped(cls, request, *args, **kwargs):
+            """
+            Runs the preo/postprocessors
+            """
             for proc in cls.preprocessors:
-                proc(cls, f.__name__, request, *args, **kwargs)
-            resource = f(cls, request, *args, **kwargs)
+                proc(cls, func.__name__, request, *args, **kwargs)
+            resource = func(cls, request, *args, **kwargs)
             for proc in cls.postprocessors:
-                proc(cls, f.__name__, request, resource, *args, **kwargs)
+                proc(cls, func.__name__, request, resource, *args, **kwargs)
             return resource
         return wrapped
 
@@ -197,7 +207,8 @@ class translate(object):
     an adapter if necessary.
     """
 
-    def __init__(self, fields=None, manager_field_validators=False, skip_required=False, validate=False):
+    def __init__(self, fields=None, manager_field_validators=False,
+                 skip_required=False, validate=False):
         """
         Initializes the decorator with the necessary fields.
         the fields should be instances of FieldBase and should
@@ -225,7 +236,7 @@ class translate(object):
         self.validate = validate
         self.cls = None
 
-    def __call__(self, f):
+    def __call__(self, func):
         """
         Wraps the function with translation and validation.
         This allows the inputs to be cast and validated as necessary.
@@ -238,19 +249,25 @@ class translate(object):
         :rtype: function
         """
         @_apiclassmethod
-        @wraps(f)
+        @wraps(func)
         def action(cls, request, *args, **kwargs):
+            """
+            Gets and translates/validates the fields.
+            """
             # TODO This is so terrible.  I really need to fix this.
             from ripozo.resources.fields.base import translate_fields
             translate_fields(request, self.fields(cls.manager),
                              skip_required=self.skip_required, validate=self.validate)
-            return f(cls, request,  *args, **kwargs)
+            return func(cls, request, *args, **kwargs)
 
         action.__manager_field_validators__ = self.manager_field_validators
         action.fields = self.fields
         return action
 
     def fields(self, manager):
+        """
+        Gets the fields from the manager if necessary.
+        """
         if self.manager_field_validators:
             return self.original_fields + manager.field_validators
         return self.original_fields

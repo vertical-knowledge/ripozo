@@ -1,16 +1,21 @@
+"""
+Contains the DispatcherBase class
+which should be implemented for the
+web framework that you are using.
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
 from abc import ABCMeta, abstractmethod, abstractproperty
-import logging
-
-import six
 
 from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
 
-logger = logging.getLogger(__name__)
+import logging
+import six
+
+_logger = logging.getLogger(__name__)
 
 
 @six.add_metaclass(ABCMeta)
@@ -76,7 +81,7 @@ class DispatcherBase(object):
         :param type adapter_class: the class to use as the default
             adapter class
         """
-        logger.info('Setting the default adapter for a Dispatcher as {0}'.format(adapter_class))
+        _logger.info('Setting the default adapter for a Dispatcher as %s', adapter_class)
         self._default_adapter = adapter_class
 
     def register_adapters(self, *adapter_classes):
@@ -95,17 +100,17 @@ class DispatcherBase(object):
         if len(adapter_classes) > 0 and self.default_adapter is None:
             self.default_adapter = adapter_classes[0]
         for klass in adapter_classes:
-            for format in klass.formats:
-                if format in self.adapter_formats or format is None:
-                    raise AdapterFormatAlreadyRegisteredException('The format {0} has already been registered'
-                                                                  ' for the class {1}.  The class {2} was attempting'
-                                                                  ' to override '
-                                                                  'it.'.format(format,
-                                                                               self.adapter_formats[format].__name__,
-                                                                               klass.__name__))
-                logger.debug('Registering format {0} to be hanlded by the AdapterBase'
-                             ' subclass {1}'.format(format, klass))
-                self.adapter_formats[format] = klass
+            for format_name in klass.formats:
+                if format_name in self.adapter_formats or format_name is None:
+                    msg = ('The format {0} has already been registered'
+                           ' for the class {1}.  The class {2} was attempting'
+                           ' to override it.'.format(format_name,
+                                                     self.adapter_formats[format_name].__name__,
+                                                     klass.__name__))
+                    raise AdapterFormatAlreadyRegisteredException(msg)
+                _logger.debug('Registering format %s to be hanlded by the AdapterBase'
+                              ' subclass %s', format_name, klass)
+                self.adapter_formats[format_name] = klass
 
     def register_resources(self, *classes):
         """
@@ -132,9 +137,9 @@ class DispatcherBase(object):
                 options = options.copy()
                 route = options.pop('route', klass.base_url)
                 methods = options.pop('methods', ['GET'])
-                logger.info('Registering the endpoint {0} to handle route {1}'
-                            ' with the methods {2} on a DispatcherBase '
-                            'subclass'.format(endpoint, route, methods))
+                _logger.info('Registering the endpoint %s to handle route %s'
+                             ' with the methods %s on a DispatcherBase '
+                             'subclass', endpoint, route, methods)
                 self.register_route(endpoint, route=route, methods=methods, **options)
 
     @abstractmethod
@@ -173,12 +178,12 @@ class DispatcherBase(object):
             can be used to find
         :rtype:
         """
-        logger.info('Dispatching request to endpoint function: {0} with args:'
-                    ' {1} and kwargs: {2}'.format(endpoint_func, args, kwargs))
+        _logger.info('Dispatching request to endpoint function: %s with args:'
+                     ' %s and kwargs:%s', endpoint_func, args, kwargs)
         result = endpoint_func(*args, **kwargs)
         adapter_class = self.get_adapter_for_type(accepted_mimetypes)
-        logger.info('Using adapter {0} to format response for format'
-                    ' type {1}'.format(adapter_class, accepted_mimetypes))
+        _logger.info('Using adapter %s to format response for format'
+                     ' type %s', adapter_class, accepted_mimetypes)
         adapter = adapter_class(result, base_url=self.base_url)
         return adapter
 
