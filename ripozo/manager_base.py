@@ -59,10 +59,6 @@ class BaseManager(object):
     pagination_prev = 'previous'
     paginate_by = 10000
     order_by = None
-    _fields = None
-    _create_fields = None
-    _list_fields = None
-    _update_fields = None
     model = None
     arg_parser = None
     _field_validators = None
@@ -153,7 +149,7 @@ class BaseManager(object):
         None.  Returns [] if cls._fields evaluates to None
         or some equivalent.
         """
-        return cls._fields or []
+        return []
 
     @classproperty
     def create_fields(cls):
@@ -168,7 +164,7 @@ class BaseManager(object):
             a model using this manager
         :rtype: list
         """
-        return cls._create_fields or cls.fields
+        return cls.fields
 
     @classproperty
     def list_fields(cls):
@@ -183,7 +179,7 @@ class BaseManager(object):
             set, otherwise, ``cls.fields``
         :rtype: list
         """
-        return cls._list_fields or cls.fields
+        return cls.fields
 
     @classproperty
     def update_fields(cls):
@@ -195,7 +191,7 @@ class BaseManager(object):
         :return: The list of fields to use when updating a model.
         :rtype: list
         """
-        return cls._update_fields or cls.fields
+        return cls.fields
 
     @classproperty
     def field_validators(cls):
@@ -209,7 +205,7 @@ class BaseManager(object):
         cls._field_validators = cls._field_validators or {}
         for field_name in cls.fields:
             if field_name not in cls._field_validators:
-                cls._field_validators[field_name] = (cls.get_field_type(field_name))
+                cls._field_validators[field_name] = cls.get_field_type(field_name)
         return list(cls._field_validators.values())
 
     def get_pagination_count(self, filters):

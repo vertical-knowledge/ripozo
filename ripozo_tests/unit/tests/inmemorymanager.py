@@ -56,7 +56,7 @@ class TestInMemoryManager(InMemoryManagerBaseTestMixin, unittest2.TestCase):
 
     def setUp(self):
         class FakeManager(InMemoryManager):
-            _fields = ['id', 'value1', 'value2']
+            fields = ['id', 'value1', 'value2']
 
         self._manager = FakeManager()
 

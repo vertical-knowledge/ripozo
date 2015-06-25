@@ -14,7 +14,7 @@ import uuid
 class TestBase(unittest2.TestCase):
     def setUp(self):
         class MyManager(InMemoryManager):
-            _fields = ('id', 'first', 'second',)
+            fields = ('id', 'first', 'second',)
             paginate_by = 5
 
         class MyClass(self.resource_base):
