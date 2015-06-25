@@ -143,7 +143,7 @@ class RetrieveList(ResourceBase):
             fields += (actual_class.manager.pagination_pk_query_arg,
                        actual_class.manager.pagination_count_query_arg)
         else:
-            fields = []
+            fields = tuple()
         return (Relationship('next', relation=actual_class.__name__,
                              query_args=fields, no_pks=True),
                 Relationship('previous', relation=actual_class.__name__,

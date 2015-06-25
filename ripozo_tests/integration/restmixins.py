@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo import restmixins, RequestContainer
+from ripozo import restmixins, RequestContainer, ResourceBase
 
 from ripozo_tests.helpers.inmemory_manager import InMemoryManager
 
@@ -87,6 +87,12 @@ class TestRetrieveList(TestBase):
         req = RequestContainer(query_args=dict(first=1))
         resource = self.resource_class.retrieve_list(req)
         self.assertEqual(resource.get_query_arg_dict()['first'], 1)
+
+    def test_get_base_links(self):
+        class R(ResourceBase):
+            pass
+        resp = restmixins.RetrieveList.get_base_links(R)
+        self.assertTupleEqual(resp[0].query_args, tuple())
 
     def test_paginate(self):
         all_models = self.create_resources(count=10)
