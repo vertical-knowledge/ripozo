@@ -3,10 +3,6 @@ A python package for quickly building RESTful/Hypermedia/HATEOAS
 applications in any web framework, with any database, using
 any protocol.
 """
-import pkg_resources
-
-__version__ = pkg_resources.get_distribution('ripozo').version
-
 
 from ripozo.decorators import apimethod, translate
 from ripozo.resources import fields, restmixins
