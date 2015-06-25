@@ -113,6 +113,9 @@ class TestApiMethodDecorator(unittest2.TestCase):
         self.assertEqual(mck.call_args_list[1][0][0], six.text_type)
         self.assertEqual(mck.call_args_list[1][0][1], 'string')
 
+        func_resp = resp(str)
+        self.assertEqual(mck.call_args_list[2][0][0], str)
+
     def test_nested_apiclassmethod(self):
         """
         Tests that the _apiclassmethod decorator works
