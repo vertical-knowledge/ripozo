@@ -8,7 +8,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from abc import ABCMeta, abstractmethod, abstractproperty
+from abc import ABCMeta, abstractmethod
 
 from ripozo.decorators import classproperty
 
@@ -285,7 +285,7 @@ class BaseManager(object):
         :rtype: dict
         """
         new_values = dict()
-        for k, v in six.iteritems(values):
-            if k in valid_fields:
-                new_values[k] = v
+        for key, value in six.iteritems(values):
+            if key in valid_fields:
+                new_values[key] = value
         return new_values
