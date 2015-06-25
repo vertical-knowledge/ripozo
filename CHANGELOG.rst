@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-0.6.1 (unreleased)
+0.6.1 (2015-06-24)
 ==================
 
 - Added valid_fields static method to BaseManager which is helper for getting valid fields.
