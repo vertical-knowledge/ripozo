@@ -8,6 +8,7 @@ import six
 import unittest2
 
 from ripozo.resources.fields.base import BaseField
+from ripozo.manager_base import BaseManager
 from ripozo_tests.helpers.inmemory_manager import InMemoryManager
 
 
@@ -127,3 +128,12 @@ class TestManager(unittest2.TestCase):
             fields = ('id', 'another', 'final',)
 
         self.assertTupleEqual(Manager.fields, Manager.update_fields)
+
+    def test_valid_fields(self):
+        """
+        Tests the valid fields method.
+        """
+        original_values = dict(x=1, y=2, z=3)
+        valid_fields = ['x', 'z', 'q']
+        resp = BaseManager.valid_fields(original_values, valid_fields)
+        self.assertDictEqual(resp, dict(x=1, z=3))

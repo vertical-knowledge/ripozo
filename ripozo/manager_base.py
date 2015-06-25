@@ -275,3 +275,21 @@ class BaseManager(object):
                 part = field_parts.pop(0)
             current[part] = None
         return field_dict
+
+    @staticmethod
+    def valid_fields(values, valid_fields):
+        """
+        Returns a dictionary with only the fields
+        specified from the valid_fields
+
+        :param dict values: The original set of fields
+        :param list|tuple valid_fields: The set of fields that
+            are valid to use.
+        :return: The valid values dict
+        :rtype: dict
+        """
+        new_values = dict()
+        for k, v in six.iteritems(values):
+            if k in valid_fields:
+                new_values[k] = v
+        return new_values
