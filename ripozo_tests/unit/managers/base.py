@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 
 from ripozo.manager_base import BaseManager
 
+import six
 import unittest2
 
 
@@ -48,7 +49,8 @@ class TestBaseManager(unittest2.TestCase):
             _field_validators = dict(x=1, z=2)
 
         resp = M.field_validators
-        self.assertEqual(dict(x=1, y=None, z=2).values(), resp)
+        for x in [None, 1, 2]:
+            self.assertIn(x, resp)
 
     def test_valid_fields(self):
         """
