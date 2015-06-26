@@ -1,6 +1,5 @@
 Resources
 =========
-
 Resources are the core of ripozo.  These define
 what can be accessed and the actions you can
 perform on those resources.  They are designed to be
@@ -13,6 +12,12 @@ should be able to be plugged in and out.
 
 Minimal Application
 -------------------
+
+.. doctest:: *
+    :hide:
+
+    >>> from ripozo import ResourceBase, apimethod
+
 
 .. code-block:: python
 
@@ -68,27 +73,45 @@ the ``ResourceBase.resource_name`` class property and appending it the the
 ``ResourceBase.namespace`` class property [#]_.  Additionally, the ``ResourceBase.pks``
 are taken and each one is added as a url_parameter [#]_.
 
+By default the namespace is empty, the resource_name is the class
+underscore class name, and there are not pks.
+
+.. doctest:: default
+
+    >>> class MyResource(ResourceBase): pass
+    >>> print(MyResource.base_url)
+    /my_resource
+
+.. doctest:: resourcename
+    :hide:
+
+    >>> class MyResource(ResourceBase):
+    ...    namespace = '/api'
+    ...    resource_name = 'resource'
+    ...    pks = ('id', 'secondary',)
+
 .. code-block:: python
 
     class MyResource(ResourceBase):
-        _namespace = '/api'
-        _resource_name = 'resource'
-        _pks = ['id', 'secondary']
+        namespace = '/api'
+        resource_name = 'resource'
+        pks = ('id', 'secondary',)
 
-.. code-block:: python
+.. doctest:: resourcename
 
-    >>> MyResource.base_url
-    '/api/resource/<id>/<secondary>'
+    >>> print(MyResource.base_url)
+    /api/resource/<id>/<secondary>
 
 If you take a MyResource instance and get the ``url`` property on
 it, you will receive a valid url rather than just a template.  It will take
 the properties that match the pks and plug them into the ``base_url`` template.
 
-.. code-block:: python
+
+.. doctest:: resourcename
 
     >>> resource = MyResource(properties=dict(id=3233, secondary='something'))
-    >>> resource.url
-    '/api/resource/3233/something'
+    >>> print(resource.url)
+    /api/resource/3233/something
 
 
 ResourceBase API

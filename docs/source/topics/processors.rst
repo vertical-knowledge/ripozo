@@ -89,4 +89,4 @@ pre/postprocessors
     In pre2
     goodbye
 
-.. autofunc:: ripozo.utilities.picky_processor
+.. autofunction:: ripozo.utilities.picky_processor
