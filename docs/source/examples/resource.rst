@@ -1,26 +1,31 @@
-Resource Example
-================
+Resource Examples
+=================
 
-.. code-block:: python
+URL construction
+^^^^^^^^^^^^^^^^
 
-    from ripozo.viewsets.resource_base import ResourceBase
+.. testsetup:: basic_url
+
+    from ripozo import ResourceBase
 
     class MyResource(ResourceBase):
         pks = ['id']
 
 
-.. code-block:: python
+.. doctest:: basic_url
 
-    >>> MyResource.base_url
-    '/my_resource/<id>'
+    >>> print(MyResource.base_url)
+    /my_resource/<id>
     >>> resource = MyResource(properties={'id': 1})
-    >>> resource.url
-    '/my_resource/1'
+    >>> print(resource.url)
+    /my_resource/1
 
+URL construction 2
+^^^^^^^^^^^^^^^^^^
 
-.. code-block:: python
+.. testsetup:: url2
 
-    from ripozo.viewsets.resource_base import ResourceBase
+    from ripozo import ResourceBase
 
     class MyResource(ResourceBase):
         namespace = '/api'
@@ -28,21 +33,20 @@ Resource Example
         resource_name = 'resource/'
 
 
-.. code-block:: python
+.. doctest:: url2
 
-    >>> MyResource.base_url
-    '/api/resource/<id>'
+    >>> print(MyResource.base_url)
+    /api/resource/<id>
     >>> resource = MyResource(properties={'id': 1})
-    >>> resource.url
-    '/api/resource/1'
+    >>> print(resource.url)
+    /api/resource/1
 
+Minimal Request
+^^^^^^^^^^^^^^^
 
-.. code-block:: python
+.. testsetup:: minimal
 
-    from ripozo.viewsets.request import RequestContainer
-
-    from ripozo.decorators import apimethod
-    from ripozo.viewsets.resource_base import ResourceBase
+    from ripozo import RequestContainer, ResourceBase, apimethod
 
     class MyResource(ResourceBase):
         namespace = '/api'
@@ -55,23 +59,21 @@ Resource Example
             return cls(properties={'id': id, 'hello': 'world'})
 
 
-.. code-block:: python
+.. doctest:: minimal
 
-    >>> from ripozo.viewsets.request import RequestContainer
     >>> request = RequestContainer(url_params={'id': 2})
     >>> resource = MyResource.hello_world(request)
-    >>> resource.url
-    '/api/resource/2'
+    >>> print(resource.url)
+    /api/resource/2
     >>> resource.properties
     {'id': 2, 'hello': 'world'}
 
+Using Fields
+^^^^^^^^^^^^
 
-.. code-block:: python
+.. testsetup:: fields
 
-    from ripozo.decorators import apimethod, translate
-    from ripozo.viewsets.constants.input_categories import URL_PARAMS
-    from ripozo.viewsets.fields.common import IntegerField
-    from ripozo.viewsets.resource_base import ResourceBase
+    from ripozo import apimethod, translate, fields, ResourceBase
 
     class MyResource(ResourceBase):
         namespace = '/api'
@@ -79,28 +81,28 @@ Resource Example
         resource_name = 'resource'
 
         @apimethod(methods=['GET'])
-        @translate(fields=[IntegerField('id', required=True, arg_type=URL_PARAMS)], validate=True)
+        @translate(fields=[fields.IntegerField('id', required=True)], validate=True)
         def hello_world(cls, request):
             id = request.url_params['id']
             return cls(properties={'id': id, 'hello': 'world'})
 
 
-.. code-block:: python
+.. doctest:: fields
+    :options: IGNORE_EXCEPTION_DETAIL
 
-    >>> from ripozo.viewsets.request import RequestContainer
+    >>> from ripozo import RequestContainer
     >>> request = RequestContainer()
     >>> resource = MyResource.hello_world(request)
+    Traceback (most recent call last):
     ...
-    ripozo.exceptions.ValidationException: The field "id" is required and cannot be None
+    ValidationException: The field "id" is required and cannot be None
 
+Relationships
+^^^^^^^^^^^^^
 
-.. code-block:: python
+.. testsetup:: relationship
 
-    from ripozo.decorators import apimethod, translate
-    from ripozo.viewsets.constants.input_categories import URL_PARAMS
-    from ripozo.viewsets.fields.common import IntegerField
-    from ripozo.viewsets.relationships import Relationship
-    from ripozo.viewsets.resource_base import ResourceBase
+    from ripozo import apimethod, translate, fields, ResourceBase, Relationship
 
     class MyResource(ResourceBase):
         namespace = '/api'
@@ -109,22 +111,27 @@ Resource Example
         _relationships = [
             Relationship('related', relation='RelatedResource')
         ]
-        # ...
+
+        @apimethod(methods=['GET'])
+        @translate(fields=[fields.IntegerField('id', required=True)], validate=True)
+        def hello_world(cls, request):
+            id = request.url_params['id']
+            return cls(properties={'id': id, 'hello': 'world'})
 
     class RelatedResource(ResourceBase):
-        _pks = ['pk']
+        pks = ['pk']
 
 
-.. code-block:: python
+.. doctest:: relationship
 
     >>> properties = dict(id=1, related=dict(pk=2))
     >>> resource = MyResource(properties=properties)
     >>> resource.properties
     {'id': 1}
-    >>> resource.relationships
-    [(<example.RelatedResource object at ...>, u'related', False)]
-    >>> related_resource = resource.relationships[0][0]
+    >>> print(resource.related_resources[0].name)
+    related
+    >>> related_resource = resource.related_resources[0].resource
     >>> related_resource.properties
     {'pk': 2}
-    >>> related_resource.url
-    u'/related_resource/2'
+    >>> print(related_resource.url)
+    /related_resource/2
