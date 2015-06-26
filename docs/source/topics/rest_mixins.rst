@@ -12,11 +12,11 @@ can focus on the interesting parts of your api.
 
     from mymanagers import MyManager
 
-    from ripozo.viewsets.restmixins import Create
+    from ripozo.resources.restmixins import Create
 
     class MyResource(Create):
-        _resource_name = 'my_resource'
-        _manager = MyManager
+        resource_name = 'my_resource'
+        manager = MyManager()
 
 This would create a endpoint '/my_resource' that if posted
 to would create a resource using the ``MyManager().create``
@@ -41,9 +41,9 @@ They can be mixed and matched as you please.
     from ripozo import ListRelationship, Relationship, restmixins
 
     class MyResourceList(restmixins.CRUDL):
-        _resource_name = 'resource'
-        _manager = MyManager
-        _pks = ('id',)
+        resource_name = 'resource'
+        manager = MyManager()
+        pks = ('id',)
 
 
  Rest Mixins API

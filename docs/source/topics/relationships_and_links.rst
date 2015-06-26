@@ -12,15 +12,15 @@ related and linked resources.
 Example
 """""""
 
-.. code-block:: python
+.. testsetup:: relationship
 
-    from ripozo import apimethod, Relationship, ResourceBase
+    from ripozo import apimethod, Relationship, ResourceBase, RequestContainer
 
 
     class MyResource(ResourceBase):
-        _relationships = {
-            'related_resource': Relationship('related', relation='RelatedResource')
-        }
+        _relationships = (
+            Relationship('related', relation='RelatedResource'),
+        )
 
         @apimethod(methods=['GET'])
         def retrieve(cls, request, *args, **kwargs):
@@ -35,18 +35,17 @@ If we were to call the retrieve method now and inspect the
 properties on the returned instance we would see that it no longer
 contained the 'related' key or it's corresponding value.
 
-.. code-block:: python
+.. doctest:: relationship
 
-    >>> from ripozo import RequestContainer
-    >>> request = RequestContainer({'name': 'Yay!', 'related': {'id': 1}})
+    >>> request = RequestContainer(body_args={'name': 'Yay!', 'related': {'id': 1}})
     >>> res = MyResource.retrieve(request)
     >>> res.properties
     {'name': 'Yay!'}
     >>> resource_tuple = res.related_resources[0]
     >>> print(resource_tuple.name)
-    'related'
+    related
     >>> print(resource_tuple.resource.url)
-    '/api/related/1'
+    /related_resource/1
     >>> print(resource_tuple.resource.properties)
     {'id': 1}
 
