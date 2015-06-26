@@ -11,29 +11,31 @@ The preprocessors and postprocessors lists are the functions that are called bef
 and after the ``apimethod`` decorated function runs.  They are run in the order in which
 they are described in the list.
 
-.. code-block:: python
+.. testsetup:: processors, picky_processors
 
-    def pre1(cls, request):
+    from ripozo import ResourceBase, apimethod, RequestContainer
+
+    def pre1(cls, function_name, request):
         print('In pre1')
 
-    def pre2(cls, request):
+    def pre2(cls, function_name, request):
         print('In pre2')
 
-    def post1(cls, request, resource):
+    def post1(cls, function_name, request, resource):
         print('In post1')
 
     class MyResource(ResourceBase):
-        _preprocessors = [pre1, pre2]
-        _postprocessors = [post1]
+        preprocessors = [pre1, pre2]
+        postprocessors = [post1]
 
         @apimethod(methods=['GET'])
         def say_hello(cls, request):
             print('hello')
             return cls(properties=dict(hello='world'))
 
-.. code-block:: python
+.. doctest:: processors
 
-    >>> MyResource.say_hello(None)
+    >>> res = MyResource.say_hello(RequestContainer())
     In pre1
     In pre2
     hello
@@ -55,12 +57,14 @@ the picky_processor.  The picky_processor allows you
 to pick which methods you or don't want to run the
 pre/postprocessors
 
-.. code-block:: python
+.. testsetup:: picky_processors
+
+    from ripozo import picky_processor
 
     class PickyResource(ResourceBase):
         # only runs for the specified methods
-        _preprocessors = [picky_processor(pre1, include=['say_hello']),
-                          picky_processor(pre2, exclude=['say_hello'])]
+        preprocessors = [picky_processor(pre1, include=['say_hello']),
+                         picky_processor(pre2, exclude=['say_hello'])]
 
         @apimethod(methods=['GET'])
         def say_hello(cls, request):
@@ -72,21 +76,23 @@ pre/postprocessors
             print('goodbye')
             return cls(properties=dict(goodbye='world'))
 
- The picky_processor allows you to pick which
- methods to run the preprocessor by looking at the name
- of the processor.  If it's not in the exclude list or
- in the include list it will be run.  Otherwise
- the preprocessor will be skipped for that method.
+The picky_processor allows you to pick which
+methods to run the preprocessor by looking at the name
+of the processor.  If it's not in the exclude list or
+in the include list it will be run.  Otherwise
+the preprocessor will be skipped for that method.
 
 
-.. code-block:: python
+.. doctest:: picky_processors
 
-    >>> PickyResource.say_hello(req)
+    >>> res = PickyResource.say_hello(RequestContainer())
     In pre1
     hello
-
-    >>> PickyResource.say_goodbye(req)
+    >>> res = PickyResource.say_goodbye(RequestContainer())
     In pre2
     goodbye
+
+Picky Processor
+^^^^^^^^^^^^^^^
 
 .. autofunction:: ripozo.utilities.picky_processor

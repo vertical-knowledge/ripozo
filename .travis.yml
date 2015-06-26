@@ -8,10 +8,8 @@ python:
   - "pypy3"
 install:
   - pip install coveralls
-  - pip install -U ripozo-tests
   - python setup.py -q install
 script:
   - coverage run --source=ripozo setup.py test
-  - sphinx-build -b doctest docs/source docs/build
 after_success:
   coveralls
