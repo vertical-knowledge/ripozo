@@ -55,7 +55,8 @@ setup(
     tests_require=[
         'unittest2',
         'tox',
-        'mock'
+        'mock',
+        'sphinx'
     ],
     test_suite="ripozo_tests"
 )

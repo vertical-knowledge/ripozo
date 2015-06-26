@@ -13,10 +13,9 @@ should be able to be plugged in and out.
 Minimal Application
 -------------------
 
-.. doctest:: *
-    :hide:
+.. testsetup:: default, resourcename
 
-    >>> from ripozo import ResourceBase, apimethod
+    from ripozo import ResourceBase, apimethod
 
 
 .. code-block:: python
@@ -82,15 +81,7 @@ underscore class name, and there are not pks.
     >>> print(MyResource.base_url)
     /my_resource
 
-.. doctest:: resourcename
-    :hide:
-
-    >>> class MyResource(ResourceBase):
-    ...    namespace = '/api'
-    ...    resource_name = 'resource'
-    ...    pks = ('id', 'secondary',)
-
-.. code-block:: python
+.. testsetup:: resourcename
 
     class MyResource(ResourceBase):
         namespace = '/api'
