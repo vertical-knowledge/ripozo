@@ -4,7 +4,7 @@ CHANGELOG
 0.6.2 (unreleased)
 ==================
 
-- Nothing changed yet.
+- Fixed bug in url for the resource instance returned by the RetrieveList mixin.
 
 
 0.6.1 (2015-06-24)

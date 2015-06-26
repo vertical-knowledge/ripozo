@@ -19,7 +19,7 @@ class TestBase(unittest2.TestCase):
 
         class MyClass(self.resource_base):
             manager = MyManager()
-            _pks = ('id',)
+            pks = ('id',)
 
         self.resource_class = MyClass
         self.manager = MyClass.manager
@@ -81,6 +81,11 @@ class TestRetrieveList(TestBase):
 
         for res in resource.properties[resource.resource_name]:
             self.assertIn(res, self.manager.objects.values())
+
+    def test_url(self):
+        req = RequestContainer()
+        resource = self.resource_class.retrieve_list(req)
+        self.assertEqual(resource.url, '/my_class')
 
     def test_filters(self):
         all_models = self.create_resources(count=10)

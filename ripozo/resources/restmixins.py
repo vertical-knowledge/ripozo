@@ -115,7 +115,7 @@ class RetrieveList(ResourceBase):
         return_props = {cls.resource_name: props}
         return_props.update(request.query_args)
         return cls(properties=return_props, meta=meta,
-                   status_code=200, query_args=cls.manager.fields)
+                   status_code=200, query_args=cls.manager.fields, no_pks=True)
 
     @classproperty
     def links(cls):
