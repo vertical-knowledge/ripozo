@@ -8,6 +8,7 @@ python:
   - "pypy3"
 install:
   - pip install coveralls
+  - pip install pylint
   - python setup.py -q install
 script:
   - coverage run --source=ripozo setup.py test
