@@ -82,17 +82,16 @@ class SirenAdapter(AdapterBase):
         :return: A dictionary of action fields
         :rtype: dict
         """
-        fields = []
-        fields_method = getattr(endpoint_func, 'fields', None)
-        if not fields_method:
-            return []
+        return_fields = []
+        fields = getattr(endpoint_func, 'fields', [])
 
-        for field in fields_method(self.resource.manager):
+        for field in fields:
             if field.arg_type is input_categories.URL_PARAMS:
                 continue
-            fields.append(dict(name=field.name, type=field.field_type.__name__,
-                               location=field.arg_type, required=field.required))
-        return fields
+            field_dict = dict(name=field.name, type=field.field_type.__name__,
+                              location=field.arg_type, required=field.required)
+            return_fields.append(field_dict)
+        return return_fields
 
     def generate_links(self):
         """

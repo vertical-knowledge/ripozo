@@ -15,45 +15,6 @@ import unittest2
 
 
 class TestResourceIntegration(unittest2.TestCase):
-    def test_validate_with_manager_field_validators(self):
-        fake_manager = mock.MagicMock()
-        fake_manager.field_validators = [BaseField('first', required=True), BaseField('second', required=False)]
-
-        class TestValidateIntegrations(ResourceBase):
-            manager = fake_manager
-
-            @apimethod(methods=['GET'])
-            @translate(manager_field_validators=True, validate=True)
-            def hello(cls, request, *args, **kwargs):
-                return cls(properties=request.body_args)
-
-        self.help_test_validate_with_manager_field_validators(TestValidateIntegrations)
-
-    def test_validate_with_manager_field_validators_inherited(self):
-        """
-        Same as test_validate_with_manager_field_validators,
-        except that it checks it on an inherited class.  This was
-        done to ensure no regressions in regards to issue #10 on github.
-        """
-        fake_manager = mock.MagicMock()
-        fake_manager.field_validators = [BaseField('first', required=True), BaseField('second', required=False)]
-
-        class TestValidateIntegrationsParent(ResourceBase):
-            manager = fake_manager
-
-            @apimethod(methods=['GET'])
-            @translate(manager_field_validators=True, validate=True)
-            def hello(cls, request, *args, **kwargs):
-                return cls(properties=request.body_args)
-
-        self.help_test_validate_with_manager_field_validators(TestValidateIntegrationsParent)
-
-        class TestValidateIntegrationsInherited(TestValidateIntegrationsParent):
-            _resource_name = 'another'
-            pass
-
-        self.help_test_validate_with_manager_field_validators(TestValidateIntegrationsInherited)
-
     def test_relationships_resource_instance(self):
         """
         Tests whether the relationships are appropriately created.

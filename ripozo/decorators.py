@@ -230,7 +230,7 @@ class translate(object):
         :param bool validate: Indicates whether the validations should
             be run.  If it is False, it will only translate the fields.
         """
-        self.original_fields = fields or []
+        self.fields = fields
         self.manager_field_validators = manager_field_validators
         self.skip_required = skip_required
         self.validate = validate
@@ -256,18 +256,10 @@ class translate(object):
             """
             # TODO This is so terrible.  I really need to fix this.
             from ripozo.resources.fields.base import translate_fields
-            translate_fields(request, self.fields(cls.manager),
+            translate_fields(request, self.fields,
                              skip_required=self.skip_required, validate=self.validate)
             return func(cls, request, *args, **kwargs)
 
         action.__manager_field_validators__ = self.manager_field_validators
         action.fields = self.fields
         return action
-
-    def fields(self, manager):
-        """
-        Gets the fields from the manager if necessary.
-        """
-        if self.manager_field_validators:
-            return self.original_fields + manager.field_validators
-        return self.original_fields

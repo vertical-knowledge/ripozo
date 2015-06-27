@@ -232,7 +232,7 @@ class TestSirenAdapter(TestAdapterBase):
         Tests that url params are not a part of the
         fields returned.
         """
-        fields_method = mock.Mock(return_value=[mock.Mock(arg_type=input_categories.URL_PARAMS)])
+        fields_method = [mock.Mock(arg_type=input_categories.URL_PARAMS)]
         endpoint_func = mock.Mock(fields=fields_method)
         adapter = SirenAdapter(mock.MagicMock())
         fields_found = adapter.generate_fields_for_endpoint_funct(endpoint_func)

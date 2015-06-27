@@ -19,13 +19,12 @@ name_space = '/mynamspace/'
 
 def get_helloworld_viewset():
     class HelloWorldViewset(ResourceBase):
-        _namespace = name_space
-        _manager = MM1
-        _resource_name = 'myresource'
+        namespace = name_space
+        manager = MM1()
+        resource_name = 'myresource'
         _relationships = [
             Relationship('related', property_map={'related': 'id'}, relation='ComplimentaryViewset')
         ]
-        _fields = ['content']
 
         @apimethod(methods=['GET'])
         @translate(fields=[StringField('content')], validate=True)
@@ -36,10 +35,10 @@ def get_helloworld_viewset():
 
 def get_complementary_viewset():
     class ComplimentaryViewset(ResourceBase):
-        _namespace = name_space
-        _manager = MM1
-        _resource_name = 'other_resource'
-        _pks = ['id']
+        namespace = name_space
+        manager = MM1()
+        resource_name = 'other_resource'
+        pks = ['id']
     return ComplimentaryViewset
 
 

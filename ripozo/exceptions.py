@@ -20,17 +20,6 @@ class RestException(Exception):
         self.status_code = status_code
 
 
-class NoResourceNameDeclaredException(RestException):
-    """
-    An exception raised when neither the _resource_name
-    or the _manager attributes are set on a ResourceBase
-    subclass.  When this happens it is impossible for the
-    ResourceBase subclass to determine what to call the
-    resource it is handling
-    """
-    pass
-
-
 class ManagerException(RestException):
     """
     A base exception for when the manager has an exception specific

@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 
 from ripozo.exceptions import RestException, DispatchException, NotFoundException, \
     TranslationException, ValidationException, AdapterFormatAlreadyRegisteredException, FieldException, \
-    ManagerException, NoResourceNameDeclaredException
+    ManagerException
 
 import unittest2
 
@@ -20,7 +20,7 @@ class TestExceptions(unittest2.TestCase):
     exceptions = [RestException, DispatchException,
                   NotFoundException, TranslationException, ValidationException,
                   AdapterFormatAlreadyRegisteredException, FieldException,
-                  ManagerException, NoResourceNameDeclaredException]
+                  ManagerException]
 
     def test_exceptions(self):
         """
