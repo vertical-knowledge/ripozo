@@ -11,9 +11,11 @@ from __future__ import unicode_literals
 from abc import ABCMeta, abstractmethod, abstractproperty
 
 from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
+from ripozo.resources.constructor import ResourceMetaClass
 
 import logging
 import six
+import warnings
 
 _logger = logging.getLogger(__name__)
 
@@ -131,6 +133,7 @@ class DispatcherBase(object):
         :param ripozo.viewsets.resource_base.ResourceBase klass: The
             class whose endpoints must be registered
         """
+        self._check_relationships(klass)
         for endpoint, routes in six.iteritems(klass.endpoint_dictionary()):
             endpoint = '{0}__{1}'.format(klass.__name__, endpoint)
             for options in routes:
@@ -204,3 +207,24 @@ class DispatcherBase(object):
             if mimetype in self.adapter_formats:
                 return self.adapter_formats.get(mimetype)
         return self.default_adapter
+
+    @staticmethod
+    def _check_relationships(klass):
+        """
+        Checks that all relationships are valid in that
+        their relation string is a real class.
+        Raises a warngin if the relation is not
+        valid.
+
+        :param type klass: The klass to check
+        """
+        for rel in klass.relationships:
+            if rel.relation not in ResourceMetaClass.registered_names_map:
+                warnings.warn('The relation property {0} on the '
+                              'relationship {1} for the class '
+                              '{2}'.format(rel.relation, rel.name, klass.__name__))
+        for rel in klass.links:
+            if rel.relation not in ResourceMetaClass.registered_names_map:
+                warnings.warn('The relation property {0} on the '
+                              'link {1} for the class '
+                              '{2}'.format(rel.relation, rel.name, klass.__name__))

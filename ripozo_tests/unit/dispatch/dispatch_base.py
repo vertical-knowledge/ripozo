@@ -22,7 +22,7 @@ class TestDispatchBase(unittest2.TestCase):
     """
     def setUp(self):
         self.dispatcher = FakeDispatcher()
-        self.mockKlass = Mock()
+        self.mockKlass = Mock(relationships=[], links=[])
 
         self.mockKlass.endpoint_dictionary = Mock(return_value=dict(
             first=[dict(route='/first', methods=['GET'])],
@@ -79,7 +79,7 @@ class TestDispatchBase(unittest2.TestCase):
 
     @mock.patch.object(FakeDispatcher, 'register_route')
     def test_register_mutiple_resource_classes(self, mck):
-        mockKlass = Mock()
+        mockKlass = Mock(relationships=[], links=[])
         mockKlass.endpoint_dictionary = Mock(return_value=dict(
             first=[dict(route='/2/first', methods=['GET'])],
             second=[
@@ -125,3 +125,16 @@ class TestDispatchBase(unittest2.TestCase):
         self.assertEqual(adapter, SirenAdapter)
         adapter2 = disp.get_adapter_for_type(['application/hal+json', 'application/vnd.siren+json'])
         self.assertEqual(adapter2, HalAdapter)
+
+    def test_check_relationships(self):
+        """
+        Tests that warnings are raised when
+        related names are not in the ResourceMetaClass
+        """
+        disp = FakeDispatcher()
+        rel = mock.MagicMock(relation='blah')
+        klass = mock.MagicMock(relationships=[rel], links=[], __name__='blah')
+        self.assertRaises(Warning, disp._check_relationships(klass))
+        disp = FakeDispatcher()
+        klass = mock.MagicMock(relationships=[], links=[rel], __name__='blah')
+        self.assertRaises(Warning, disp._check_relationships(klass))

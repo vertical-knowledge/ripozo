@@ -7,6 +7,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import logging
+import warnings
 
 _logger = logging.getLogger(__name__)
 
@@ -58,4 +59,7 @@ class ResourceMetaClass(type):
         :raises: BaseRestEndpointAlreadyExists
         """
         mcs.registered_resource_classes[klass] = klass.base_url
+        if klass.__name__ in mcs.registered_names_map:
+            warnings.warn('A class with the name {0} has already been registered.'
+                          'Overwriting that class'.format(klass.__name__), UserWarning)
         mcs.registered_names_map[klass.__name__] = klass

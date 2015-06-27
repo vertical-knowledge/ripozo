@@ -45,6 +45,11 @@ class TestBaseField(FieldTestBase2, unittest2.TestCase):
         output = f._translate([])
         self.assertIsNone(output)
 
+    def test_translate_list(self):
+        f = BaseField('field')
+        output = f._translate([1, 2])
+        self.assertEqual(output, 1)
+
 
 class TestTranslateFields(unittest2.TestCase):
     """
