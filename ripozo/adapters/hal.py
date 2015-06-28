@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 from ripozo.adapters import AdapterBase
 
 import json
+import six
 
 _CONTENT_TYPE = 'application/hal+json'
 
@@ -91,3 +92,22 @@ class HalAdapter(AdapterBase):
             return relationship.properties
         else:
             return dict(href=relationship.url)
+
+    @classmethod
+    def format_exception(cls, exc):
+        """
+        Takes an exception and appropriately formats
+        the response.  By default it just returns a json dump
+        of the status code and the exception message.
+        Any exception that does not have a status_code attribute
+        will have a status_code of 500.
+
+        :param Exception exc: The exception to format.
+        :return: A tuple containing: response body, format,
+            http response code
+        :rtype: tuple
+        """
+        status_code = getattr(exc, 'status_code', 500)
+        body = json.dumps(dict(status=status_code, message=six.text_type(exc),
+                               _embedded={}, _links={}))
+        return body, cls.formats[0], status_code

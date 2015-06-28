@@ -4,7 +4,6 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import json
-
 import six
 import unittest2
 
@@ -13,6 +12,7 @@ from ripozo.adapters import HalAdapter
 from ripozo.resources.constructor import ResourceMetaClass
 from ripozo.resources.request import RequestContainer
 from ripozo_tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
+from ripozo.exceptions import RestException
 
 
 class TestHalAdapter(unittest2.TestCase):
@@ -144,3 +144,13 @@ class TestHalAdapter(unittest2.TestCase):
         embedded, links = adapter.generate_relationship(relation_list)
         self.assertDictEqual(embedded, {})
         self.assertDictEqual(links, {})
+
+    def test_format_exception(self):
+        exc = RestException('blah blah', status_code=458)
+        json_dump, content_type, status_code = HalAdapter.format_exception(exc)
+        data = json.loads(json_dump)
+        self.assertEqual(HalAdapter.formats[0], content_type)
+        self.assertEqual(status_code, 458)
+        self.assertIn('_embedded', data)
+        self.assertIn('_links', data)
+        self.assertEqual(data['message'], 'blah blah')
