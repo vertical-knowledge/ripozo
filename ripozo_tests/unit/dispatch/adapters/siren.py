@@ -183,7 +183,12 @@ class TestSirenAdapter(TestAdapterBase):
         data = json.loads(json_dump)
         self.assertEqual(SirenAdapter.formats[0], content_type)
         self.assertEqual(status_code, 458)
-        self.assertEqual(data['message'], 'blah blah')
+        self.assertIn('properties', data)
+        self.assertIn('class', data)
+        self.assertIn('actions', data)
+        self.assertIn('links', data)
+        self.assertIn('entities', data)
+        self.assertEqual(data['properties']['message'], 'blah blah')
 
     def test_list_relationship_entity(self):
         """

@@ -4,14 +4,17 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import unittest2
+import json
 
 from ripozo.adapters.base import AdapterBase
 from ripozo.resources.relationships import Relationship, ListRelationship
 from ripozo.resources.resource_base import ResourceBase
+from ripozo.exceptions import RestException
 
 
 class TestAdapter(AdapterBase):
     __abstract__ = True
+    formats = ['blah']
 
     @property
     def formatted_body(self):
@@ -78,3 +81,14 @@ class TestAdapterBase(unittest2.TestCase):
             assert False
         except NotImplementedError:
             assert True
+
+    def test_format_exception(self):
+        """
+        Tests the format_exception class method.
+        """
+        exc = RestException('blah blah', status_code=458)
+        json_dump, content_type, status_code = TestAdapter.format_exception(exc)
+        data = json.loads(json_dump)
+        self.assertEqual(TestAdapter.formats[0], content_type)
+        self.assertEqual(status_code, 458)
+        self.assertEqual(data['message'], 'blah blah')

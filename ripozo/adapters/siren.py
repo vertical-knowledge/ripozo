@@ -24,7 +24,7 @@ class SirenAdapter(AdapterBase):
     A description of a SIREN format can be found here:
     `SIREN specification <https://github.com/kevinswiber/siren>`_
     """
-    formats = ['siren', _CONTENT_TYPE]
+    formats = [_CONTENT_TYPE, 'siren']
     extra_headers = {'Content-Type': _CONTENT_TYPE}
 
     @property
@@ -139,3 +139,21 @@ class SirenAdapter(AdapterBase):
                 ent['properties'] = resource.properties
                 ent['links'] = [dict(rel=['self'], href=resource_url)]
             yield ent
+
+    @classmethod
+    def format_exception(cls, exc):
+        """
+        Takes an exception and appropriately formats it
+        in the siren format.  Mostly.  It doesn't return
+        a self in this circumstance.
+
+        :param Exception exc: The exception to format.
+        :return: A tuple containing: response body, format,
+            http response code
+        :rtype: tuple
+        """
+        status_code = getattr(exc, 'status_code', 500)
+        body = {'class': ['exception', exc.__class__.__name__],
+                'actions': [], 'entities': [], 'links': [],
+                'properties': dict(status=status_code, message=six.text_type(exc))}
+        return json.dumps(body), cls.formats[0], status_code
