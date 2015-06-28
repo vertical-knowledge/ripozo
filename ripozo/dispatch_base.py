@@ -10,6 +10,7 @@ from __future__ import unicode_literals
 
 from abc import ABCMeta, abstractmethod, abstractproperty
 
+from ripozo import ResourceBase, apimethod, Relationship
 from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
 from ripozo.resources.constructor import ResourceMetaClass
 
@@ -228,3 +229,40 @@ class DispatcherBase(object):
                 warnings.warn('The relation property {0} on the '
                               'link {1} for the class '
                               '{2}'.format(rel.relation, rel.name, klass.__name__))
+
+
+# TODO Finish this shit.
+# class _OptionsResource(ResourceBase):
+#     namespace = ''
+#     resource_name = ''
+#     _resource_classes = []
+#     _links = []
+#
+#     @apimethod(methods=['OPTIONS'])
+#     def api_options(cls, request):
+#         """
+#         Gets all of the available resources
+#         and exposes them.
+#
+#         :param RequestContainer request: Ignored.
+#         :return: A resource pointing
+#             to all of the other resources.
+#         :rtype: _OptionsResource
+#         """
+#         raise NotImplementedError
+#
+#     @classmethod
+#     def add_resource(cls, resource_class):
+#         """
+#         Adds a resource to the available resources.
+#
+#         :param ResourceMetaClass resource_class:
+#         """
+#         if resource_class not in cls._resource_classes:
+#             cls._resource_classes.append(resource_class)
+#             rel = Relationship(resource_class.__name__,
+#                                relation=resource_class.__name__, no_pks=True)
+#             cls._links.append(rel)
+#
+#     @staticmethod
+#     def generate_endpoint_dict():
