@@ -14,8 +14,44 @@ from ripozo.resources.resource_base import ResourceBase
 from ripozo.resources.fields.base import translate_fields
 
 import logging
+import six
 
 _logger = logging.getLogger(__name__)
+
+
+class AllOptionsResource(ResourceBase):
+    __abstract__ = True
+    namespace = ''
+    resource_name = ''
+    linked_resource_classes = tuple()
+
+    @apimethod(methods=['OPTIONS'])
+    def all_options(cls, request):
+        linked_resources = {}
+        for klass in cls.linked_resource_classes:
+            linked_resources[klass.resource_name] = {}
+        return cls(meta=dict(links=linked_resources))
+
+    @classproperty
+    def links(cls):
+        _links = []
+        for klass in cls.linked_resource_classes:
+            has_no_pks = False
+            has_pk_endpoint = False
+            for name, all_endpoints in six.iteritems(klass.endpoint_dictionary()):
+                for endpoint in all_endpoints:
+                    if endpoint['no_pks'] is True:
+                        has_no_pks = True
+                    else:
+                        has_pk_endpoint = True
+            if has_no_pks:
+                rel = Relationship('{0}_list'.format(klass.resource_name),
+                                   relation=klass.__name__, no_pks=True)
+                _links.append(rel)
+            if has_pk_endpoint:
+                rel = Relationship(klass.resource_name, relation=klass.__name__, no_pks=False)
+                _links.append(rel)
+        return _links
 
 
 class Create(ResourceBase):
