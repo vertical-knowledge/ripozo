@@ -10,7 +10,6 @@ from __future__ import unicode_literals
 
 from abc import ABCMeta, abstractmethod, abstractproperty
 
-from ripozo import ResourceBase, apimethod, Relationship
 from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
 from ripozo.resources.constructor import ResourceMetaClass
 
