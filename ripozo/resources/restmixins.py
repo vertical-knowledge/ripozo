@@ -9,7 +9,7 @@ from __future__ import unicode_literals
 
 from ripozo.resources.relationships.relationship import Relationship
 from ripozo.resources.relationships.list_relationship import ListRelationship
-from ripozo.decorators import apimethod, classproperty
+from ripozo.decorators import apimethod, classproperty, translate
 from ripozo.resources.resource_base import ResourceBase
 from ripozo.resources.fields.base import translate_fields
 
@@ -26,6 +26,7 @@ class Create(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['POST'], no_pks=True)
+    @translate(manager_field_validators=True, validate=True)
     def create(cls, request):
         """
         Creates a new resource using the cls.manager.create
@@ -39,7 +40,6 @@ class Create(ResourceBase):
         :rtype: Update
         """
         _logger.debug('Creating a resource using manager %s', cls.manager)
-        translate_fields(request, cls.manager.field_validators, validate=True)
         props = cls.manager.create(request.body_args)
         meta = dict(links=dict(created=props))
         return cls(properties=props, meta=meta, status_code=201)
@@ -72,6 +72,7 @@ class Retrieve(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['GET'])
+    @translate(manager_field_validators=True)
     def retrieve(cls, request):
         """
         Retrieves an individual resource.
@@ -84,7 +85,6 @@ class Retrieve(ResourceBase):
         :raises: NotFoundException
         """
         _logger.debug('Retrieving a resource using the manager %s', cls.manager)
-        translate_fields(request, cls.manager.field_validators)
         props = cls.manager.retrieve(request.url_params)
         return cls(properties=props, status_code=200)
 
@@ -100,6 +100,7 @@ class RetrieveList(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['GET'], no_pks=True)
+    @translate(manager_field_validators=True)
     def retrieve_list(cls, request):
         """
         A resource that contains the other resources as properties.
@@ -111,7 +112,6 @@ class RetrieveList(ResourceBase):
         :rtype: RetrieveList
         """
         _logger.debug('Retrieving list of resources using manager %s', cls.manager)
-        translate_fields(request, cls.manager.field_validators, validate=False)
         props, meta = cls.manager.retrieve_list(request.query_args)
         return_props = {cls.resource_name: props}
         return_props.update(request.query_args)
@@ -180,6 +180,7 @@ class Update(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['PATCH'])
+    @translate(manager_field_validators=True, validate=True, skip_required=True)
     def update(cls, request):
         """
         Updates the resource using the manager
@@ -192,8 +193,6 @@ class Update(ResourceBase):
         :rtype: Create
         """
         _logger.debug('Updating a resource using the manager %s', cls.manager)
-        translate_fields(request, cls.manager.field_validators,
-                         skip_required=True, validate=True)
         props = cls.manager.update(request.url_params, request.body_args)
         return cls(properties=props, status_code=200)
 
@@ -205,6 +204,7 @@ class Delete(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['DELETE'])
+    @translate(manager_field_validators=True)
     def delete(cls, request):
         """
 
@@ -215,7 +215,6 @@ class Delete(ResourceBase):
         :rtype: Create
         """
         _logger.debug('Deleting the resource using manager %s ', cls.manager)
-        translate_fields(request, cls.manager.field_validators)
         props = cls.manager.delete(request.url_params)
         return cls(properties=props)
 

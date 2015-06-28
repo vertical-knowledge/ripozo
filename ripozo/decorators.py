@@ -207,7 +207,8 @@ class translate(object):
     an adapter if necessary.
     """
 
-    def __init__(self, fields=None, skip_required=False, validate=False):
+    def __init__(self, fields=None, skip_required=False,
+                 validate=False, manager_field_validators=False):
         """
         Initializes the decorator with the necessary fields.
         the fields should be instances of FieldBase and should
@@ -225,9 +226,10 @@ class translate(object):
         :param bool validate: Indicates whether the validations should
             be run.  If it is False, it will only translate the fields.
         """
-        self.fields = fields
+        self.original_fields = fields or []
         self.skip_required = skip_required
         self.validate = validate
+        self.manager_field_validators = manager_field_validators
         self.cls = None
 
     def __call__(self, func):
@@ -248,10 +250,20 @@ class translate(object):
             """
             Gets and translates/validates the fields.
             """
+            # TODO This is so terrible.  I really need to fix this.
             from ripozo.resources.fields.base import translate_fields
-            translate_fields(request, self.fields,
-                             skip_required=self.skip_required, validate=self.validate)
+            translate_fields(request, self.fields(cls.manager),
+                                skip_required=self.skip_required, validate=self.validate)
             return func(cls, request, *args, **kwargs)
 
+        action.__manager_field_validators__ = self.manager_field_validators
         action.fields = self.fields
         return action
+
+    def fields(self, manager):
+        """
+        Gets the fields from the manager if necessary.
+        """
+        if self.manager_field_validators:
+            return self.original_fields + manager.field_validators
+        return self.original_fields
