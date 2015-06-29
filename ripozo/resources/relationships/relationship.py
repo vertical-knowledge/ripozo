@@ -110,6 +110,14 @@ class Relationship(object):
         return resource
 
     def _should_return_none(self, resource):
+        """
+        Helper method  for construct_resource.
+        :param ResourceBase resource: The resource
+            to evaluate.
+        :return: A boolean indicating whether returning
+            None is valid.
+        :rtype: bool
+        """
         return not resource.has_all_pks and not resource.no_pks and not self.templated
 
     def remove_child_resource_properties(self, properties):

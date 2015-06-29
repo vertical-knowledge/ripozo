@@ -27,6 +27,14 @@ class AllOptionsResource(ResourceBase):
 
     @apimethod(methods=['OPTIONS'])
     def all_options(cls, request):
+        """
+        A resource pointing to all
+        of the resources in the linked_resource_classes.
+
+        :param RequestContainer request: Not used.
+        :return:
+        :rtype: ResourceBase
+        """
         linked_resources = {}
         for klass in cls.linked_resource_classes:
             linked_resources[klass.resource_name] = {}
@@ -34,6 +42,12 @@ class AllOptionsResource(ResourceBase):
 
     @classproperty
     def links(cls):
+        """
+        Generates links to each of the linked_resource_classes.
+
+        :return: A list of links.
+        :rtype: list
+        """
         _links = []
         for klass in cls.linked_resource_classes:
             has_no_pks = False
