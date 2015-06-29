@@ -166,6 +166,7 @@ class DispatcherBase(object):
                              ' with the methods %s on a DispatcherBase '
                              'subclass', endpoint, route, methods)
                 self.register_route(endpoint, route=route, methods=methods, **options)
+        self._check_relationships(klass)
 
     @abstractmethod
     def register_route(self, endpoint, endpoint_func=None, route=None, methods=None, **options):
@@ -244,9 +245,11 @@ class DispatcherBase(object):
             if rel.relation not in ResourceMetaClass.registered_names_map:
                 warnings.warn('The relation property {0} on the '
                               'relationship {1} for the class '
-                              '{2}'.format(rel.relation, rel.name, klass.__name__))
+                              '{2} has not been registered.'
+                              ''.format(rel.relation, rel.name, klass.__name__))
         for rel in klass.links:
             if rel.relation not in ResourceMetaClass.registered_names_map:
                 warnings.warn('The relation property {0} on the '
                               'link {1} for the class '
-                              '{2}'.format(rel.relation, rel.name, klass.__name__))
+                              '{2} has not been registered.'
+                              ''.format(rel.relation, rel.name, klass.__name__))
