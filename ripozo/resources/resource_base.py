@@ -90,7 +90,8 @@ class ResourceBase(object):
     _links = None
 
     def __init__(self, properties=None, errors=None, meta=None, no_pks=False,
-                 status_code=200, query_args=None, include_relationships=True):
+                 status_code=200, query_args=None, include_relationships=True,
+                 route_extension=''):
         """
         Initializes a resource to pass to an adapter typically.
         An ResourceBase instance is supposed to fully represent the
@@ -111,6 +112,9 @@ class ResourceBase(object):
         :param bool include_relationships:  This flag is available to prevent
             infinite loops in resources that each have a relationship to
             the other.
+        :param unicode route_extension: A part of the url to append to
+            the url.  This is helpful in constructing the correct url
+            for apimethods with a route defined.
         """
         self.properties = properties or {}
         self.status_code = status_code
@@ -119,6 +123,7 @@ class ResourceBase(object):
         self.query_args = query_args or {}
         self._url = None
         self.no_pks = no_pks
+        self.route_extension = route_extension
 
         if include_relationships:
             self.related_resources = self._generate_links(self.relationships, self.properties)
@@ -205,7 +210,9 @@ class ResourceBase(object):
         """
         if not self._url:
             base_url = self.base_url_sans_pks if self.no_pks else self.base_url
-            url = create_url(base_url, **self.item_pks)
+            base_url = join_url_parts(base_url, self.route_extension)
+            url = create_url(base_url, **self.item_pks).strip('/')
+            url = '/{0}'.format(url) if not self.append_slash else '/{0}/'.format(url)
             query_string = self.query_string
             if query_string:
                 url = '{0}?{1}'.format(url, query_string)

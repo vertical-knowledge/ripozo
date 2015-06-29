@@ -486,3 +486,25 @@ class TestResourceBase(unittest2.TestCase):
         self.assertEqual(MyResource.base_url, '/api/my_resource/<id>/<pk>')
         self.assertEqual(MyResource.base_url_sans_pks, '/api/my_resource')
 
+    def test_resource_extension(self):
+        """
+        Tests appending an extension to the self
+        route for a resource.
+        """
+        class MyResource(ResourceBase):
+            namespace = '/api'
+            pks = ('id', 'pk',)
+            append_slash = True
+
+        res = MyResource(route_extension='bla')
+        self.assertEqual(res.url, '/api/my_resource/<id>/<pk>/bla/')
+        res = MyResource(route_extension='bla', no_pks=True)
+        self.assertEqual(res.url, '/api/my_resource/bla/')
+
+        class Resource2(MyResource):
+            append_slash = False
+
+        res = Resource2(route_extension='bla')
+        self.assertEqual(res.url, '/api/resource2/<id>/<pk>/bla')
+        res = Resource2(route_extension='bla', no_pks=True)
+        self.assertEqual(res.url, '/api/resource2/bla')
