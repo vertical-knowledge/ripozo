@@ -7,7 +7,7 @@ from mock import Mock, MagicMock
 import mock
 import unittest2
 
-from ripozo.adapters import BoringJSONAdapter, HalAdapter, SirenAdapter
+from ripozo.adapters import BasicJSONAdapter, HalAdapter, SirenAdapter
 from ripozo.dispatch_base import DispatcherBase
 from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
 from ripozo_tests.helpers.dispatcher import FakeDispatcher
@@ -49,7 +49,7 @@ class TestDispatchBase(unittest2.TestCase):
 
     def test_register_adapters(self):
         """Tests whether adapters are properly registered"""
-        adapters = (SirenAdapter, HalAdapter, BoringJSONAdapter,)
+        adapters = (SirenAdapter, HalAdapter, BasicJSONAdapter,)
         self.dispatcher.register_adapters(*adapters)
         self.assertEqual(self.dispatcher.default_adapter, SirenAdapter)
         for adapter in adapters:

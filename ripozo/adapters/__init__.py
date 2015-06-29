@@ -12,4 +12,4 @@ from __future__ import unicode_literals
 from .base import AdapterBase
 from .siren import SirenAdapter
 from .hal import HalAdapter
-from .boring_json import BoringJSONAdapter
+from .basic_json import BasicJSONAdapter
