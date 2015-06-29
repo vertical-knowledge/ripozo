@@ -20,6 +20,11 @@ _logger = logging.getLogger(__name__)
 
 
 class AllOptionsResource(ResourceBase):
+    """
+    This class is not designed to be mixed in
+    with other resources.  Instead it is supposed
+    to be used as a pointer to other resources.
+    """
     __abstract__ = True
     namespace = ''
     resource_name = ''
