@@ -50,6 +50,9 @@ class Relationship(object):
         :param list[str|tuple] query_args: A list of strings that
             should be passed to the query_args parameter for resource
             construction.
+        :param bool templated: If templated is True, then the resource
+            does not need to have all pks.  However, embedded is negated
+            if templated = True to prevent infinite loops.
         """
         self.query_args = query_args or tuple()
         self.property_map = property_map or {}
@@ -102,9 +105,12 @@ class Relationship(object):
             raise RestException('The relationship {0} could not construct a valid {1}'
                                 ' with all of its pks.  Properties'
                                 ' {2}'.format(self.name, self.relation, related_properties))
-        elif not resource: # or (not resource.has_all_pks and not resource.no_pks):
+        elif not resource or self._should_return_none(resource):
             return None
         return resource
+
+    def _should_return_none(self, resource):
+        return not resource.has_all_pks and not resource.no_pks and not self.templated
 
     def remove_child_resource_properties(self, properties):
         """
