@@ -141,7 +141,6 @@ class TestMixins(unittest2.TestCase):
         """
         class Fake(ResourceBase):
             pks = ('id',)
-
             @apimethod()
             def fake(cls, request):
                 return cls()
