@@ -14,7 +14,7 @@ import json
 _CONTENT_TYPE = 'application/json'
 
 
-class BoringJSONAdapter(AdapterBase):
+class BasicJSONAdapter(AdapterBase):
     """
     Just a plain old JSON dump of the properties.
     Nothing exciting.

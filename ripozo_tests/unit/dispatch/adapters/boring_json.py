@@ -15,7 +15,7 @@ from ripozo_tests.helpers.hello_world_viewset import get_refreshed_helloworld_vi
 
 class TestBoringJSONAdapter(unittest2.TestCase):
     """
-    Tests whether the BoringJSONAdapter appropriately creates
+    Tests whether the BasicJSONAdapter appropriately creates
     a response for a resource
     """
     # TODO this definitely needs to be fleshed out.  All of it.

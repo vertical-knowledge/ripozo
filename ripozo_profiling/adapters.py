@@ -51,6 +51,6 @@ class TestRestMixinProfile(unittest2.TestCase):
 
     # @profileit
     # def test_json_adapter_formatted_body(self):
-    #     adapter = BoringJSONAdapter(self.resource)
+    #     adapter = BasicJSONAdapter(self.resource)
     #     for i in range(self.runs):
     #         x = adapter.formatted_body
