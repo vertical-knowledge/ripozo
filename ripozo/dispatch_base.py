@@ -242,14 +242,14 @@ class DispatcherBase(object):
         :param type klass: The klass to check
         """
         for rel in klass.relationships:
-            if rel.relation not in ResourceMetaClass.registered_names_map:
+            if rel._relation not in ResourceMetaClass.registered_names_map:
                 warnings.warn('The relation property {0} on the '
                               'relationship {1} for the class '
                               '{2} has not been registered.'
-                              ''.format(rel.relation, rel.name, klass.__name__))
+                              ''.format(rel._relation, rel.name, klass.__name__))
         for rel in klass.links:
-            if rel.relation not in ResourceMetaClass.registered_names_map:
+            if rel._relation not in ResourceMetaClass.registered_names_map:
                 warnings.warn('The relation property {0} on the '
                               'link {1} for the class '
                               '{2} has not been registered.'
-                              ''.format(rel.relation, rel.name, klass.__name__))
+                              ''.format(rel._relation, rel.name, klass.__name__))
