@@ -7,9 +7,11 @@ from mock import Mock, MagicMock
 import mock
 import unittest2
 
+from ripozo import ResourceBase
 from ripozo.adapters import BasicJSONAdapter, HalAdapter, SirenAdapter
 from ripozo.dispatch_base import DispatcherBase
 from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
+from ripozo.resources.constructor import ResourceMetaClass
 from ripozo_tests.helpers.dispatcher import FakeDispatcher
 
 
@@ -138,3 +140,45 @@ class TestDispatchBase(unittest2.TestCase):
         disp = FakeDispatcher()
         klass = mock.MagicMock(relationships=[], links=[rel], __name__='blah')
         self.assertRaises(Warning, disp._check_relationships(klass))
+
+    def test_auto_options(self):
+        """
+        Tests the auto_options flag.
+        """
+        disp = FakeDispatcher(auto_options=False)
+        self.assertEqual(len(disp.routes), 0)
+        disp = FakeDispatcher(auto_options=True)
+        self.assertEqual(len(disp.routes), 1)
+        endpoint_dict = disp.routes['AutoOptionsResource__all_options'][0]
+        self.assertEqual(endpoint_dict['route'], '/')
+        self.assertListEqual(endpoint_dict['methods'], ['OPTIONS'])
+        self.assertEqual(len(disp.auto_options_class.linked_resource_classes), 0)
+
+    def test_auto_options_with_registered_classes(self):
+        """
+        Tests that the auto_options_class
+        appropriately adds linked resources.
+        :return:
+        :rtype:
+        """
+        disp = FakeDispatcher(auto_options=True)
+
+        class MyResource(ResourceBase):
+            pass
+
+        disp.register_resources(MyResource)
+        self.assertEqual(len(disp.auto_options_class.linked_resource_classes), 1)
+        disp.register_resources(MyResource)
+        self.assertEqual(len(disp.auto_options_class.linked_resource_classes), 1)
+
+    def test_auto_options_name(self):
+        """
+        Tests that the name of the resource is
+        whatever the auto_options_name is.
+        """
+        name = 'sdfasdfhgws'
+        disp = FakeDispatcher(auto_options=True, auto_options_name=name)
+        self.assertIn(name, ResourceMetaClass.registered_names_map)
+        cls = disp.auto_options_class
+        self.assertIn(cls, ResourceMetaClass.registered_resource_classes)
+        self.assertEqual(cls.__name__, name)
