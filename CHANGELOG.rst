@@ -1,8 +1,8 @@
 CHANGELOG
 =========
 
-0.6.2 (unreleased)
-==================
+1.0.0b1 (2015-06-29)
+====================
 
 - Fixed bug in url for the resource instance returned by the RetrieveList mixin.
 - manager_field_validators attribute in @translate decorator removed.  It's now expected that you explicitly call translate_fields in your method if you wish to translate fields in an inheritable class apimethod
