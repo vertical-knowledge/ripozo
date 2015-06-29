@@ -3,8 +3,10 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from ripozo import ResourceBase, apimethod, RequestContainer
 from ripozo.resources.constructor import ResourceMetaClass
-from ripozo.resources.restmixins import Create, Retrieve, Update, Delete, RetrieveRetrieveList
+from ripozo.resources.restmixins import Create, Retrieve, Update, \
+    Delete, RetrieveRetrieveList, AllOptionsResource
 
 import mock
 import unittest2
@@ -91,3 +93,76 @@ class TestMixins(unittest2.TestCase):
         # self.assertEqual(request.translate.call_count, 1)
         self.assertEqual(manager2.delete.call_count, 1)
         self.assertIsInstance(response, T1)
+
+    def test_all_options_links_no_pks(self):
+        """
+        Tests getting the links for a class with
+        only no_pks apimethods
+        """
+        class Fake(ResourceBase):
+            @apimethod(no_pks=True)
+            def fake(cls, request):
+                return cls()
+
+        class MyResource(AllOptionsResource):
+            linked_resource_classes = (Fake,)
+
+        links = MyResource.links
+        self.assertEqual(len(links), 1)
+        link = links[0]
+        self.assertEqual(link.relation, Fake)
+        self.assertEqual(link.name, 'fake_list')
+        self.assertTrue(link.no_pks)
+
+    def test_all_options_links_with_pks(self):
+        """
+        Tests getting the links for a class with
+        only no_pks apimethods
+        """
+        class Fake(ResourceBase):
+            @apimethod()
+            def fake(cls, request):
+                return cls()
+
+        class MyResource(AllOptionsResource):
+            linked_resource_classes = (Fake,)
+
+        links = MyResource.links
+        self.assertEqual(len(links), 1)
+        link = links[0]
+        self.assertEqual(link.relation, Fake)
+        self.assertEqual(link.name, 'fake')
+        self.assertFalse(link.no_pks)
+
+    def test_all_options(self):
+        """
+        Tests calling the all_options route
+        and constructing all of the links.
+        """
+        class Fake(ResourceBase):
+            pks = ('id',)
+            @apimethod()
+            def fake(cls, request):
+                return cls()
+
+            @apimethod(no_pks=True)
+            def fake2(cls, request):
+                return cls()
+
+        class MyResource(AllOptionsResource):
+            linked_resource_classes = (Fake,)
+
+        options = MyResource.all_options(RequestContainer())
+        self.assertEqual(len(options.linked_resources), 2)
+        found_fake = False
+        found_fake_list = False
+        for l in options.linked_resources:
+            rel = l.resource
+            if l.name == 'fake':
+                self.assertEqual(rel.url, '/fake/<id>')
+                found_fake = True
+            if l.name == 'fake_list':
+                self.assertEqual(rel.url, '/fake')
+                found_fake_list = True
+        self.assertTrue(found_fake)
+        self.assertTrue(found_fake_list)

@@ -8,6 +8,7 @@ CHANGELOG
 - manager_field_validators attribute in @translate decorator removed.  It's now expected that you explicitly call translate_fields in your method if you wish to translate fields in an inheritable class apimethod
 - Warnings raised when a class registered with a dispatcher has a relationship/link with a relation that does not exist in the ResourceMetaClass registry.
 - renamed BoringJSONAdapter to BasicJSONAdapter
+- Templated relationships now available.
 
 
 0.6.1 (2015-06-24)

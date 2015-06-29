@@ -8,8 +8,8 @@ from ripozo.dispatch_base import DispatcherBase
 
 class FakeDispatcher(DispatcherBase):
     def __init__(self, *args, **kwargs):
-        super(FakeDispatcher, self).__init__(*args, **kwargs)
         self.routes = {}
+        super(FakeDispatcher, self).__init__(*args, **kwargs)
 
     def register_route(self, endpoint, **options):
         super(FakeDispatcher, self).register_route(endpoint, **options)

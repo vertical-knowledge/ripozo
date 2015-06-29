@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 from ripozo.decorators import translate, apimethod
 from ripozo.exceptions import ValidationException
 from ripozo.resources.fields import BaseField
-from ripozo.resources.relationships import ListRelationship
+from ripozo.resources.relationships import ListRelationship, Relationship
 from ripozo.resources.request import RequestContainer
 from ripozo.resources.resource_base import ResourceBase
 
@@ -98,3 +98,16 @@ class TestResourceIntegration(unittest2.TestCase):
         request3 = RequestContainer(body_args=dict(first=[1]))
         response = klass.hello(request3)
         self.assertDictEqual(dict(first=1), response.properties)
+
+    def test_self_referential_templated(self):
+        """
+        Tests a self referential templated link.
+        """
+        class MyResource(ResourceBase):
+            pks = ('id',)
+            _links = (Relationship('my_resource', relation='MyResource',
+                                   templated=True, embedded=True),)
+
+        res = MyResource()
+        self.assertEqual(len(res.linked_resources), 1)
+        self.assertEqual(res.linked_resources[0].resource.url, '/my_resource/<id>')

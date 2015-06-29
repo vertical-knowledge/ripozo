@@ -10,9 +10,9 @@ from __future__ import unicode_literals
 
 from abc import ABCMeta, abstractmethod, abstractproperty
 
-from ripozo import ResourceBase, apimethod, Relationship
 from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
 from ripozo.resources.constructor import ResourceMetaClass
+from ripozo.resources.restmixins import AllOptionsResource
 
 import logging
 import six
@@ -36,6 +36,23 @@ class DispatcherBase(object):
     """
     _adapter_formats = None
     _default_adapter = None
+
+    def __init__(self, auto_options=True, auto_options_name='AutoOptionsResource'):
+        """
+
+        :param bool auto_options: Automatically builds out an
+            options endpoint on the base url that points
+            to all other resources.
+        :param unicode auto_options_name: The name of the auto
+            options resource class.  Available in cases of
+            multiple dispatchers.
+        """
+        self.auto_options = auto_options
+        if self.auto_options:
+            cls = ResourceMetaClass(str(auto_options_name), (AllOptionsResource,),
+                                    dict(linked_resource_classes=[]))
+            self.auto_options_class = cls
+            self.register_resources(self.auto_options_class)
 
     @property
     def adapter_formats(self):
@@ -134,6 +151,10 @@ class DispatcherBase(object):
         :param ripozo.viewsets.resource_base.ResourceBase klass: The
             class whose endpoints must be registered
         """
+        if self.auto_options \
+                and klass not in self.auto_options_class.linked_resource_classes\
+                and klass is not self.auto_options_class:
+            self.auto_options_class.linked_resource_classes.append(klass)
         self._check_relationships(klass)
         for endpoint, routes in six.iteritems(klass.endpoint_dictionary()):
             endpoint = '{0}__{1}'.format(klass.__name__, endpoint)
