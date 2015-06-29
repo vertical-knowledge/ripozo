@@ -111,7 +111,7 @@ class TestMixins(unittest2.TestCase):
         self.assertEqual(len(links), 1)
         link = links[0]
         self.assertEqual(link.relation, Fake)
-        self.assertEqual(link.name, 'fake')
+        self.assertEqual(link.name, 'fake_list')
         self.assertTrue(link.no_pks)
 
     def test_all_options_links_with_pks(self):
@@ -140,6 +140,8 @@ class TestMixins(unittest2.TestCase):
         and constructing all of the links.
         """
         class Fake(ResourceBase):
+            pks = ('id',)
+
             @apimethod()
             def fake(cls, request):
                 return cls()
@@ -152,4 +154,16 @@ class TestMixins(unittest2.TestCase):
             linked_resource_classes = (Fake,)
 
         options = MyResource.all_options(RequestContainer())
-        assert False
+        self.assertEqual(len(options.linked_resources), 2)
+        found_fake = False
+        found_fake_list = False
+        for l in options.linked_resources:
+            rel = l.resource
+            if l.name == 'fake':
+                self.assertEqual(rel.url, '/fake/<id>')
+                found_fake = True
+            if l.name == 'fake_list':
+                self.assertEqual(rel.url, '/fake')
+                found_fake_list = True
+        self.assertTrue(found_fake)
+        self.assertTrue(found_fake_list)

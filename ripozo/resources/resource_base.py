@@ -165,6 +165,8 @@ class ResourceBase(object):
             the ``self.properties`` attribute.
         :rtype: bool
         """
+        if self.no_pks:
+            return True
         for primary_key in self.pks:
             if primary_key not in self.properties:
                 return False
@@ -223,7 +225,8 @@ class ResourceBase(object):
         pks = self.pks or []
         pk_dict = {}
         for primary_key in pks:
-            pk_dict[primary_key] = self.properties.get(primary_key, None)
+            if primary_key in self.properties:
+                pk_dict[primary_key] = self.properties[primary_key]
         return pk_dict
 
     @classproperty

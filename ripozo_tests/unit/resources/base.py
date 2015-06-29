@@ -248,6 +248,8 @@ class TestResourceBase(unittest2.TestCase):
         self.assertFalse(res.has_all_pks)
         res = MyResource(properties=dict(id=1, pk=2))
         self.assertTrue(res.has_all_pks)
+        res = MyResource(no_pks=True)
+        self.assertTrue(res.has_all_pks)
 
     def test_links_property(self):
         """

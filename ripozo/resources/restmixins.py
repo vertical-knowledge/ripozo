@@ -46,10 +46,12 @@ class AllOptionsResource(ResourceBase):
                         has_pk_endpoint = True
             if has_no_pks:
                 rel = Relationship('{0}_list'.format(klass.resource_name),
-                                   relation=klass.__name__, no_pks=True)
+                                   relation=klass.__name__, no_pks=True,
+                                   templated=True)
                 _links.append(rel)
             if has_pk_endpoint:
-                rel = Relationship(klass.resource_name, relation=klass.__name__, no_pks=False)
+                rel = Relationship(klass.resource_name, relation=klass.__name__,
+                                   no_pks=False, templated=True)
                 _links.append(rel)
         return _links
 
