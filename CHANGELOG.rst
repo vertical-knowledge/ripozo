@@ -9,6 +9,7 @@ CHANGELOG
 - Warnings raised when a class registered with a dispatcher has a relationship/link with a relation that does not exist in the ResourceMetaClass registry.
 - renamed BoringJSONAdapter to BasicJSONAdapter
 - Templated relationships now available.
+- Route extensions available on ResourceBase instances.  This allows a user to append part of a url to a resource base so that the .url property renders properly.  This is helpful when route is defined on an apimethod.
 
 
 0.6.1 (2015-06-24)
