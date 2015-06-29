@@ -12,6 +12,5 @@ install:
   - python setup.py -q install
 script:
   - coverage run --source=ripozo setup.py test
-  - pylint ripozo --errors-only
 after_success:
   coveralls

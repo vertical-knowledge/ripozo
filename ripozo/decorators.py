@@ -253,7 +253,7 @@ class translate(object):
             # TODO This is so terrible.  I really need to fix this.
             from ripozo.resources.fields.base import translate_fields
             translate_fields(request, self.fields(cls.manager),
-                                skip_required=self.skip_required, validate=self.validate)
+                             skip_required=self.skip_required, validate=self.validate)
             return func(cls, request, *args, **kwargs)
 
         action.__manager_field_validators__ = self.manager_field_validators
