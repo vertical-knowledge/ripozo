@@ -43,23 +43,27 @@ class TestManager(unittest2.TestCase):
         """
         return self._manager.objects[person_id]
 
-    @mock.patch.object(InMemoryManager, 'get_field_type')
-    def test_field_validators(self, mck):
+    def test_field_validators(self):
         """
         Test the field_validators class property
 
         :param mock.MagicMock mck:
         """
-        self.assertIsNone(InMemoryManager._field_validators)
-        self.assertListEqual(InMemoryManager.field_validators, [])
+        class MyManager(InMemoryManager):
+            get_field_type = mock.MagicMock()
+            pass
+        self.assertIsNone(MyManager._field_validators)
+        self.assertListEqual(MyManager.field_validators, [])
 
-        fields = [1, 2, 3]
-        InMemoryManager.fields = fields
+        class MyManager(MyManager):
+            fields = [1, 2, 3]
 
-        mck_list = InMemoryManager.field_validators
+        fields = MyManager.fields
+
+        mck_list = MyManager.field_validators
         self.assertIsInstance(mck_list, list)
-        self.assertEqual(mck.call_count, len(fields))
-        args = list((x[0][0] for x in mck.call_args_list))
+        self.assertEqual(MyManager.get_field_type.call_count, len(fields))
+        args = list((x[0][0] for x in MyManager.get_field_type.call_args_list))
         self.assertListEqual(args, fields)
 
     def test_list_fields_property(self):

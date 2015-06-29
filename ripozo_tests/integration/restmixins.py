@@ -58,6 +58,16 @@ class TestCreate(TestBase):
         self.assertIsInstance(created.resource, self.resource_class)
         self.assertEqual(created.resource.properties, resource.properties)
 
+    def test_create_manager_fields(self):
+        """
+        Tests that the manager fields
+        are available
+        """
+        fields = self.resource_class.create.fields(self.manager)
+        for field in fields:
+            self.assertIn(field.name, self.manager.fields)
+        self.assertEqual(len(fields), len(self.manager.fields))
+
 
 class TestRetrieve(TestBase):
     resource_base = restmixins.Retrieve
@@ -133,6 +143,16 @@ class TestRetrieveList(TestBase):
         self.assertIn(self.manager.pagination_count_query_arg, prev_resource.get_query_arg_dict())
         self.assertIn(self.manager.pagination_pk_query_arg, prev_resource.get_query_arg_dict())
 
+    def test_retrieve_list_manager_fields(self):
+        """
+        Tests that the manager fields
+        are available
+        """
+        fields = self.resource_class.retrieve_list.fields(self.resource_class.manager)
+        for field in fields:
+            self.assertIn(field.name, self.manager.fields)
+        self.assertEqual(len(fields), len(self.manager.fields))
+
 
 class TestRetrieveRetrieveList(TestRetrieve, TestRetrieveList):
     resource_base = restmixins.RetrieveRetrieveList
@@ -172,6 +192,16 @@ class TestUpdate(TestBase):
             else:
                 self.assertEqual(v, 2)
 
+    def test_update_manager_fields(self):
+        """
+        Tests that the manager fields
+        are available
+        """
+        fields = self.resource_class.update.fields(self.resource_class.manager)
+        for field in fields:
+            self.assertIn(field.name, self.manager.fields)
+        self.assertEqual(len(fields), len(self.manager.fields))
+
 
 class TestDelete(TestBase):
     resource_base = restmixins.Delete
@@ -184,6 +214,16 @@ class TestDelete(TestBase):
         resource = self.resource_class.delete(req)
         self.assertDictEqual(resource.properties, {})
         self.assertNotIn(id_, self.manager.objects)
+
+    def test_delete_manager_fields(self):
+        """
+        Tests that the manager fields
+        are available
+        """
+        fields = self.resource_class.delete.fields(self.resource_class.manager)
+        for field in fields:
+            self.assertIn(field.name, self.manager.fields)
+        self.assertEqual(len(fields), len(self.manager.fields))
 
 
 class TestRetrieveUpdate(TestRetrieve, TestUpdate):
