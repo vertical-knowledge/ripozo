@@ -47,9 +47,6 @@ Looking for the `ripozo for flask/SQLAlchemy tutorial <http://ripozo-sqlalchemy.
 
 Or maybe you would prefer to read over the `django-ripozo tutorial <http://django-ripozo.readthedocs.org/en/latest/tutorial/setup.html>`_
 
-**NOTE:**
-ripozo is in a beta stage until version 1.0.0.
-
 Installation
 ------------
 
@@ -191,8 +188,8 @@ basic CRUD+L.
 Versioning
 ==========
 
-Until version 1.0.0 ripozo is an unstable state and the version follows `sentimental
-versioning <http://sentimentalversioning.org/>`_.  After that the versioning will follow
+Prior to version 1.0.0 ripozo versioning follows `sentimental
+versioning <http://sentimentalversioning.org/>`_.   Releases after 1.0.0 ollow
 a standard *major.minor.patch* style.
 
 - patch: forwards and backwards compatible
