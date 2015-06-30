@@ -71,4 +71,8 @@ class BasicJSONAdapter(AdapterBase):
         for resource, name, embedded in relationships:
             if name not in rel_dict:
                 rel_dict[name] = []
+            if isinstance(resource, (list, tuple)):
+                for res in resource:
+                    rel_dict[name].append(res.properties)
+                continue
             rel_dict[name].append(resource.properties)
