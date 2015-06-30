@@ -23,10 +23,9 @@ ripozo
         :target: https://pypi.python.org/pypi/ripozo/
         :alt: PyPI downloads
 
-..
-    .. image:: https://pypip.in/py_versions/ripozo/badge.svg?style=flat
-        :target: https://pypi.python.org/pypi/ripozo/
-        :alt: python versions
+.. image:: https://img.shields.io/pypi/dm/ripozo.svg?style=flat
+    :target: https://pypi.python.org/pypi/ripozo/
+    :alt: python versions
 
 A pluggable tool for quickly and efficiently creating web apis.
 In the modern day, your server is no longer just interacting
