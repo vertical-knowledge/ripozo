@@ -12,7 +12,7 @@ related and linked resources.
 Example
 """""""
 
-.. testsetup:: relationship
+.. testcode:: relationship
 
     from ripozo import apimethod, Relationship, ResourceBase, RequestContainer
 

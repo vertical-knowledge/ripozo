@@ -11,7 +11,7 @@ The preprocessors and postprocessors lists are the functions that are called bef
 and after the ``apimethod`` decorated function runs.  They are run in the order in which
 they are described in the list.
 
-.. testsetup:: processors, picky_processors
+.. testcode:: processors, picky_processors
 
     from ripozo import ResourceBase, apimethod, RequestContainer
 
@@ -57,7 +57,7 @@ the picky_processor.  The picky_processor allows you
 to pick which methods you or don't want to run the
 pre/postprocessors
 
-.. testsetup:: picky_processors
+.. testcode:: picky_processors
 
     from ripozo import picky_processor
 

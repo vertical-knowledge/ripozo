@@ -13,7 +13,7 @@ should be able to be plugged in and out.
 Minimal Application
 -------------------
 
-.. testsetup:: default, resourcename
+.. testcode:: default, resourcename
 
     from ripozo import ResourceBase, apimethod
 
@@ -81,7 +81,7 @@ underscore class name, and there are not pks.
     >>> print(MyResource.base_url)
     /my_resource
 
-.. testsetup:: resourcename
+.. testcode:: resourcename
 
     class MyResource(ResourceBase):
         namespace = '/api'

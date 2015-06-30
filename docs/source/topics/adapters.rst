@@ -64,7 +64,7 @@ Built in adapters
 .. autoclass:: ripozo.adapters.hal.HalAdapter
     :members:
 
-.. autoclass:: ripozo.adapters.boring_json.BasicJSONAdapter
+.. autoclass:: ripozo.adapters.basic_json.BasicJSONAdapter
     :members:
 
 Base Adapter

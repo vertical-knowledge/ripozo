@@ -4,7 +4,7 @@ Resource Examples
 URL construction
 ^^^^^^^^^^^^^^^^
 
-.. testsetup:: basic_url
+.. testcode:: basic_url
 
     from ripozo import ResourceBase
 
@@ -23,7 +23,7 @@ URL construction
 URL construction 2
 ^^^^^^^^^^^^^^^^^^
 
-.. testsetup:: url2
+.. testcode:: url2
 
     from ripozo import ResourceBase
 
@@ -44,7 +44,7 @@ URL construction 2
 Minimal Request
 ^^^^^^^^^^^^^^^
 
-.. testsetup:: minimal
+.. testcode:: minimal
 
     from ripozo import RequestContainer, ResourceBase, apimethod
 
@@ -71,7 +71,7 @@ Minimal Request
 Using Fields
 ^^^^^^^^^^^^
 
-.. testsetup:: fields
+.. testcode:: fields
 
     from ripozo import apimethod, translate, fields, ResourceBase
 
@@ -100,7 +100,7 @@ Using Fields
 Relationships
 ^^^^^^^^^^^^^
 
-.. testsetup:: relationship
+.. testcode:: relationship
 
     from ripozo import apimethod, translate, fields, ResourceBase, Relationship
 
