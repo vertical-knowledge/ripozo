@@ -43,7 +43,7 @@ efficiently.
 
 `full ripozo documentation <https://ripozo.readthedocs.org/>`_
 
-Looking for the `ripozo for flask/SQLAlchemy tutorial <http://ripozo-sqlalchemy.readthedocs.org/en/latest/examples/basic_example.html>`_?
+Looking for the `ripozo for flask/SQLAlchemy tutorial <http://flask-ripozo.readthedocs.org/en/latest/flask_tutorial.html>`_?
 
 Or maybe you would prefer to read over the `django-ripozo tutorial <http://django-ripozo.readthedocs.org/en/latest/tutorial/setup.html>`_
 
