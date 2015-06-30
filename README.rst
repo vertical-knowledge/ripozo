@@ -48,11 +48,11 @@ Looking for the `ripozo for flask/SQLAlchemy tutorial <http://flask-ripozo.readt
 Or maybe you would prefer to read over the `django-ripozo tutorial <http://django-ripozo.readthedocs.org/en/latest/tutorial/setup.html>`_
 
 Why ripozo?
-^^^^^^^^^^^
+-----------
 
-* Strong support for HATEOAS/Hypermedia
-* Flexible (can be used with any web framework, database, or response protocol)
-* Fast development (especially when using the extensions, such as flask-ripozo or django-ripozo)
+- Strong support for HATEOAS/Hypermedia
+- Flexible (can be used with any web framework, database, or response protocol)
+- Fast development (especially when using the extensions, such as flask-ripozo or django-ripozo)
 
 Installation
 ------------
