@@ -91,6 +91,7 @@ and Cassandra (via cqlengine).
 - `ripozo-sqlalchemy <https://github.com/vertical-knowledge/ripozo-sqlalchemy>`_
 - `ripozo-cassandra <https://github.com/vertical-knowledge/ripozo-cassandra>`_
 
+Built an extension for ripozo? Let us know and we'll add it in here!
 
 Philosophy
 ----------
