@@ -29,7 +29,9 @@ ripozo
     
     
     
-.. image:: https://ghbtns.com/github-btn.html?user=vertical-knowledge&repo=ripozo&type=star&count=true    
+.. image:: https://img.shields.io/github/stars/vertical-knowledge/ripozo.svg?style=flat
+    :target: https://github.com/vertical-knowledge/ripozo/
+    :alt: stars
 
 A pluggable tool for quickly and efficiently creating web apis.
 In the modern day, your server is no longer just interacting
