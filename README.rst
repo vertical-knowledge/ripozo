@@ -26,6 +26,10 @@ ripozo
 .. image:: https://img.shields.io/pypi/dm/ripozo.svg?style=flat
     :target: https://pypi.python.org/pypi/ripozo/
     :alt: python versions
+    
+    
+    
+.. image:: https://ghbtns.com/github-btn.html?user=vertical-knowledge&repo=ripozo&type=star&count=true    
 
 A pluggable tool for quickly and efficiently creating web apis.
 In the modern day, your server is no longer just interacting
