@@ -85,6 +85,10 @@ Installation
 Example
 -------
 
+You'll need to create a dispatcher using one of the dispatchers included
+in the framework extensions.  You can find a list of framework extensions in
+`The ripozo ecosystem`_ section.  If it's not there you can always roll out your own.
+
 .. code-block:: python
 
     from ripozo import apimethod, adapters, ResourceBase
@@ -104,7 +108,7 @@ And just like that, you have an api that can return either Siren or Hal
 formatted responses.  Pretty easy, right?
 
 Versioning
-==========
+----------
 
 Prior to version 1.0.0 ripozo versioning follows `sentimental
 versioning <http://sentimentalversioning.org/>`_.   Releases after 1.0.0 ollow
@@ -115,7 +119,7 @@ a standard *major.minor.patch* style.
 - major: No guarantees
 
 Contributing
-============
+------------
 
 Want to help out? We'd love it! Github will be the hub of development for ripozo.
 If you have any issues, comments, or complaints post them there.  Additionally, we
