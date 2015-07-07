@@ -33,13 +33,13 @@ ripozo
     :target: https://github.com/vertical-knowledge/ripozo/
     :alt: stars
 
-A pluggable tool for quickly and efficiently creating web apis.
-In the modern day, your server is no longer just interacting
-with a web browser.  Instead it's interfacing with desktop and mobile 
-web browsers, multiple native applications, and maybe even being exposed
-as an API to other developers.  Ripozo is designed to solve this problem.
-It allows you to easily build Hypermedia/HATEOAS/REST APIs quickly and 
-efficiently.
+
+ripozo is a tool for building RESTful/HATEOAS/Hypermedia apis.  It provides
+strong, simple, and fully qualified linking between resources, the ability to expose
+available actions and necessary parameters on a resource, and exposing
+multiple REST protocols (i.e. SIREN and HAL).  Finally, ripozo is highly extensible.
+It is able to integrate with any web framework or database and you can easily roll out
+your own REST protocols.
 
 Full documentation
 ------------------
