@@ -41,13 +41,20 @@ multiple REST protocols (i.e. SIREN and HAL).  Finally, ripozo is highly extensi
 It is able to integrate with any web framework or database and you can easily roll out
 your own REST protocols.
 
-Full documentation
-------------------
+Why to use ripozo:
+
+- Strong support for inter-resource linking (HATEOAS/Hypermedia)
+- Flexible (can be used with any web framework, database, or response protocol)
+- Fast development (especially when using the extensions, such as flask-ripozo or django-ripozo)
+- Ability to expose actions on resource from the web api (self-discoverability)
+
+Documentation
+-------------
 
 `ripozo documentation <https://ripozo.readthedocs.org/>`_
 
 The ripozo ecosystem
---------------------
+^^^^^^^^^^^^^^^^^^^^
 
 Currently, ripozo has integrations with Django, Flask, SQLAlchemy,
 and Cassandra (via cqlengine).  The documentation links are provided
@@ -63,17 +70,10 @@ below.
 Built an extension for ripozo? Let us know and we'll add it in here!
 
 Helpful links
--------------
+^^^^^^^^^^^^^
 
 - `flask-ripozo/ripozo-sqlalchemy tutorial <http://flask-ripozo.readthedocs.org/en/latest/flask_tutorial.html>`_
 - `django-ripozo tutorial <http://django-ripozo.readthedocs.org/en/latest/tutorial/setup.html>`_
-
-Why ripozo?
------------
-
-- Strong support for HATEOAS/Hypermedia
-- Flexible (can be used with any web framework, database, or response protocol)
-- Fast development (especially when using the extensions, such as flask-ripozo or django-ripozo)
 
 Installation
 ------------
@@ -130,10 +130,10 @@ documentation).  We do have just a few requests:
 * There should be at least one unit test for each function and method
 * Keep your pull requests to one issue. (Preferably open an issue on github first for record keeping)
 
-.. _`ripozo-cassandra: <https://github.com/vertical-knowledge/ripozo-cassandra>`_
+.. _ripozo-cassandra: <https://github.com/vertical-knowledge/ripozo-cassandra
 
-.. _`ripozo-sqlalchemy: <https://github.com/vertical-knowledge/ripozo-sqlalchemy>`_
+.. _ripozo-sqlalchemy: <https://github.com/vertical-knowledge/ripozo-sqlalchemy>
 
-.. _`django-ripozo: <https://github.com/vertical-knowledge/django-ripozo>`_
+.. _django-ripozo: <https://github.com/vertical-knowledge/django-ripozo>
 
-.. _`flask-ripozo: <https://github.com/vertical-knowledge/flask-ripozo>`_
+.. _flask-ripozo: <https://github.com/vertical-knowledge/flask-ripozo>
