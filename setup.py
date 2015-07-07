@@ -52,10 +52,12 @@ setup(
             'sphinx'
         ]
     },
+    keywords='REST HATEOAS Hypermedia RESTful SIREN HAL API web framework',
     tests_require=[
         'unittest2',
         'tox',
         'mock',
     ],
-    test_suite="ripozo_tests"
+    test_suite="ripozo_tests",
+    url='http://ripozo.readthedocs.org/'
 )
