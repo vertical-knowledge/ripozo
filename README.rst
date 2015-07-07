@@ -41,7 +41,7 @@ as an API to other developers.  Ripozo is designed to solve this problem.
 It allows you to easily build Hypermedia/HATEOAS/REST APIs quickly and 
 efficiently.
 
-Full Documentation
+Full documentation
 ------------------
 
 `ripozo documentation <https://ripozo.readthedocs.org/>`_
@@ -53,19 +53,20 @@ Currently, ripozo has integrations with Django, Flask, SQLAlchemy,
 and Cassandra (via cqlengine).  The documentation links are provided
 below.
 
-============== ==================
-  Frameworks     Databases
-============== ==================
-flask-ripozo_  ripozo-sqlalchemy_
-django-ripozo_ ripozo-cassandra_
-============== ==================
+======================================================================= ================================================================================
+                          Frameworks                                                                     Databases
+======================================================================= ================================================================================
+`flask-ripozo <https://github.com/vertical-knowledge/flask-ripozo>`_     `ripozo-sqlalchemy <https://github.com/vertical-knowledge/ripozo-sqlalchemy>`_
+`django-ripozo <https://github.com/vertical-knowledge/django-ripozo>`_   `ripozo-cassandra <https://github.com/vertical-knowledge/ripozo-cassandra>`_
+======================================================================= ================================================================================
 
-Additionally, we have the following set of helpful links
+Built an extension for ripozo? Let us know and we'll add it in here!
+
+Helpful links
+-------------
 
 - `flask-ripozo/ripozo-sqlalchemy tutorial <http://flask-ripozo.readthedocs.org/en/latest/flask_tutorial.html>`_
 - `django-ripozo tutorial <http://django-ripozo.readthedocs.org/en/latest/tutorial/setup.html>`_
-
-Built an extension for ripozo? Let us know and we'll add it in here!
 
 Why ripozo?
 -----------
@@ -125,10 +126,10 @@ documentation).  We do have just a few requests:
 * There should be at least one unit test for each function and method
 * Keep your pull requests to one issue. (Preferably open an issue on github first for record keeping)
 
-.. _ripozo-cassandra: <https://github.com/vertical-knowledge/ripozo-cassandra>
+.. _`ripozo-cassandra: <https://github.com/vertical-knowledge/ripozo-cassandra>`_
 
-.. _ripozo-sqlalchemy: <https://github.com/vertical-knowledge/ripozo-sqlalchemy>
+.. _`ripozo-sqlalchemy: <https://github.com/vertical-knowledge/ripozo-sqlalchemy>`_
 
-.. _django-ripozo: <https://github.com/vertical-knowledge/django-ripozo>
+.. _`django-ripozo: <https://github.com/vertical-knowledge/django-ripozo>`_
 
-.. _flask-ripozo: <https://github.com/vertical-knowledge/flask-ripozo>
+.. _`flask-ripozo: <https://github.com/vertical-knowledge/flask-ripozo>`_
