@@ -107,6 +107,33 @@ in the framework extensions.  You can find a list of framework extensions in
 And just like that, you have an api that can return either Siren or Hal
 formatted responses.  Pretty easy, right?
 
+On the other hand, if you wanted a full CRUD+L (Create, Retrieve, Update, Delete, and List),
+you could use one of the manager extensions (django-ripozo, ripozo-sqlalchemy, and ripozo-cassandra all
+include readt to use base managers). There are slight differences
+on creating Manager classes and instances in the different extensions but at a core they all follow this
+format.
+
+.. code-block:: python
+
+    from ripozo import restmixins
+    from fake_ripozo_extension import MyManager
+    from myapp.models import MyModel # An ORM model for example a sqlalchemy or Django model.
+
+    class MyManager(MyManager):
+        fields = ('id', 'field1', 'field2',)
+        model = MyModel
+
+    class MyResource(restmixins.CRUDL):
+        manager = MyManager()
+        pks = ('id',)
+
+    # Create your dispatcher and register the resource...
+
+It is important to not that there are restmixins for each of
+the individual CRUD+L (i.e. restmixins.Create, restmixins.Retrieve, etc.)
+actions that can be mixed and matched to your pleasure.
+
+
 Versioning
 ----------
 
