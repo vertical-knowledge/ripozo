@@ -115,7 +115,7 @@ Full CRUD+L
 
 On the other hand, if you wanted a full CRUD+L (Create, Retrieve, Update, Delete, and List),
 you could use one of the manager extensions (django-ripozo, ripozo-sqlalchemy, and ripozo-cassandra all
-include readt to use base managers). There are slight differences
+include ready to use base managers). There are slight differences
 on creating Manager classes and instances in the different extensions but at a core they all follow this
 format.
 
