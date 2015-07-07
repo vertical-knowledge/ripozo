@@ -82,12 +82,15 @@ Installation
 
     pip install ripozo
 
-Example
--------
+Examples
+--------
 
 You'll need to create a dispatcher using one of the dispatchers included
 in the framework extensions.  You can find a list of framework extensions in
 `The ripozo ecosystem`_ section.  If it's not there you can always roll out your own.
+
+Minimal
+^^^^^^^
 
 .. code-block:: python
 
@@ -106,6 +109,9 @@ in the framework extensions.  You can find a list of framework extensions in
 
 And just like that, you have an api that can return either Siren or Hal
 formatted responses.  Pretty easy, right?
+
+Full CRUD+L
+^^^^^^^^^^^
 
 On the other hand, if you wanted a full CRUD+L (Create, Retrieve, Update, Delete, and List),
 you could use one of the manager extensions (django-ripozo, ripozo-sqlalchemy, and ripozo-cassandra all
