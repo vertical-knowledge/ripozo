@@ -11,12 +11,12 @@ Contents:
 .. toctree::
     :maxdepth: 2
 
-    topics/index
-    examples
+    topics/index.rst
+    examples/index.rst
+    philosophy.rst
+    changelog.rst
 
 .. include:: ../../README.rst
-
-.. include:: ../../CHANGELOG.rst
 
 
 

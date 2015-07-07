@@ -1,5 +1,5 @@
-ripozo Topics
-===============
+Topics
+======
 
 Contents:
 

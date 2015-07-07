@@ -1,5 +1,8 @@
-CHANGELOG
-=========
+Changelog
+`````````
+
+1.x Releases
+~~~~~~~~~~~~
 
 1.0.1 (unreleased)
 ==================
@@ -12,6 +15,8 @@ CHANGELOG
 
 - Nothing changed yet.
 
+0.x Releases
+~~~~~~~~~~~~
 
 1.0.0b1 (2015-06-29)
 ====================
