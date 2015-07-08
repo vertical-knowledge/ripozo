@@ -51,7 +51,7 @@ Why to use ripozo:
 Documentation
 -------------
 
-`ripozo documentation <https://ripozo.readthedocs.org/>`_
+`ripozo documentation <http://ripozo.org>`_
 
 The ripozo ecosystem
 ^^^^^^^^^^^^^^^^^^^^
