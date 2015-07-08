@@ -13,7 +13,7 @@ should be able to be plugged in and out.
 Minimal Application
 -------------------
 
-.. testcode:: default, resourcename
+.. testcode:: default, resourcename, urlextension, baseurl
 
     from ripozo import ResourceBase, apimethod
 
@@ -97,12 +97,107 @@ If you take a MyResource instance and get the ``url`` property on
 it, you will receive a valid url rather than just a template.  It will take
 the properties that match the pks and plug them into the ``base_url`` template.
 
-
 .. doctest:: resourcename
 
     >>> resource = MyResource(properties=dict(id=3233, secondary='something'))
     >>> print(resource.url)
     /api/resource/3233/something
+
+Cookbook
+^^^^^^^^
+
+Individual endpoint url extension
+"""""""""""""""""""""""""""""""""
+
+In this case we want all but on of the urls
+to construct urls in the normal manner.  But we have
+one endpoint that should have an extra path attribute.
+
+For example all but one should be ```/resource/<id>```
+but one should be ```/resource/<id>/extension/<pk>```
+
+.. testcode:: urlextension
+
+    class MyResource(ResourceBase):
+        resource_name = 'resource'
+        pks = ('id',)
+
+        @apimethod()
+        def first(cls, request):
+            # Do something
+            return cls(properties=request.url_params)
+
+        @apimethod()
+        def second(cls, request):
+            # Do something else
+            return cls(properties=request.url_params)
+
+        # We need to add the wanted
+        @apimethod(route='extension/<pk>')
+        def extension_route(cls, request):
+            # We'll also need to add the route extension explicitly
+            # to the returned instance if we want to the resource's url to
+            # correctly get constructed.
+            pk = request.get('pk')
+            return cls(properties=request.url_params, route_extension='extension/{0}'.format(pk))
+
+If we inspect the endpoint dictionary we can see the following.
+
+.. doctest:: urlextension
+
+    >>> print(MyResource.base_url)
+    /resource/<id>
+    >>> endpoint_dictionary = MyResource.endpoint_dictionary()
+    >>> print(endpoint_dictionary['first'][0]['route'])
+    /resource/<id>/
+    >>> print(endpoint_dictionary['extension_route'][0]['route'])
+    /resource/<id>/extension/<pk>
+
+Also, we can see that making requests will properly return
+
+.. doctest:: urlextension
+
+    >>> from ripozo import RequestContainer
+    >>> req = RequestContainer(url_params=dict(id=1, pk=2))
+    >>> res = MyResource.first(req)
+    >>> print(res.url)
+    /resource/1
+    >>> extended_req = RequestContainer(url_params=dict(id=1, pk=2))
+    >>> extended = MyResource.extension_route(extended_req)
+    >>> print(extended.url)
+    /resource/1/extension/2
+
+Common base url
+^^^^^^^^^^^^^^^
+
+At some point you'll probably want to group individual
+resources under a common base path.  For example, you
+may want all of your resources to be grouped under a common
+```'/api'``` resource path.
+
+In most cases, you should be able to pass a base_url parameter
+to the constructor of a dispathcher.  It will automatically
+prepend the ```'/api'``` to the routes.
+
+.. code-block:: python
+
+    import MyDispatcher
+
+    dispatcher = MyDispatcher(base_url='/api')
+    dispatcher.register_resources(MyResource, MyOtherResource)
+
+In other cases this may be impractical.  In that case we can take
+advantage of the namespace attribute.
+
+.. testcode:: baseurl
+
+    class MyResource(ResourceBase):
+        namespace = '/api'
+
+.. doctest:: baseurl
+
+    >>> print(MyResource.base_url)
+    /api/my_resource
 
 
 ResourceBase API
