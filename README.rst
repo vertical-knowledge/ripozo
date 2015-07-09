@@ -36,6 +36,8 @@ ripozo
 .. image:: ./logos/ripozo-logo.png
     :target: http://ripozo.org
     :alt: ripozo logo
+    :scale: 50%
+    :align: center
 
 
 ripozo is a tool for building RESTful/HATEOAS/Hypermedia apis.  It provides
