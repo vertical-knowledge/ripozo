@@ -1,6 +1,10 @@
 ripozo
 ======
 
+.. image:: ./logos/ripozo-logo.png
+    :target: http://ripozo.org
+    :alt:
+
 .. image:: https://travis-ci.org/vertical-knowledge/ripozo.svg?branch=master&style=flat
     :target: https://travis-ci.org/vertical-knowledge/ripozos
     :alt: test status
@@ -34,53 +38,19 @@ ripozo
     :alt: stars
 
 
-ripozo is a tool for building RESTful/HATEOAS/Hypermedia apis.  It provides
+Ripozo is a tool for building RESTful/HATEOAS/Hypermedia apis.  It provides
 strong, simple, and fully qualified linking between resources, the ability to expose
 available actions and necessary parameters on a resource, and exposing
 multiple REST protocols (i.e. SIREN and HAL).  Finally, ripozo is highly extensible.
 It is able to integrate with any web framework or database and you can easily roll out
 your own REST protocols.
 
-Why to use ripozo:
+Why use ripozo?
 
 - Strong support for inter-resource linking (HATEOAS/Hypermedia)
 - Flexible (can be used with any web framework, database, or response protocol)
 - Fast development (especially when using the extensions, such as flask-ripozo or django-ripozo)
 - Ability to expose actions on resource from the web api (self-discoverability)
-
-Documentation
--------------
-
-`ripozo documentation <http://ripozo.org>`_
-
-The ripozo ecosystem
-^^^^^^^^^^^^^^^^^^^^
-
-Currently, ripozo has integrations with Django, Flask, SQLAlchemy,
-and Cassandra (via cqlengine).  The documentation links are provided
-below.
-
-======================================================================= ================================================================================
-                          Frameworks                                                                     Databases
-======================================================================= ================================================================================
-`flask-ripozo <https://github.com/vertical-knowledge/flask-ripozo>`_     `ripozo-sqlalchemy <https://github.com/vertical-knowledge/ripozo-sqlalchemy>`_
-`django-ripozo <https://github.com/vertical-knowledge/django-ripozo>`_   `ripozo-cassandra <https://github.com/vertical-knowledge/ripozo-cassandra>`_
-======================================================================= ================================================================================
-
-Built an extension for ripozo? Let us know and we'll add it in here!
-
-Helpful links
-^^^^^^^^^^^^^
-
-- `flask-ripozo/ripozo-sqlalchemy tutorial <http://flask-ripozo.readthedocs.org/en/latest/flask_tutorial.html>`_
-- `django-ripozo tutorial <http://django-ripozo.readthedocs.org/en/latest/tutorial/setup.html>`_
-
-Installation
-------------
-
-.. code-block:: bash
-
-    pip install ripozo
 
 Examples
 --------
@@ -122,10 +92,10 @@ format.
 .. code-block:: python
 
     from ripozo import restmixins
-    from fake_ripozo_extension import MyManager
+    from fake_ripozo_extension import Manager
     from myapp.models import MyModel # An ORM model for example a sqlalchemy or Django model.
 
-    class MyManager(MyManager):
+    class MyManager(Manager):
         fields = ('id', 'field1', 'field2',)
         model = MyModel
 
@@ -138,6 +108,63 @@ format.
 It is important to not that there are restmixins for each of
 the individual CRUD+L (i.e. restmixins.Create, restmixins.Retrieve, etc.)
 actions that can be mixed and matched to your pleasure.
+
+Links
+^^^^^
+
+The coolest part of ripozo is the ability to easily create fully qualified links between
+resources.
+
+.. code-block:: python
+
+    from ripozo import restmixins, Relationship
+
+    class MyResource(restmixins.CRUDL):
+        manager = MyManager()
+        pks = ('id',)
+        _relationships = [Relationship('related', relation='RelatedResource')]
+
+    class RelatedResource(restmixins.CRUDL)
+        manager = RelatedManager()
+        pks = ('id',)
+
+Now whenever you request MyResource you'll get a link pointing to
+the related resource.
+
+
+Documentation
+-------------
+
+`ripozo documentation <http://ripozo.org>`_
+
+The ripozo ecosystem
+^^^^^^^^^^^^^^^^^^^^
+
+Currently, ripozo has integrations with Django, Flask, SQLAlchemy,
+and Cassandra (via cqlengine).  The documentation links are provided
+below.
+
+======================================================================= ================================================================================
+                          Frameworks                                                                     Databases
+======================================================================= ================================================================================
+`flask-ripozo <https://github.com/vertical-knowledge/flask-ripozo>`_     `ripozo-sqlalchemy <https://github.com/vertical-knowledge/ripozo-sqlalchemy>`_
+`django-ripozo <https://github.com/vertical-knowledge/django-ripozo>`_   `ripozo-cassandra <https://github.com/vertical-knowledge/ripozo-cassandra>`_
+======================================================================= ================================================================================
+
+Built an extension for ripozo? Let us know and we'll add it in here!
+
+Helpful links
+^^^^^^^^^^^^^
+
+- `flask-ripozo/ripozo-sqlalchemy tutorial <http://flask-ripozo.readthedocs.org/en/latest/flask_tutorial.html>`_
+- `django-ripozo tutorial <http://django-ripozo.readthedocs.org/en/latest/tutorial/setup.html>`_
+
+Installation
+------------
+
+.. code-block:: bash
+
+    pip install ripozo
 
 
 Versioning
