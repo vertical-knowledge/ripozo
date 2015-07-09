@@ -1,6 +1,13 @@
 ripozo
 ======
 
+
+.. ifconfig:: hide_logo in ('haslogo')
+
+    .. image:: ./logos/ripozo-logo.png
+        :target: http://ripozo.org
+        :alt: ripozo logo
+
 .. image:: https://travis-ci.org/vertical-knowledge/ripozo.svg?branch=master&style=flat
     :target: https://travis-ci.org/vertical-knowledge/ripozos
     :alt: test status
@@ -32,11 +39,6 @@ ripozo
 .. image:: https://img.shields.io/github/stars/vertical-knowledge/ripozo.svg?style=flat
     :target: https://github.com/vertical-knowledge/ripozo/
     :alt: stars
-
-.. image:: ./logos/ripozo-logo.png
-    :target: http://ripozo.org
-    :alt: ripozo logo
-
 
 ripozo is a tool for building RESTful/HATEOAS/Hypermedia apis.  It provides
 strong, simple, and fully qualified linking between resources, the ability to expose

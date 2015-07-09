@@ -6,6 +6,10 @@
 Welcome to ripozo's documentation!
 ==================================
 
+.. image:: ./_static/ripozo-logo.png
+    :target: http://ripozo.org
+    :alt: ripozo logo
+
 Contents:
 
 .. toctree::
@@ -15,6 +19,8 @@ Contents:
     examples/index.rst
     philosophy.rst
     changelog.rst
+
+
 
 .. include:: ../../README.rst
 
