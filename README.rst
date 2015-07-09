@@ -1,12 +1,9 @@
 ripozo
 ======
 
-
-.. ifconfig:: hide_logo in ('haslogo')
-
-    .. image:: ./logos/ripozo-logo.png
-        :target: http://ripozo.org
-        :alt: ripozo logo
+.. image:: ./logos/ripozo-logo.png
+    :target: http://ripozo.org
+    :alt: 
 
 .. image:: https://travis-ci.org/vertical-knowledge/ripozo.svg?branch=master&style=flat
     :target: https://travis-ci.org/vertical-knowledge/ripozos
