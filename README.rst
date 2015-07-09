@@ -33,7 +33,7 @@ ripozo
     :target: https://github.com/vertical-knowledge/ripozo/
     :alt: stars
 
-.. image:: ./ripozo-logo.png
+.. image:: ./logos/ripozo-logo.png
     :target: http://ripozo.org
     :alt: ripozo logo
 
