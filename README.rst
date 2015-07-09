@@ -3,7 +3,7 @@ ripozo
 
 .. image:: ./logos/ripozo-logo.png
     :target: http://ripozo.org
-    :alt: 
+    :alt:
 
 .. image:: https://travis-ci.org/vertical-knowledge/ripozo.svg?branch=master&style=flat
     :target: https://travis-ci.org/vertical-knowledge/ripozos
@@ -45,7 +45,7 @@ multiple REST protocols (i.e. SIREN and HAL).  Finally, ripozo is highly extensi
 It is able to integrate with any web framework or database and you can easily roll out
 your own REST protocols.
 
-Why to use ripozo:
+Why use ripozo?
 
 - Strong support for inter-resource linking (HATEOAS/Hypermedia)
 - Flexible (can be used with any web framework, database, or response protocol)
