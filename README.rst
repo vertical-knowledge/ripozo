@@ -38,7 +38,7 @@ ripozo
     :alt: stars
 
 
-ripozo is a tool for building RESTful/HATEOAS/Hypermedia apis.  It provides
+Ripozo is a tool for building RESTful/HATEOAS/Hypermedia apis.  It provides
 strong, simple, and fully qualified linking between resources, the ability to expose
 available actions and necessary parameters on a resource, and exposing
 multiple REST protocols (i.e. SIREN and HAL).  Finally, ripozo is highly extensible.
