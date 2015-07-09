@@ -33,6 +33,10 @@ ripozo
     :target: https://github.com/vertical-knowledge/ripozo/
     :alt: stars
 
+.. image:: ./ripozo-logo.png
+    :target: http://ripozo.org
+    :alt: ripozo logo
+
 
 ripozo is a tool for building RESTful/HATEOAS/Hypermedia apis.  It provides
 strong, simple, and fully qualified linking between resources, the ability to expose
