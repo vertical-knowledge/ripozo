@@ -13,9 +13,9 @@ ripozo
     :target: https://coveralls.io/r/vertical-knowledge/ripozo?branch=master
     :alt: test coverage
 
-.. image:: https://readthedocs.org/projects/ripozo/badge/?version=latest&style=flat
-    :target: https://ripozo.readthedocs.org/
-    :alt: documentation status
+.. image:: https://readthedocs.org/projects/ripozo/badge/?version=latest
+    :target: https://readthedocs.org/projects/ripozo/?badge=latest
+    :alt: Documentation Status
 
 ..
     .. image:: https://pypip.in/version/ripozo/badge.svg?style=flat
