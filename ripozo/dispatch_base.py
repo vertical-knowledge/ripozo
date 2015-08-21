@@ -185,7 +185,7 @@ class DispatcherBase(object):
         """
         pass
 
-    def dispatch(self, endpoint_func, accepted_mimetypes, *args, **kwargs):
+    def dispatch(self, endpoint_func, accepted_mimetypes, request, *args, **kwargs):
         """
         A helper to dispatch the endpoint_func, get the ResourceBase
         subclass instance, get the appropriate AdapterBase subclass
@@ -196,6 +196,7 @@ class DispatcherBase(object):
         :param list accepted_mimetypes: The mime types accepted by
             the client.  If none of the mimetypes provided are
             available the default adapter will be used.
+        :param RequestContainer request: The request object
         :param list args: a list of args that wll be passed
             to the endpoint_func
         :param dict kwargs: a dictionary of keyword args to
@@ -206,8 +207,9 @@ class DispatcherBase(object):
         """
         _logger.info('Dispatching request to endpoint function: %s with args:'
                      ' %s and kwargs:%s', endpoint_func, args, kwargs)
-        result = endpoint_func(*args, **kwargs)
         adapter_class = self.get_adapter_for_type(accepted_mimetypes)
+        request = adapter_class.format_request(request)
+        result = endpoint_func(request, *args, **kwargs)
         _logger.info('Using adapter %s to format response for format'
                      ' type %s', adapter_class, accepted_mimetypes)
         adapter = adapter_class(result, base_url=self.base_url)

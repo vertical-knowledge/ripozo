@@ -160,3 +160,8 @@ class SirenAdapter(AdapterBase):
                 'actions': [], 'entities': [], 'links': [],
                 'properties': dict(status=status_code, message=six.text_type(exc))}
         return json.dumps(body), cls.formats[0], status_code
+
+    @classmethod
+    def format_request(cls, request):
+        """Does nothing with request, simply return request"""
+        return request

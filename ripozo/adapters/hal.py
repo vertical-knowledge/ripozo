@@ -111,3 +111,8 @@ class HalAdapter(AdapterBase):
         body = json.dumps(dict(status=status_code, message=six.text_type(exc),
                                _embedded={}, _links={}))
         return body, cls.formats[0], status_code
+
+    @classmethod
+    def format_request(cls, request):
+        """Does nothing with request, simply returns it"""
+        return request
