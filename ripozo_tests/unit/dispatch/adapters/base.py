@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 import unittest2
 import json
 
+from ripozo import RequestContainer
 from ripozo.adapters.base import AdapterBase
 from ripozo.resources.relationships import Relationship, ListRelationship
 from ripozo.resources.resource_base import ResourceBase
@@ -92,3 +93,9 @@ class TestAdapterBase(unittest2.TestCase):
         self.assertEqual(TestAdapter.formats[0], content_type)
         self.assertEqual(status_code, 458)
         self.assertEqual(data['message'], 'blah blah')
+
+    def test_format_request(self):
+        """Dumb test for format_request"""
+        request = RequestContainer()
+        response = TestAdapter.format_request(request)
+        self.assertIs(response, request)

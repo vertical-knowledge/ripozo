@@ -9,6 +9,7 @@ import six
 import unittest2
 
 from ripozo.adapters import BasicJSONAdapter
+from ripozo.exceptions import RestException
 from ripozo.resources.request import RequestContainer
 from ripozo_tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
 
@@ -41,3 +42,20 @@ class TestBoringJSONAdapter(unittest2.TestCase):
     def test_content_header(self):
         adapter = BasicJSONAdapter(None)
         self.assertEqual(adapter.extra_headers, {'Content-Type': 'application/json'})
+
+    def test_format_exception(self):
+        """
+        Tests the format_exception class method.
+        """
+        exc = RestException('blah blah', status_code=458)
+        json_dump, content_type, status_code = BasicJSONAdapter.format_exception(exc)
+        data = json.loads(json_dump)
+        self.assertEqual(BasicJSONAdapter.formats[0], content_type)
+        self.assertEqual(status_code, 458)
+        self.assertEqual(data['message'], 'blah blah')
+
+    def test_format_request(self):
+        """Dumb test for format_request"""
+        request = RequestContainer()
+        response = BasicJSONAdapter.format_request(request)
+        self.assertIs(response, request)
