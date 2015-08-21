@@ -62,7 +62,8 @@ class BasicJSONAdapter(AdapterBase):
     def _append_relationships_to_list(rel_dict, relationships):
         """
         Dumps the relationship resources provided into
-        a json ready list of dictionaries.
+        a json ready list of dictionaries.  Side effect
+        of updating the dictionary with the relationships
 
         :param dict rel_dict:
         :param list relationships:

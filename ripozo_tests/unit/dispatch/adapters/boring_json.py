@@ -8,6 +8,7 @@ import json
 import six
 import unittest2
 
+from ripozo import ResourceBase
 from ripozo.adapters import BasicJSONAdapter
 from ripozo.exceptions import RestException
 from ripozo.resources.request import RequestContainer
@@ -59,3 +60,29 @@ class TestBoringJSONAdapter(unittest2.TestCase):
         request = RequestContainer()
         response = BasicJSONAdapter.format_request(request)
         self.assertIs(response, request)
+
+    def test_append_relationships_to_list_list_relationship(self):
+        """
+        Tests whether the relationships are appropriately
+        added to the response
+        """
+        class MyResource(ResourceBase):
+            pass
+
+        relationship_list = [MyResource(properties=dict(id=1)), MyResource(properties=dict(id=2))]
+        relationships = [(relationship_list, 'name', True)]
+        rel_dict = {}
+        BasicJSONAdapter._append_relationships_to_list(rel_dict, relationships)
+        self.assertDictEqual(dict(name=[dict(id=1), dict(id=2)]), rel_dict)
+
+    def test_append_relationships_to_list_single_relationship(self):
+        """
+        Ensures that a Relationship (not ListRelationship) is properly added
+        """
+        class MyResource(ResourceBase):
+            pass
+
+        relationships = [(MyResource(properties=dict(id=1)), 'name', True)]
+        rel_dict = {}
+        BasicJSONAdapter._append_relationships_to_list(rel_dict, relationships)
+        self.assertDictEqual(dict(name=[dict(id=1)]), rel_dict)
