@@ -114,5 +114,10 @@ class HalAdapter(AdapterBase):
 
     @classmethod
     def format_request(cls, request):
-        """Does nothing with request, simply returns it"""
+        """
+        Simply returns request
+
+        :param RequestContainer request: The request to handler
+        :rtype: RequestContainer
+        """
         return request
