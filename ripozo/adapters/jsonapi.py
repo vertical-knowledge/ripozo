@@ -1,0 +1,134 @@
+"""
+Contains the adapter for the
+`JSON API <http://jsonapi.org/format/>`_.
+"""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
+import json
+
+import six
+
+from ripozo import ResourceBase
+from ripozo.adapters.base import AdapterBase
+from ripozo.utilities import join_url_parts
+
+_CONTENT_TYPE = 'application/vnd.api+json'
+
+
+class JSONAPIAdapter(AdapterBase):
+    """
+    An adapter for formatting and ResourceBase
+    instance in an appropriate format.  See the
+    `specification <http://jsonapi.org/format/>`_
+    for more details on what format it will return.
+    """
+    formats = [_CONTENT_TYPE]
+    extra_headers = {'Content-Type': _CONTENT_TYPE}
+
+    @property
+    def formatted_body(self):
+        data = self._construct_data(self.resource, embedded=True)
+        return json.dumps(dict(data=data))
+
+    def _construct_id(self, resource):
+        """
+        Constructs a JSON API compatible id.
+        May not work particularly well for composite ids since
+        apparently JSON API hates them.
+
+        :param ResourceBase resource: The resource whose
+            id needs to be constructed.
+        :return: The id in a format `<pk1>/<pk2>`
+        :rtype: unicode
+        """
+        pks = resource.item_pks
+        id_parts = [resource.item_pks[pk] for pk in pks]
+        id_ = join_url_parts(id_parts).strip('/')
+        return id_
+
+    def _construct_data(self, resource, embedded=True):
+        """
+        Constructs a resource object according to this
+        `part of the specification <http://jsonapi.org/format/#document-resource-objects>`_
+
+        :param ResourceBase resource: The resource to format
+        :param bool embedded: A flag to indicate whether
+            all of the data should be included.
+        :return: A dictionary representing the resource
+            according to the specification
+        :rtype: dict
+        """
+        # TODO implement embedded
+        id_ = self._construct_id(resource)
+        data = dict(id=id_, type=resource.resource_name)
+        if embedded:
+            data['relationships'] = self._construct_relationships(resource)
+            data['links'] = self._construct_links(resource)
+            data['attributes'] = resource.properties
+        else:
+            data['links'] = {'self': resource.url}
+        return data
+
+    def _construct_links(self, resource):
+        """
+        Constructs the links object according
+        to `this section <http://jsonapi.org/format/#document-links>`_
+
+        :param ResourceBase resource: The links from this resource
+            instance will be used to construct the links object.
+        :return: A dictionary representing the links object
+        :rtype: dict
+        """
+        self_url = self.combine_base_url_with_resource_url(resource.url)
+        links = {'self': self_url}
+        for link, name, embedded in resource.linked_resources:
+            links[name] = link.url
+        return links
+
+    def _construct_relationships(self, resource):
+        # TODO docs
+        relationships = dict()
+        for resource, name, embedded in resource.related_resources:
+            if name not in relationships:
+                relationships[name] = dict(data=[])
+            data = relationships[name]['data']
+            if isinstance(resource, ResourceBase):
+                data.append(self._construct_data(resource, embedded=embedded))
+            else:
+                for res in resource:
+                    data.append(self._construct_data(res, embedded=embedded))
+        return relationships
+
+    @classmethod
+    def format_exception(cls, exc):
+        """
+        Responsible for formatting the exception according to the
+        `error formatting specification <http://jsonapi.org/format/#errors>`_
+
+        :param Exception exc: The exception to format
+        :return: The response body, content type and status code
+            as a tuple in that order.
+        :rtype: unicode, unicode, int
+        """
+        status_code = getattr(exc, 'status_code', 500)
+        error = dict(
+            status=getattr(exc, 'status_code', 500),
+            title=exc.__class__.__name__,
+            detail=six.text_type(exc)
+        )
+        body = json.dumps(dict(errors=[error]))
+        return body, _CONTENT_TYPE, status_code
+
+    @classmethod
+    def format_request(cls, request):
+        """
+
+        :param RequestContainer request:
+        :return:
+        :rtype: RequestContainer
+        """
+        request.body = request.body['data']['relationships']
+        return request
