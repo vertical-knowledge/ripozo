@@ -8,6 +8,9 @@ Changelog
 ==================
 
 - Bug fix for BasicJSONAdapter.
+- Base adapter got a format_request method that must be called by the dispatcher.  This allows the adapter to appropriately reformat the request into a ripozo acceptable format.
+- Warnings raised in base adapter's format_request and format_exception since these must be implemented by the adapter in version 2.0.0
+- All adapters explicitly override format_exception and format_request
 
 
 1.0.0 (2015-06-30)
