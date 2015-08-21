@@ -7,6 +7,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from abc import ABCMeta, abstractproperty
+from warnings import warn
 
 from ripozo.utilities import join_url_parts
 
@@ -97,9 +98,29 @@ class AdapterBase(object):
             http response code
         :rtype: tuple
         """
+        warn('format_exception will be an abstract method in release 2.0.0. '
+             'You will need to implement this method in your adapter.', DeprecationWarning)
         status_code = getattr(exc, 'status_code', 500)
         body = json.dumps(dict(status=status_code, message=six.text_type(exc)))
         return body, cls.formats[0], status_code
+
+    @classmethod
+    def format_request(cls, request):
+        """
+        Takes a request and appropriately reformats
+        the request.  For example, jsonAPI requires a
+        specific request format that must be transformed
+        to work with ripozo.  For this base implementation
+        it simply returns the request without any additional
+        formating.
+
+        :param RequestContainer request: The request to reformat.
+        :return: The formatted request.
+        :rtype: RequestContainer
+        """
+        warn('format_request will be an abstractmethod in release 2.0. '
+             'You will need to implement this method in your adapter', DeprecationWarning)
+        return request
 
     @property
     def status_code(self):

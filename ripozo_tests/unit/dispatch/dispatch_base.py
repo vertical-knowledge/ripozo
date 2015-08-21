@@ -40,14 +40,13 @@ class TestDispatchBase(unittest2.TestCase):
 
     def test_dispatch(self):
         endpoint_func = MagicMock()
-        self.assertRaises(TypeError, self.dispatcher.dispatch, endpoint_func, 'fake')
-        self.assertEqual(endpoint_func.call_count, 1)
+        request = mock.MagicMock()
         adapter = MagicMock()
         adapter.formats = ['fake']
         self.dispatcher.register_adapters(adapter)
-        self.dispatcher.dispatch(endpoint_func, 'fake')
+        self.dispatcher.dispatch(endpoint_func, 'fake', request)
         self.assertEqual(adapter.call_count, 1)
-        self.assertEqual(endpoint_func.call_count, 2)
+        self.assertEqual(endpoint_func.call_count, 1)
 
     def test_register_adapters(self):
         """Tests whether adapters are properly registered"""

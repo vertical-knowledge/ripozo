@@ -10,6 +10,7 @@ from __future__ import unicode_literals
 from ripozo.adapters import AdapterBase
 
 import json
+import six
 
 _CONTENT_TYPE = 'application/json'
 
@@ -61,7 +62,8 @@ class BasicJSONAdapter(AdapterBase):
     def _append_relationships_to_list(rel_dict, relationships):
         """
         Dumps the relationship resources provided into
-        a json ready list of dictionaries.
+        a json ready list of dictionaries.  Side effect
+        of updating the dictionary with the relationships
 
         :param dict rel_dict:
         :param list relationships:
@@ -76,3 +78,31 @@ class BasicJSONAdapter(AdapterBase):
                     rel_dict[name].append(res.properties)
                 continue
             rel_dict[name].append(resource.properties)
+
+    @classmethod
+    def format_exception(cls, exc):
+        """
+        Takes an exception and appropriately formats
+        the response.  By default it just returns a json dump
+        of the status code and the exception message.
+        Any exception that does not have a status_code attribute
+        will have a status_code of 500.
+
+        :param Exception exc: The exception to format.
+        :return: A tuple containing: response body, format,
+            http response code
+        :rtype: tuple
+        """
+        status_code = getattr(exc, 'status_code', 500)
+        body = json.dumps(dict(status=status_code, message=six.text_type(exc)))
+        return body, cls.formats[0], status_code
+
+    @classmethod
+    def format_request(cls, request):
+        """
+        Simply returns request
+
+        :param RequestContainer request: The request to handler
+        :rtype: RequestContainer
+        """
+        return request

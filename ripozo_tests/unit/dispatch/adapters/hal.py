@@ -154,3 +154,9 @@ class TestHalAdapter(unittest2.TestCase):
         self.assertIn('_embedded', data)
         self.assertIn('_links', data)
         self.assertEqual(data['message'], 'blah blah')
+
+    def test_format_request(self):
+        """Dumb test for format_request"""
+        request = RequestContainer()
+        response = HalAdapter.format_request(request)
+        self.assertIs(response, request)

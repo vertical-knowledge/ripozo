@@ -242,3 +242,9 @@ class TestSirenAdapter(TestAdapterBase):
         adapter = SirenAdapter(mock.MagicMock())
         fields_found = adapter.generate_fields_for_endpoint_funct(endpoint_func)
         self.assertListEqual(fields_found, [])
+
+    def test_format_request(self):
+        """Dumb test for format_request"""
+        request = RequestContainer()
+        response = SirenAdapter.format_request(request)
+        self.assertIs(response, request)
