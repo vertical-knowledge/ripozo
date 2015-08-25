@@ -30,24 +30,9 @@ class JSONAPIAdapter(AdapterBase):
 
     @property
     def formatted_body(self):
+        # TODO docs
         data = self._construct_data(self.resource, embedded=True)
         return json.dumps(dict(data=data))
-
-    def _construct_id(self, resource):
-        """
-        Constructs a JSON API compatible id.
-        May not work particularly well for composite ids since
-        apparently JSON API hates them.
-
-        :param ResourceBase resource: The resource whose
-            id needs to be constructed.
-        :return: The id in a format `<pk1>/<pk2>`
-        :rtype: unicode
-        """
-        pks = resource.item_pks
-        id_parts = [resource.item_pks[pk] for pk in pks]
-        id_ = join_url_parts(id_parts).strip('/')
-        return id_
 
     def _construct_data(self, resource, embedded=True):
         """
@@ -87,6 +72,24 @@ class JSONAPIAdapter(AdapterBase):
         for link, name, embedded in resource.linked_resources:
             links[name] = link.url
         return links
+
+    @staticmethod
+    def _construct_id(resource):
+        """
+        Constructs a JSON API compatible id.
+        May not work particularly well for composite ids since
+        apparently JSON API hates them.  It will simply
+        join the pks with a `"/"` in the appropriate order.
+
+        :param ResourceBase resource: The resource whose
+            id needs to be constructed.
+        :return: The id in a format `<pk1>/<pk2>`
+        :rtype: unicode
+        """
+        pks = resource.pks
+        id_parts = [resource.item_pks[pk] for pk in pks]
+        id_ = join_url_parts(*id_parts)
+        return id_
 
     def _construct_relationships(self, resource):
         # TODO docs
