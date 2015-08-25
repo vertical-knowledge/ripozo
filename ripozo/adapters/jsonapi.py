@@ -13,6 +13,8 @@ import six
 
 from ripozo import ResourceBase
 from ripozo.adapters.base import AdapterBase
+from ripozo.exceptions import JSONAPIFormatException
+from ripozo.resources.constructor import ResourceMetaClass
 from ripozo.utilities import join_url_parts
 
 _CONTENT_TYPE = 'application/vnd.api+json'
@@ -46,7 +48,6 @@ class JSONAPIAdapter(AdapterBase):
             according to the specification
         :rtype: dict
         """
-        # TODO implement embedded
         id_ = self._construct_id(resource)
         data = dict(id=id_, type=resource.resource_name)
         if embedded:
@@ -70,7 +71,7 @@ class JSONAPIAdapter(AdapterBase):
         self_url = self.combine_base_url_with_resource_url(resource.url)
         links = {'self': self_url}
         for link, name, embedded in resource.linked_resources:
-            links[name] = link.url
+            links[name] = self.combine_base_url_with_resource_url(link.url)
         return links
 
     @staticmethod
@@ -133,5 +134,37 @@ class JSONAPIAdapter(AdapterBase):
         :return:
         :rtype: RequestContainer
         """
-        request.body = request.body['data']['relationships']
+        if request.body:
+            try:
+                data = request.body['data']
+            except KeyError:
+                raise JSONAPIFormatException('Any request with a request body'
+                                             'must include a "data" attribute.')
+            try:
+                body = data['attributes']
+            except KeyError:
+                raise JSONAPIFormatException('Any request with a request body'
+                                             'must include a "data" attribute '
+                                             'with a`"attributes" attribute within it')
+            for name, value in six.iteritems(data.get('relationships', {})):
+                if 'data' not in value or 'id' not in value['data'] or 'type' not in value['data']:
+                    raise JSONAPIFormatException('All relationships must include a "data" '
+                                                 'attribute with "id" and "type" attributes.')
+                ids_dict = cls._parse_id(value['data']['id'], value['data']['type'])
+                attributes = dict()
+                for key, val in six.iteritems(ids_dict):
+                    attributes['{0}.{1}'.format(name, key)] = val
+                body.update(attributes)
+            request.body = body
         return request
+
+    @staticmethod
+    def _parse_id(id_, resource_name):
+        if resource_name not in ResourceMetaClass.registered_resource_names_map:
+            raise JSONAPIFormatException('The resource "{0}" is not a valid type'.format(resource_name))
+        resource_class = ResourceMetaClass.registered_resource_names_map[resource_name]
+        ids = id_.split('/')
+        if len(ids) != len(resource_class.pks):
+            raise JSONAPIFormatException("Unsatisfactory id.  There are an unequal number"
+                                         "of pks among the ids {0}".format(ids))
+        return dict(zip(resource_class.pks, ids))

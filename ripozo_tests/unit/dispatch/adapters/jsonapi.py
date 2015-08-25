@@ -7,8 +7,9 @@ import json
 
 import unittest2
 
-from ripozo import ResourceBase
+from ripozo import ResourceBase, Relationship
 from ripozo.adapters.jsonapi import JSONAPIAdapter
+from ripozo.exceptions import JSONAPIFormatException
 
 
 class TestJSONAPIAdapter(unittest2.TestCase):
@@ -36,3 +37,94 @@ class TestJSONAPIAdapter(unittest2.TestCase):
         response = JSONAPIAdapter._construct_id(MyResource(properties=dict(id=1, pk=2)))
         self.assertEqual(response, '1/2')
 
+    def test_construct_data_embedded(self):
+        """Ensures that reltionships, links, and attributes are included"""
+        class MyResource(ResourceBase):
+            pks = 'id',
+
+        res = MyResource(properties=dict(id=1, field='value'))
+        adapter = JSONAPIAdapter(resource=res)
+        resp = adapter._construct_data(res, embedded=True)
+        self.assertDictEqual(resp['relationships'], dict())
+        self.assertDictEqual(resp['attributes'], res.properties)
+        self.assertDictEqual(dict(self='/my_resource/1'), resp['links'])
+        self.assertEqual('1', resp['id'])
+        self.assertEqual('my_resource', resp['type'])
+
+    def test_construct_data_not_embedded(self):
+        """Only the self link should be included"""
+        class MyResource(ResourceBase):
+            pks = 'id',
+
+        res = MyResource(properties=dict(id=1, field='value'))
+        adapter = JSONAPIAdapter(resource=res)
+        resp = adapter._construct_data(res, embedded=False)
+        self.assertNotIn('relationships', resp)
+        self.assertNotIn('attributes', resp)
+        self.assertDictEqual(dict(self='/my_resource/1'), resp['links'])
+        self.assertEqual('1', resp['id'])
+        self.assertEqual('my_resource', resp['type'])
+
+    def test_construct_links_no_links(self):
+        """Constructing links when there are not any"""
+        class MyResource(ResourceBase):
+            pks = 'id',
+
+        res = MyResource(properties=dict(id=1, field='value'))
+        adapter = JSONAPIAdapter(resource=res)
+        resp = adapter._construct_links(res)
+        self.assertDictEqual(dict(self='/my_resource/1'), resp)
+
+    def test_construct_links(self):
+        """Expected case"""
+        class MyResource(ResourceBase):
+            pks = 'id',
+            _links = Relationship('child', property_map=dict(child_id='pk'), relation='RelatedResource'),
+
+        class RelatedResource(ResourceBase):
+            pks = 'pk',
+
+        res = MyResource(properties=dict(id=1), meta=dict(links=dict(child_id=2)))
+        adapter = JSONAPIAdapter(resource=res)
+        resp = adapter._construct_links(res)
+        expected = dict(self='/my_resource/1', child='/related_resource/2')
+        self.assertEqual(resp, expected)
+
+    def test_format_request(self):
+        """Expected case"""
+        assert False
+
+    def test_format_request_improper_request(self):
+        """
+        Ensures that the appropriate exception is raised when
+        the request is improperly formatted
+        """
+        assert False
+
+    def test_format_request_relationships(self):
+        """
+        Tests that relationships are appropriately reformatted
+        to the ripozo style.
+        """
+        assert False
+
+    def test_parse_id_invalid_type(self):
+        """Asserts exception raised when resource_name is not valid"""
+        self.assertRaises(JSONAPIFormatException, JSONAPIAdapter._parse_id, 'id', 'fake_resource')
+
+    def test_parse_id_inappropriate_id(self):
+        """Asserts exception raised when pks length does not match the ids"""
+        class MyResource(ResourceBase):
+            pks = 'pk', 'id', 'id2',
+
+        id_ = '1/2'
+        self.assertRaises(JSONAPIFormatException, JSONAPIAdapter._parse_id, id_, 'my_resource')
+
+    def test_parse_id(self):
+        """Normal case"""
+        class MyResource(ResourceBase):
+            pks = 'pk', 'id',
+
+        id_ = '1/2'
+        resp = JSONAPIAdapter._parse_id(id_, 'my_resource')
+        self.assertDictEqual(dict(pk='1', id='2'), resp)

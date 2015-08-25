@@ -27,6 +27,7 @@ class ResourceMetaClass(type):
     """
     registered_resource_classes = {}
     registered_names_map = {}
+    registered_resource_names_map = {}
 
     def __new__(mcs, name, bases, attrs):
         """
@@ -63,3 +64,4 @@ class ResourceMetaClass(type):
             warnings.warn('A class with the name {0} has already been registered.'
                           'Overwriting that class'.format(klass.__name__), UserWarning)
         mcs.registered_names_map[klass.__name__] = klass
+        mcs.registered_resource_names_map[klass.resource_name] = klass

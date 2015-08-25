@@ -75,3 +75,13 @@ class AdapterFormatAlreadyRegisteredException(DispatchException):
     to prevent accidental overrides of format types.
     """
     pass
+
+
+class JSONAPIFormatException(RestException):
+    """
+    This exception is raised when a request is not
+    properly formatted according to the
+    `JSON API specification <http://jsonapi.org/format/#crud>`_
+    """
+    def __init__(self, message, status_code=400, *args, **kwargs):
+        super(JSONAPIFormatException, self).__init__(message, status_code=status_code, *args, **kwargs)
