@@ -64,4 +64,5 @@ class ResourceMetaClass(type):
             warnings.warn('A class with the name {0} has already been registered.'
                           'Overwriting that class'.format(klass.__name__), UserWarning)
         mcs.registered_names_map[klass.__name__] = klass
-        mcs.registered_resource_names_map[klass.resource_name] = klass
+        resource_name = getattr(klass, 'resource_name', klass.__name__)
+        mcs.registered_resource_names_map[resource_name] = klass
