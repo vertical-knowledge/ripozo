@@ -129,14 +129,19 @@ class JSONAPIAdapter(AdapterBase):
     @classmethod
     def format_request(cls, request):
         """
+        Unwraps a JSONAPI request according
+        to the `specification .<http://jsonapi.org/format/#crud>`_
+        Basically, it reformats the attributes and relationships to
+        be top level and dot formatted instead of an underlying dictionary.
 
-        :param RequestContainer request:
-        :return:
+        :param RequestContainer request: The request whose request
+            body should be updated
+        :return: The updated request ready for ripozo.
         :rtype: RequestContainer
         """
-        if request.body:
+        if request.body_args:
             try:
-                data = request.body['data']
+                data = request.body_args['data']
             except KeyError:
                 raise JSONAPIFormatException('Any request with a request body'
                                              'must include a "data" attribute.')
@@ -145,7 +150,7 @@ class JSONAPIAdapter(AdapterBase):
             except KeyError:
                 raise JSONAPIFormatException('Any request with a request body'
                                              'must include a "data" attribute '
-                                             'with a`"attributes" attribute within it')
+                                             'with an "attributes" attribute within it')
             for name, value in six.iteritems(data.get('relationships', {})):
                 if 'data' not in value or 'id' not in value['data'] or 'type' not in value['data']:
                     raise JSONAPIFormatException('All relationships must include a "data" '
@@ -155,7 +160,7 @@ class JSONAPIAdapter(AdapterBase):
                 for key, val in six.iteritems(ids_dict):
                     attributes['{0}.{1}'.format(name, key)] = val
                 body.update(attributes)
-            request.body = body
+            request.body_args = body
         return request
 
     @staticmethod

@@ -7,7 +7,7 @@ import json
 
 import unittest2
 
-from ripozo import ResourceBase, Relationship
+from ripozo import ResourceBase, Relationship, RequestContainer
 from ripozo.adapters.jsonapi import JSONAPIAdapter
 from ripozo.exceptions import JSONAPIFormatException
 
@@ -92,21 +92,32 @@ class TestJSONAPIAdapter(unittest2.TestCase):
 
     def test_format_request(self):
         """Expected case"""
-        assert False
+        req = RequestContainer(body_args=dict(data=dict(attributes=dict(id=1))))
+        resp = JSONAPIAdapter.format_request(req)
+        self.assertDictEqual(resp.body_args, dict(id=1))
 
     def test_format_request_improper_request(self):
         """
         Ensures that the appropriate exception is raised when
         the request is improperly formatted
         """
-        assert False
+        req = RequestContainer(body_args=dict(id=1))
+        self.assertRaises(JSONAPIFormatException, JSONAPIAdapter.format_request, req)
+        req = RequestContainer(body_args=dict(data=dict(id=1)))
+        self.assertRaises(JSONAPIFormatException, JSONAPIAdapter.format_request, req)
 
     def test_format_request_relationships(self):
         """
         Tests that relationships are appropriately reformatted
         to the ripozo style.
         """
-        assert False
+        class RelatedResource(ResourceBase):
+            pks = ('id', 'pk',)
+
+        rel_dict = {'resource': dict(data=dict(id='1/2', type='related_resource'))}
+        req = RequestContainer(body_args=dict(data=dict(attributes=dict(id=1), relationships=rel_dict)))
+        resp = JSONAPIAdapter.format_request(req)
+        self.assertDictEqual(resp.body_args, {'id': 1, 'resource.id': '1', 'resource.pk': '2'})
 
     def test_parse_id_invalid_type(self):
         """Asserts exception raised when resource_name is not valid"""
