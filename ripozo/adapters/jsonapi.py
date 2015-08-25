@@ -119,7 +119,7 @@ class JSONAPIAdapter(AdapterBase):
         """
         status_code = getattr(exc, 'status_code', 500)
         error = dict(
-            status=getattr(exc, 'status_code', 500),
+            status=status_code,
             title=exc.__class__.__name__,
             detail=six.text_type(exc)
         )

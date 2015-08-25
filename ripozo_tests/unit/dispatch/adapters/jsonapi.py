@@ -9,7 +9,7 @@ import unittest2
 
 from ripozo import ResourceBase, Relationship, RequestContainer
 from ripozo.adapters.jsonapi import JSONAPIAdapter
-from ripozo.exceptions import JSONAPIFormatException
+from ripozo.exceptions import JSONAPIFormatException, RestException
 
 
 class TestJSONAPIAdapter(unittest2.TestCase):
@@ -119,6 +119,24 @@ class TestJSONAPIAdapter(unittest2.TestCase):
         resp = JSONAPIAdapter.format_request(req)
         self.assertDictEqual(resp.body_args, {'id': 1, 'resource.id': '1', 'resource.pk': '2'})
 
+    def test_format_request_relationship_bad_format(self):
+        """Ensures exception is raised when an inappropriate relation format is presented"""
+        class RelatedResource(ResourceBase):
+            pks = ('id', 'pk',)
+
+        rel_dict = {'resource': dict(data=dict(type='related_resource'))}
+        req = RequestContainer(body_args=dict(data=dict(attributes=dict(id=1), relationships=rel_dict)))
+        self.assertRaises(JSONAPIFormatException, JSONAPIAdapter.format_request, req)
+
+        rel_dict = {'resource': dict(data=dict(id='1/2'))}
+        req = RequestContainer(body_args=dict(data=dict(attributes=dict(id=1), relationships=rel_dict)))
+        self.assertRaises(JSONAPIFormatException, JSONAPIAdapter.format_request, req)
+
+        rel_dict = {'resource': dict(id='1/2', type='related_resource')}
+        req = RequestContainer(body_args=dict(data=dict(attributes=dict(id=1), relationships=rel_dict)))
+        self.assertRaises(JSONAPIFormatException, JSONAPIAdapter.format_request, req)
+
+
     def test_parse_id_invalid_type(self):
         """Asserts exception raised when resource_name is not valid"""
         self.assertRaises(JSONAPIFormatException, JSONAPIAdapter._parse_id, 'id', 'fake_resource')
@@ -139,3 +157,31 @@ class TestJSONAPIAdapter(unittest2.TestCase):
         id_ = '1/2'
         resp = JSONAPIAdapter._parse_id(id_, 'my_resource')
         self.assertDictEqual(dict(pk='1', id='2'), resp)
+
+    def test_format_exception_ripozo_exception(self):
+        """Ensures that the appropriate status code is returned"""
+        exc = RestException('some message', status_code=654)
+        body, content_type, status_code = JSONAPIAdapter.format_exception(exc)
+        body = json.loads(body)
+        expected = dict(
+            errors=[
+                dict(status=654, title='RestException', detail='some message')
+            ]
+        )
+        self.assertDictEqual(expected, body)
+        self.assertEqual(content_type, 'application/vnd.api+json')
+        self.assertEqual(status_code, 654)
+
+    def test_format_exception(self):
+        """For when a non ripozo exception is passed in"""
+        exc = Exception('some message')
+        body, content_type, status_code = JSONAPIAdapter.format_exception(exc)
+        body = json.loads(body)
+        expected = dict(
+            errors=[
+                dict(status=500, title='Exception', detail='some message')
+            ]
+        )
+        self.assertDictEqual(expected, body)
+        self.assertEqual(content_type, 'application/vnd.api+json')
+        self.assertEqual(status_code, 500)
