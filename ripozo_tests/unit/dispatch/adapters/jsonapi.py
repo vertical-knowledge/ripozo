@@ -7,7 +7,7 @@ import json
 
 import unittest2
 
-from ripozo import ResourceBase, Relationship, RequestContainer
+from ripozo import ResourceBase, Relationship, RequestContainer, ListRelationship
 from ripozo.adapters.jsonapi import JSONAPIAdapter
 from ripozo.exceptions import JSONAPIFormatException, RestException
 
@@ -36,6 +36,16 @@ class TestJSONAPIAdapter(unittest2.TestCase):
 
         response = JSONAPIAdapter._construct_id(MyResource(properties=dict(id=1, pk=2)))
         self.assertEqual(response, '1/2')
+
+    def test_construct_data_with_base_url(self):
+        """Tests when there is a base_url"""
+        class MyResource(ResourceBase):
+            pks = 'id',
+
+        res = MyResource(properties=dict(id=1, field='value'))
+        adapter = JSONAPIAdapter(resource=res, base_url='http://blah.com')
+        resp = adapter._construct_data(res)
+        self.assertEqual(resp['links']['self'], 'http://blah.com/my_resource/1')
 
     def test_construct_data_embedded(self):
         """Ensures that reltionships, links, and attributes are included"""
@@ -136,7 +146,6 @@ class TestJSONAPIAdapter(unittest2.TestCase):
         req = RequestContainer(body_args=dict(data=dict(attributes=dict(id=1), relationships=rel_dict)))
         self.assertRaises(JSONAPIFormatException, JSONAPIAdapter.format_request, req)
 
-
     def test_parse_id_invalid_type(self):
         """Asserts exception raised when resource_name is not valid"""
         self.assertRaises(JSONAPIFormatException, JSONAPIAdapter._parse_id, 'id', 'fake_resource')
@@ -185,3 +194,65 @@ class TestJSONAPIAdapter(unittest2.TestCase):
         self.assertDictEqual(expected, body)
         self.assertEqual(content_type, 'application/vnd.api+json')
         self.assertEqual(status_code, 500)
+
+    def test_construct_relationship(self):
+        """Single relationship"""
+        class MyResource(ResourceBase):
+            _relationships = Relationship('related', relation='RelatedResource'),
+
+        class RelatedResource(ResourceBase):
+            pks = 'id',
+
+        res = MyResource(properties=dict(related=dict(id=1)))
+        adapter = JSONAPIAdapter(res, base_url='/blah')
+        resp = adapter._construct_relationships(res)
+        self.assertIn('related', resp)
+        self.assertIn('data', resp['related'])
+        data = resp['related']['data']
+        self.assertEqual(len(data), 1)
+        data = data[0]
+        self.assertDictEqual(dict(type='related_resource', id='1',
+                                  links=dict(self='/blah/related_resource/1')), data)
+
+    def test_construct_relationship_list(self):
+        """A ListRelationship instance"""
+        class MyResource(ResourceBase):
+            _relationships = ListRelationship('related', relation='RelatedResource'),
+
+        class RelatedResource(ResourceBase):
+            pks = 'id',
+
+        res = MyResource(properties=dict(related=[dict(id=2), dict(id=1)]))
+        adapter = JSONAPIAdapter(res, base_url='/blah')
+        resp = adapter._construct_relationships(res)
+        self.assertIn('related', resp)
+        self.assertIn('data', resp['related'])
+        data = resp['related']['data']
+        self.assertEqual(len(data), 2)
+        for related in data:
+            self.assertEqual(related['type'], 'related_resource')
+            self.assertTrue(related['links']['self'].startswith('/blah/related_resource'))
+
+    def test_construct_relationship_embedded(self):
+        """An embedded relationship"""
+        class MyResource(ResourceBase):
+            _relationships = Relationship('related', relation='RelatedResource', embedded=True),
+
+        class RelatedResource(ResourceBase):
+            pks = 'id',
+
+        res = MyResource(properties=dict(related=dict(id=1, value=2)))
+        adapter = JSONAPIAdapter(res, base_url='/blah')
+        resp = adapter._construct_relationships(res)
+        self.assertIn('related', resp)
+        self.assertIn('data', resp['related'])
+        data = resp['related']['data']
+        self.assertEqual(len(data), 1)
+        data = data[0]
+        self.assertIn('attributes', data)
+        self.assertDictEqual(
+            dict(
+                type='related_resource', id='1',
+                links=dict(self='/blah/related_resource/1'),
+                relationships={}, attributes=dict(id=1, value=2)
+            ), data)

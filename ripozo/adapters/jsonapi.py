@@ -32,7 +32,13 @@ class JSONAPIAdapter(AdapterBase):
 
     @property
     def formatted_body(self):
-        # TODO docs
+        """
+        Returns a string in the
+        `JSON API format. <http://jsonapi.org/format/>`_
+
+        :return: The appropriately formatted string
+        :rtype: unicode|str
+        """
         data = self._construct_data(self.resource, embedded=True)
         return json.dumps(dict(data=data))
 
@@ -55,7 +61,7 @@ class JSONAPIAdapter(AdapterBase):
             data['links'] = self._construct_links(resource)
             data['attributes'] = resource.properties
         else:
-            data['links'] = {'self': resource.url}
+            data['links'] = {'self': self.combine_base_url_with_resource_url(resource.url)}
         return data
 
     def _construct_links(self, resource):
@@ -93,6 +99,18 @@ class JSONAPIAdapter(AdapterBase):
         return id_
 
     def _construct_relationships(self, resource):
+        """
+        Constructs the relationships according to the
+        `specification <http://jsonapi.org/format/#document-resource-object-relationships>`_
+
+        :param ResourceBase resource: This is the resource
+            that the relationships will be constructed for.
+            It will user the `related_resources` attribute
+            on the resource to construct the resources
+        :return: The dictionary representing the relationships
+            in the appropriate format.
+        :rtype: dict
+        """
         # TODO docs
         relationships = dict()
         for resource, name, embedded in resource.related_resources:
