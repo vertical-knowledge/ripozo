@@ -256,3 +256,19 @@ class TestJSONAPIAdapter(unittest2.TestCase):
                 links=dict(self='/blah/related_resource/1'),
                 relationships={}, attributes=dict(id=1, value=2)
             ), data)
+
+    def test_formatted_body(self):
+        """Simple explosion test"""
+        class MyResource(ResourceBase):
+            pks = 'id',
+
+        res = MyResource(properties=dict(id=1))
+        adapter = JSONAPIAdapter(res)
+        resp = adapter.formatted_body
+        body = json.loads(resp)
+        self.assertIn('data', body)
+        body = body['data']
+        self.assertEqual(body['id'], '1')
+        self.assertEqual(body['type'], 'my_resource')
+        self.assertDictEqual(body['links'], dict(self='/my_resource/1'))
+        self.assertDictEqual(body['attributes'], dict(id=1))
