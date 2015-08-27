@@ -135,7 +135,7 @@ the related resource.
 Documentation
 -------------
 
-`ripozo documentation <http://ripozo.org>`_
+`ripozo documentation <http://ripozo.readthedocs.org>`_
 
 The ripozo ecosystem
 ^^^^^^^^^^^^^^^^^^^^
