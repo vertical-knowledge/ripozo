@@ -61,6 +61,9 @@ Built in adapters
 .. autoclass:: ripozo.adapters.siren.SirenAdapter
     :members:
 
+.. autoclass:: ripozo.adapters.jsonapi.JSONAPIAdapter
+    :members:
+
 .. autoclass:: ripozo.adapters.hal.HalAdapter
     :members:
 

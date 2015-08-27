@@ -12,6 +12,7 @@ Changelog
 - Warnings raised in base adapter's format_request and format_exception since these must be implemented by the adapter in version 2.0.0
 - All adapters explicitly override format_exception and format_request
 - Fixed `join_url_parts` bug so that responses always return unicode objects (`str` type in python 3)
+- Added an adapter that meets the `JSON API specification <http://jsonapi.org/format/>`_
 
 
 1.0.0 (2015-06-30)
