@@ -58,14 +58,12 @@ master_doc = 'index'
 
 # General information about the project.
 from datetime import datetime
-import pkg_resources
 
 __author__ = u'Tim Martin'
 __pkg_name__ = u'ripozo'
 
 project = __pkg_name__
 
-package = pkg_resources.get_distribution(project)
 copyright = u'{0}, {1}'.format(datetime.now().year, __author__)
 
 # The version info for the project you're documenting, acts as replacement for
@@ -74,7 +72,7 @@ copyright = u'{0}, {1}'.format(datetime.now().year, __author__)
 #
 # The short X.Y version.
 
-version = package.version
+version = '1.0.2'
 # The full version, including alpha/beta/rc tags.
 release = version
 
