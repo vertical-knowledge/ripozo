@@ -67,13 +67,14 @@ def join_url_parts(*parts):
         >>> join_url_parts('first', 'second', 'last')
         'first/second/last'
 
-    :param list parts: a list of strings to join together with a '/'
+    :param list[unicode|str|int] parts: a list of strings to join together with a '/'
     :return: The url
     :rtype: unicode
     """
     url = None
     if len(parts) == 0:
         return ''
+    parts = [six.text_type(part) for part in parts]
     for part in parts:
         if url is None:  # first case
             url = part

@@ -12,7 +12,6 @@ import unittest2
 
 from ripozo.utilities import titlize_endpoint, join_url_parts, \
     picky_processor, convert_to_underscore, make_json_safe
-from ripozo_tests.bases.manager import generate_random_name
 
 
 class UtilitiesTestCase(unittest2.TestCase):
@@ -134,4 +133,9 @@ class UtilitiesTestCase(unittest2.TestCase):
         self.assertIsInstance(resp, dict)
         for key, value in six.iteritems(resp):
             self.assertIsInstance(value, six.text_type)
+
+    def test_join_url_parts_ints(self):
+        """joining parts when a single int.  Ensuring that it is unicode"""
+        resp = join_url_parts(1)
+        self.assertEqual(resp, '1')
 
