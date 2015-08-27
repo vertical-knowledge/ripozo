@@ -14,7 +14,7 @@ ripozo
     :alt: test coverage
 
 .. image:: https://readthedocs.org/projects/ripozo/badge/?version=latest
-    :target: https://readthedocs.org/projects/ripozo/?badge=latest
+    :target: https://ripozo.readthedocs.org/
     :alt: Documentation Status
 
 ..
