@@ -4,7 +4,7 @@ Changelog
 1.x Releases
 ~~~~~~~~~~~~
 
-1.1.0 (unreleased)
+1.1.0 (2015-08-26)
 ==================
 
 - Bug fix for BasicJSONAdapter.
