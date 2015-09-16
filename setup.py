@@ -52,7 +52,7 @@ setup(
             'sphinx'
         ]
     },
-    keywords='REST HATEOAS Hypermedia RESTful SIREN HAL API web framework',
+    keywords='REST HATEOAS Hypermedia RESTful SIREN HAL API JSONAPI web framework',
     tests_require=[
         'unittest2',
         'tox',
