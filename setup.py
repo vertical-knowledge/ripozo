@@ -24,7 +24,7 @@ setup(
     version=version,
     packages=find_packages(exclude=['tests', 'tests.*']),
     include_package_data=True,
-    description='An tool for easily making RESTful interfaces',
+    description='A tool for easily making RESTful interfaces',
     # long_description=long_description,
     install_requires=[
         'six>=1.4.1,!=1.7.1'
