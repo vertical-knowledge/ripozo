@@ -13,3 +13,4 @@ from .base import AdapterBase
 from .siren import SirenAdapter
 from .hal import HalAdapter
 from .basic_json import BasicJSONAdapter
+from .jsonapi import JSONAPIAdapter
