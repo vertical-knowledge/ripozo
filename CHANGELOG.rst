@@ -4,6 +4,12 @@ Changelog
 1.x Releases
 ~~~~~~~~~~~~
 
+1.1.2 (unreleased)
+==================
+
+- Nothing changed yet.
+
+
 1.1.1 (2015-11-04)
 ==================
 
