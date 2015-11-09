@@ -9,6 +9,7 @@ Changelog
 
 - Added `remove_properties` attribute to `Relationship` instantiation.  This allows a user to keep properties in both the parent and the child such as passing a parent's id to the child while keeping it in its properties.
 - Added `FilterRelationship` class which provides a shortcut to creating Relationships that point to a filtering against a list of resources.
+- Added `manager_translate` decorator which will replace the `translate` decorator when using manager generated fields to translate and decorate an @apimethod.  Using `translate` for manager_fields will be deprecated in v2.0
 
 
 1.1.1 (2015-11-04)
