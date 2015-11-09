@@ -3,16 +3,16 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import mock
+import six
+import unittest2
+
 from ripozo.decorators import apimethod, translate, _apiclassmethod, \
-    classproperty, ClassPropertyDescriptor
+    classproperty, ClassPropertyDescriptor, manager_translate
 from ripozo.exceptions import TranslationException
 from ripozo.resources.fields.common import IntegerField
 from ripozo.resources.request import RequestContainer
 from ripozo.resources.resource_base import ResourceBase
-
-import mock
-import six
-import unittest2
 
 
 class TestApiMethodDecorator(unittest2.TestCase):
@@ -284,4 +284,22 @@ class TestApiMethodDecorator(unittest2.TestCase):
         descriptor = ClassPropertyDescriptor(mck)
         resp = descriptor.__get__(5)
         self.assertEqual(mck.__get__.call_args_list[0][0], (5, int))
+
+
+class TestManagerTranslate(unittest2.TestCase):
+    def test_fields(self):
+        """Tests that the fields are
+        appropriately retrieved from the manager"""
+        orig = mock.Mock()
+        mt = manager_translate(fields_attr='something', fields=[orig])
+        v1 = mock.Mock()
+        v1.name = 'first'
+        v2 = mock.Mock()
+        v2.name = 'second'
+        v3 = mock.Mock()
+        v3.name = 'third'
+        mck_manager = mock.Mock(something=['first', 'third'],
+                                field_validators=[v1, v2, v3])
+        rsp = mt.fields(mck_manager)
+        self.assertEqual([orig, v1, v3], rsp)
 
