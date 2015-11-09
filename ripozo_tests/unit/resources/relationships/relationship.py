@@ -112,3 +112,18 @@ class TestRelationship(unittest2.TestCase):
         updated_properties = r.remove_child_resource_properties(original_properties)
         self.assertDictEqual(updated_properties, expected)
 
+    def test_return_none(self):
+        """Tests that the private _should_return_none appropriately
+        returns according to the expected behavior"""
+        class MyResource(ResourceBase):
+            pks = 'id',
+
+        res = MyResource(no_pks=True)
+        rel = Relationship('related')
+        self.assertFalse(rel._should_return_none(res))
+        res = MyResource(properties=dict(id=1))
+        self.assertFalse(rel._should_return_none(res))
+        res = MyResource(properties=dict())
+        self.assertTrue(rel._should_return_none(res))
+        rel.templated = True
+        self.assertFalse(rel._should_return_none(res))

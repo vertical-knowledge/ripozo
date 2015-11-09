@@ -118,7 +118,7 @@ class Relationship(object):
             None is valid.
         :rtype: bool
         """
-        return not resource.has_all_pks and not resource.no_pks and not self.templated
+        return not (resource.has_all_pks or resource.no_pks or self.templated)
 
     def remove_child_resource_properties(self, properties):
         """
