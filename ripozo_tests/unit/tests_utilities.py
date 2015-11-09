@@ -11,7 +11,7 @@ import six
 import unittest2
 
 from ripozo.utilities import titlize_endpoint, join_url_parts, \
-    picky_processor, convert_to_underscore, make_json_safe
+    picky_processor, convert_to_underscore, make_json_safe, get_or_pop
 
 
 class UtilitiesTestCase(unittest2.TestCase):
@@ -138,4 +138,30 @@ class UtilitiesTestCase(unittest2.TestCase):
         """joining parts when a single int.  Ensuring that it is unicode"""
         resp = join_url_parts(1)
         self.assertEqual(resp, '1')
+
+    def test_get_or_pop(self):
+        """Simple test to ensure that the get_or_pop
+        returns the value and appropriately updates the
+        dictionary if necessary"""
+        x = dict(x=1)
+        val = get_or_pop(x, 'x', pop=False)
+        self.assertDictEqual(x, dict(x=1))
+        self.assertEqual(val, 1)
+        val = get_or_pop(x, 'x', pop=True)
+        self.assertDictEqual(x, dict())
+        self.assertEqual(val, 1)
+
+    def test_get_or_pop_default(self):
+        """Ensures that a default is returned
+        if the key is not available"""
+        x = dict()
+        val = get_or_pop(x, 'x', pop=False)
+        self.assertIsNone(val)
+        val = get_or_pop(x, 'x', pop=True)
+        self.assertIsNone(val)
+        val = get_or_pop(x, 'x', default=1, pop=False)
+        self.assertEqual(val, 1)
+        val = get_or_pop(x, 'x', default=1, pop=True)
+        self.assertEqual(val, 1)
+
 

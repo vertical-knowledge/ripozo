@@ -78,7 +78,7 @@ Cookbook
 
 .. testsetup:: queryargs, embedded, linktolist
 
-    from ripozo import ResourceBase, apimethod, Relationship, ListRelationship
+    from ripozo import ResourceBase, apimethod, Relationship, ListRelationship, FilteredRelationship
 
 A link with query args
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -213,7 +213,7 @@ If embedded was not equal to true we would only get the links to the resources i
     wanted to point to a location where you could explicitly get the children
     for a specific parent.  It's generally considered more RESTful to hit
     point to an endpoint like ``'/children?parent_id=1'`` than ``'/parent/1/children'``.
-    Fortunately this is extremely easy in ripozo.
+    Fortunately this is extremely easy in ripozo with the :class: `FilteredRelationship` class.
 
     *NOTE* If you are using a manager than you can use the ``restmixins.Retrieve`` and/or
     ``restmixins.RetrieveList`` instead of explicitly declaring the retrieve methods.
@@ -224,7 +224,7 @@ If embedded was not equal to true we would only get the links to the resources i
         class Parent(ResourceBase):
             pks = ('id',)
             relationships = (
-                Relationship('children', relation='Child', property_map=dict(id='parent_id'), no_pks=True, query_args=['parent_id']),
+                FilteredRelationship('children', relation='Child', property_map=dict(id='parent_id')),
             )
 
             @apimethod()
@@ -261,4 +261,7 @@ Relationships API
 
 
 .. autoclass:: ripozo.resources.relationships.list_relationship.ListRelationship
+    :members:
+
+.. autoclass:: ripozo.resources.relationships.relationship.FilteredRelationship
     :members:

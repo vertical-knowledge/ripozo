@@ -154,3 +154,27 @@ def make_json_safe(obj):
     elif isinstance(obj, decimal.Decimal):
         obj = float(obj)
     return obj
+
+
+def get_or_pop(dictionary, key, default=None, pop=False):
+    """A simple helper for getting or popping a property
+    from a dictionary depending on the ```pop``` parameter.
+
+    This is a helper method for relationships to easily
+    update whether they keep or remove items from
+    the parent
+
+    :param dict dictionary: The dictionary to check
+    :param object key: The key to look for in the dictionary
+    :param object default: The default value to return if nothing
+        is found
+    :param bool pop: A boolean that removes the item from
+        the dictionary if true.  Otherwise it just gets
+        the value from the dictionary
+    :returns: The value of the requested object or the
+        default if it was not found.
+    :rtype: object
+    """
+    if pop:
+        return dictionary.pop(key, default)
+    return dictionary.get(key, default)

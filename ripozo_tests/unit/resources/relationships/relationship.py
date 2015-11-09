@@ -127,3 +127,34 @@ class TestRelationship(unittest2.TestCase):
         self.assertTrue(rel._should_return_none(res))
         rel.templated = True
         self.assertFalse(rel._should_return_none(res))
+
+    def test_remove_properties(self):
+        """Tests whether properties are appropriately
+        kept or removed according to the remove_properties
+        attribute"""
+        rel = Relationship('related')
+        x = dict(related=dict(name='name'))
+        ret = rel._map_pks(x)
+        self.assertDictEqual(ret, dict(name='name'))
+        self.assertDictEqual(x, dict())
+        rel.remove_properties = False
+        x = dict(related=dict(name='name'))
+        ret = rel._map_pks(x)
+        self.assertDictEqual(ret, dict(name='name'))
+        self.assertDictEqual(x, dict(related=dict(name='name')))
+
+    def test_remove_properties_property_map(self):
+        """Tests whether removing properties according
+        to the property_map adheres to the remove_properties
+        attribute"""
+
+        rel = Relationship('related', property_map=dict(name='name'))
+        x = dict(name='name')
+        ret = rel._map_pks(x)
+        self.assertDictEqual(ret, dict(name='name'))
+        self.assertDictEqual(x, dict())
+        rel.remove_properties = False
+        x = dict(name='name')
+        ret = rel._map_pks(x)
+        self.assertDictEqual(ret, dict(name='name'))
+        self.assertDictEqual(x, dict(name='name'))

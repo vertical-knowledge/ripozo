@@ -4,16 +4,17 @@ Changelog
 1.x Releases
 ~~~~~~~~~~~~
 
-1.1.2 (unreleased)
+1.2.0 (unreleased)
 ==================
 
-- Nothing changed yet.
+- Added `remove_properties` attribute to `Relationship` instantiation.  This allows a user to keep properties in both the parent and the child such as passing a parent's id to the child while keeping it in its properties.
+- Added `FilterRelationship` class which provides a shortcut to creating Relationships that point to a filtering against a list of resources.
 
 
 1.1.1 (2015-11-04)
 ==================
 
-- Nothing changed yet.
+- Moved up some imports for ease of use
 
 
 1.1.0 (2015-08-26)

@@ -1,5 +1,6 @@
 """
-Contains the relationship class.
+Contains the relationship class and additional
+shortcut classes.
 """
 from __future__ import absolute_import
 from __future__ import division
@@ -8,6 +9,7 @@ from __future__ import unicode_literals
 
 from ripozo.exceptions import RestException
 from ripozo.resources.constructor import ResourceMetaClass
+from ripozo.utilities import get_or_pop
 
 import logging
 import six
@@ -26,7 +28,8 @@ class Relationship(object):
     _resource_meta_class = ResourceMetaClass
 
     def __init__(self, name, property_map=None, relation=None, embedded=False,
-                 required=False, no_pks=False, query_args=None, templated=False):
+                 required=False, no_pks=False, query_args=None, templated=False,
+                 remove_properties=True):
         """
         :param unicode name:
         :param dict property_map: A map of the parent's property name
@@ -47,12 +50,15 @@ class Relationship(object):
         :param bool no_pks: A flag that indicates that the resources
             created do not need pks (for example a next link in RetrieveList
             mixin)
-        :param list[str|tuple] query_args: A list of strings that
+        :param list[unicode]|tuple[unicode] query_args: A list of strings that
             should be passed to the query_args parameter for resource
             construction.
         :param bool templated: If templated is True, then the resource
             does not need to have all pks.  However, embedded is negated
             if templated = True to prevent infinite loops.
+        :param bool remove_properties: If True, then the properties in the
+            child relationship will be removed. Otherwise, the properties
+            will simply be copied to the relationship
         """
         self.query_args = query_args or tuple()
         self.property_map = property_map or {}
@@ -62,6 +68,7 @@ class Relationship(object):
         self.name = name
         self.no_pks = no_pks
         self.templated = templated
+        self.remove_properties = remove_properties
 
     @property
     def relation(self):
@@ -135,6 +142,7 @@ class Relationship(object):
         properties = properties.copy()
         for key in six.iterkeys(self.property_map):
             properties.pop(key, None)
+        properties.pop(self.name, None)
         return properties
 
     def _map_pks(self, parent_properties):
@@ -159,10 +167,62 @@ class Relationship(object):
         """
         properties = {}
         for parent_prop, prop in six.iteritems(self.property_map):
-            val = parent_properties.pop(parent_prop, None)
+            val = get_or_pop(parent_properties, parent_prop, pop=self.remove_properties)
             if val is not None:
                 properties[prop] = val
-        name_values = parent_properties.pop(self.name, {})
-        if name_values is not None:
+        name_values = get_or_pop(parent_properties, self.name, pop=self.remove_properties)
+        if name_values:
             properties.update(name_values)
         return properties
+
+
+class FilteredRelationship(Relationship):
+    """
+    A relationship class that helps to easily create relationships
+    that point to a filtered relationship.
+
+    For example, suppose we had the following resources
+
+    .. codeblock::
+
+        from ripozo import restmixins
+
+        class Parent(ResourceBase):
+            resource_name = 'parent'
+            pks = 'id',
+
+        class Child(restmixins.RetrieveList):
+            resource_name = 'child'
+            pks = 'id',
+
+    Assuming that a parent can have many children and that a child
+    has a property called `parent_id`, we want a link
+    to get all of the children, but we don't want to embed the links
+    to all of the individual children.  We simply want a link with
+    `'/child?parent_id=<id>'`.  This can be done by doing:
+
+    .. codeblock::
+
+        class Parent(ResourceBase):
+            _relationships = Relationship('children', relation='Child',
+                                          property_map=dict(id='parent_id'),
+                                          query_args=['parent_id'], no_pks = True,
+                                          remove_properties=False)
+
+    However, that is a lot of set up.  With this class you would simply
+    do:
+
+    .. codeblock::
+
+        class Parent(ResourceBase):
+            _relationships = FilteredRelationship('children', relation='Child',
+                                                  property_map=dict(id='parent_id'))
+    """
+
+    def __init__(self, *args, **kwargs):
+        """Sets the query_args to the values of the property_map
+        remove_properties=False, and no_pks=True then calls super"""
+        kwargs['query_args'] = kwargs.get('property_map', {}).values()
+        kwargs['remove_properties'] = False
+        kwargs['no_pks'] = True
+        super(FilteredRelationship, self).__init__(*args, **kwargs)

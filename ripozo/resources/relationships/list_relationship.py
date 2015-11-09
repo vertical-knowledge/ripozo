@@ -8,6 +8,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.resources.relationships.relationship import Relationship
+from ripozo.utilities import get_or_pop
 
 
 class ListRelationship(Relationship):
@@ -30,28 +31,10 @@ class ListRelationship(Relationship):
         :return: A generator that yields the relationships.
         :rtype: types.GeneratorType
         """
-        objects = properties.pop(self.name, [])
-        objects = objects or []
+        objects = get_or_pop(properties, self.name, [], pop=self.remove_properties)
         resources = []
         for obj in objects:
             res = self.relation(properties=obj, query_args=self.query_args,
                                 include_relationships=self.embedded)
             resources.append(res)
         return resources
-
-    def remove_child_resource_properties(self, properties):
-        """
-        Removes the item from the properties dict with the key
-        that matches this instance's list_name attribute.  It
-        copies the properties and pops the property from the copy
-        before returning it.
-
-        :param dict properties: The properties with the list_name
-            key and value to be removed.
-        :return: The updated properties dict.  This is actually a copy
-            of the original to prevent side effects.
-        :rtype: dict
-        """
-        properties = properties.copy()
-        properties.pop(self.name, None)
-        return properties
