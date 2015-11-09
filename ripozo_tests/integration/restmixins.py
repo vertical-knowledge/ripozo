@@ -80,7 +80,7 @@ class TestCreate(TestBase):
             pks = 'id',
 
         names = [f.name for f in CreateResource.create.fields(CreateResource.manager)]
-        self.assertListEqual(['second', 'first'], names)
+        self.assertTupleEqual(('second', 'first',), tuple(names))
 
 
 
@@ -180,7 +180,7 @@ class TestRetrieveList(TestBase):
             pks = 'id',
 
         names = [f.name for f in ListResource.retrieve_list.fields(ListResource.manager)]
-        self.assertListEqual(['second', 'first'], names)
+        self.assertTupleEqual(('second', 'first',), tuple(names))
 
 
 class TestRetrieveRetrieveList(TestRetrieve, TestRetrieveList):
@@ -243,7 +243,7 @@ class TestUpdate(TestBase):
             pks = 'id',
 
         names = [f.name for f in UpdateResource.update.fields(UpdateResource.manager)]
-        self.assertListEqual(['second', 'first'], names)
+        self.assertTupleEqual(('second', 'first',), tuple(names))
 
 
 class TestDelete(TestBase):
