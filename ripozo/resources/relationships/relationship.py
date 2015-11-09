@@ -49,7 +49,7 @@ class Relationship(object):
         :param bool no_pks: A flag that indicates that the resources
             created do not need pks (for example a next link in RetrieveList
             mixin)
-        :param list[str|tuple] query_args: A list of strings that
+        :param list[unicode]|tuple[unicode] query_args: A list of strings that
             should be passed to the query_args parameter for resource
             construction.
         :param bool templated: If templated is True, then the resource
@@ -173,3 +173,55 @@ class Relationship(object):
         if name_values:
             properties.update(name_values)
         return properties
+
+
+class FilteredRelationship(Relationship):
+    """
+    A relationship class that helps to easily create relationships
+    that point to a filtered relationship.
+
+    For example, suppose we had the following resources
+
+    .. codeblock::
+
+        from ripozo import restmixins
+
+        class Parent(ResourceBase):
+            resource_name = 'parent'
+            pks = 'id',
+
+        class Child(restmixins.RetrieveList):
+            resource_name = 'child'
+            pks = 'id',
+
+    Assuming that a parent can have many children and that a child
+    has a property called `parent_id`, we want a link
+    to get all of the children, but we don't want to embed the links
+    to all of the individual children.  We simply want a link with
+    `'/child?parent_id=<id>'`.  This can be done by doing:
+
+    .. codeblock::
+
+        class Parent(ResourceBase):
+            _relationships = Relationship('children', relation='Child',
+                                          property_map=dict(id='parent_id'),
+                                          query_args=['parent_id'], no_pks = True,
+                                          remove_properties=False)
+
+    However, that is a lot of set up.  With this class you would simply
+    do:
+
+    .. codeblock::
+
+        class Parent(ResourceBase):
+            _relationships = FilteredRelationship('children', relation='Child',
+                                                  property_map=dict(id='parent_id'))
+    """
+
+    def __init__(self, *args, **kwargs):
+        """Sets the query_args to the values of the property_map
+        remove_properties=False, and no_pks=True then calls super"""
+        kwargs['query_args'] = kwargs.get('property_map', {}).values()
+        kwargs['remove_properties'] = False
+        kwargs['no_pks'] = True
+        super(FilteredRelationship, self).__init__(*args, **kwargs)
