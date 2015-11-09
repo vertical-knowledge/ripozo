@@ -1,5 +1,6 @@
 """
-Contains the relationship class.
+Contains the relationship class and additional
+shortcut classes.
 """
 from __future__ import absolute_import
 from __future__ import division
