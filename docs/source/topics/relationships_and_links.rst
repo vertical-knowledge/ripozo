@@ -262,3 +262,6 @@ Relationships API
 
 .. autoclass:: ripozo.resources.relationships.list_relationship.ListRelationship
     :members:
+
+.. autoclass:: ripozo.resources.relationships.relationship.FilteredRelationship
+    :members:
