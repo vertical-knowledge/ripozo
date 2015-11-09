@@ -141,6 +141,8 @@ class DispatcherBase(object):
         """
         for klass in classes:
             self._register_class_routes(klass)
+        for klass in classes:
+            self._check_relationships(klass)
 
     def _register_class_routes(self, klass):
         """
@@ -166,7 +168,6 @@ class DispatcherBase(object):
                              ' with the methods %s on a DispatcherBase '
                              'subclass', endpoint, route, methods)
                 self.register_route(endpoint, route=route, methods=methods, **options)
-        self._check_relationships(klass)
 
     @abstractmethod
     def register_route(self, endpoint, endpoint_func=None, route=None, methods=None, **options):
