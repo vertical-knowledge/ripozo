@@ -8,4 +8,4 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from ripozo.resources.relationships.list_relationship import ListRelationship
-from ripozo.resources.relationships.relationship import Relationship
+from ripozo.resources.relationships.relationship import Relationship, FilteredRelationship
