@@ -57,7 +57,6 @@ class ResourceMetaClass(type):
         exception so as not to offer multiple endpoints for the same base_url
 
         :param klass: The class to register
-        :raises: BaseRestEndpointAlreadyExists
         """
         mcs.registered_resource_classes[klass] = klass.base_url
         if klass.__name__ in mcs.registered_names_map:

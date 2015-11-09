@@ -47,6 +47,9 @@ class DispatcherBase(object):
             options resource class.  Available in cases of
             multiple dispatchers.
         """
+        self.registered_resource_classes = {}
+        self.registered_names_map = {}
+        self.registered_resource_names_map = {}
         self.auto_options = auto_options
         if self.auto_options:
             cls = ResourceMetaClass(str(auto_options_name), (AllOptionsResource,),
@@ -140,9 +143,28 @@ class DispatcherBase(object):
             registered with this dispatcher.
         """
         for klass in classes:
+            self._register_class(klass)
             self._register_class_routes(klass)
+
+        # Check relationships afterwards to not create needless warnings
         for klass in classes:
             self._check_relationships(klass)
+
+    def _register_class(self, klass):
+        """
+        Responsible for registering a class on the dispatcher in the
+        same manner as it gets Registered with the ResourceMetaClass.
+        This will eventually entirely replace the ResourceMetaClass.
+
+        :param class klass: The instance to register
+        """
+        self.registered_resource_classes[klass] = klass.base_url
+        if klass.__name__ in self.registered_names_map:
+            warnings.warn('A class with the name {0} has already been registered.'
+                          'Overwriting that class'.format(klass.__name__), UserWarning)
+        self.registered_names_map[klass.__name__] = klass
+        resource_name = getattr(klass, 'resource_name', klass.__name__)
+        self.registered_resource_names_map[resource_name] = klass
 
     def _register_class_routes(self, klass):
         """
@@ -234,25 +256,35 @@ class DispatcherBase(object):
                 return self.adapter_formats.get(mimetype)
         return self.default_adapter
 
-    @staticmethod
-    def _check_relationships(klass):
+    def _check_relationships(self, klass):
         """
         Checks that all relationships are valid in that
         their relation string is a real class.
-        Raises a warngin if the relation is not
+        Raises a warning if the relation is not
         valid.
 
         :param type klass: The klass to check
         """
         for rel in klass.relationships:
-            if rel._relation not in ResourceMetaClass.registered_names_map:
-                warnings.warn('The relation property {0} on the '
-                              'relationship {1} for the class '
-                              '{2} has not been registered.'
-                              ''.format(rel._relation, rel.name, klass.__name__))
+            self._warn_missing_relationship(rel, klass.__name__)
         for rel in klass.links:
-            if rel._relation not in ResourceMetaClass.registered_names_map:
+            self._warn_missing_relationship(rel, klass.__name__)
+
+    def _warn_missing_relationship(self, rel, class_name):
+        """Raises a warning when a relationship on a class has a relation
+        property that doesn't point to a class that is currently registered
+
+        :param Relationship rel: The relationship that is being checked
+        """
+        if rel._relation not in ResourceMetaClass.registered_names_map:
+            raise DeprecationWarning('The relation property {0} on the '
+                                     'link {1} is not registered on the adapter '
+                                     'that {2} is registered on.  In version 2.0 of ripozo '
+                                     'all resources that relate to each other must be registered'
+                                     ' on the same dispatcher.  You can register a resource to multiple'
+                                     ' dispatchers.')
+            if rel._relation not in self.registered_names_map:
                 warnings.warn('The relation property {0} on the '
                               'link {1} for the class '
                               '{2} has not been registered.'
-                              ''.format(rel._relation, rel.name, klass.__name__))
+                              ''.format(rel._relation, rel.name, class_name))

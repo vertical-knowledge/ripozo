@@ -183,6 +183,7 @@ class JSONAPIAdapter(AdapterBase):
 
     @staticmethod
     def _parse_id(id_, resource_name):
+        # Fix this
         if resource_name not in ResourceMetaClass.registered_resource_names_map:
             raise JSONAPIFormatException('The resource "{0}" is not a valid type'.format(resource_name))
         resource_class = ResourceMetaClass.registered_resource_names_map[resource_name]
