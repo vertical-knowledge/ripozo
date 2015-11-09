@@ -99,7 +99,8 @@ class AdapterBase(object):
         :rtype: tuple
         """
         warn('format_exception will be an abstract method in release 2.0.0. '
-             'You will need to implement this method in your adapter.', DeprecationWarning)
+             'You will need to implement this method in your adapter.',
+             PendingDeprecationWarning)
         status_code = getattr(exc, 'status_code', 500)
         body = json.dumps(dict(status=status_code, message=six.text_type(exc)))
         return body, cls.formats[0], status_code
@@ -119,7 +120,8 @@ class AdapterBase(object):
         :rtype: RequestContainer
         """
         warn('format_request will be an abstractmethod in release 2.0. '
-             'You will need to implement this method in your adapter', DeprecationWarning)
+             'You will need to implement this method in your adapter',
+             PendingDeprecationWarning)
         return request
 
     @property

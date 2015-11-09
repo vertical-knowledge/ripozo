@@ -7,8 +7,9 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from functools import wraps, update_wrapper
-
 import logging
+import warnings
+
 import six
 
 
@@ -225,11 +226,19 @@ class translate(object):
             arguments.
         :param bool validate: Indicates whether the validations should
             be run.  If it is False, it will only translate the fields.
+        :param bool manager_field_validators: (Deprecated: will be removed
+            in v2) A flag indicating that the fields from the Resource's
+            manager should be used.
         """
         self.original_fields = fields or []
         self.skip_required = skip_required
         self.validate = validate
         self.manager_field_validators = manager_field_validators
+        if manager_field_validators:
+            warnings.warn('The manager_field_validators attribute will be'
+                          ' removed in version 2.0.0.  Please use the '
+                          '"ripozo.decorators.manager_translate decorator"',
+                          PendingDeprecationWarning)
         self.cls = None
 
     def __call__(self, func):
@@ -267,3 +276,78 @@ class translate(object):
         if self.manager_field_validators:
             return self.original_fields + manager.field_validators
         return self.original_fields
+
+
+class manager_translate(object):
+    """
+    A special case translation and validation for using managers.
+    Performs the same actions as ripozo.decorators.translate
+    but it inspects the manager to get the resources necessary.
+
+    Additionally, you can tell it what fields to get from the manager
+    via the fields_attr.  This will look up the fields on the manager
+    to return.
+    """
+
+    def __init__(self, fields=None, skip_required=False,
+                 validate=False, fields_attr='fields'):
+        """A special case translation that inspects the manager
+        to get the relevant fields.  This is purely for ease of use
+        and may not be maintained
+
+        :param list[ripozo.resources.fields.base.BaseField] fields: A
+            list of fields to translate
+        :param bool skip_required: If true, it will not require
+            any of the fields.  Only relevant when validate is True
+        :param bool validate: A flag that indicates whether validation
+            should occur.
+        :param str|unicode fields_attr: The name of the attribute
+            to access on the manager to get the fields that are necessary.
+            e.g. `'create_fields'`, `'list_fields'` or whatever you want.
+            The attribute should be a list of strings
+        """
+        self.original_fields = fields or []
+        self.skip_required = skip_required
+        self.validate = validate
+        self.fields_attr = fields_attr
+        self.cls = None
+
+    def __call__(self, func):
+        """
+        Wraps the function with translation and validation.
+        This allows the inputs to be cast and validated as necessary.
+        Additionally, it provides the adapter with information about
+        what is necessary to successfully make a request to the wrapped
+        apimethod.
+
+        :param method f:
+        :return: The wrapped function
+        :rtype: function
+        """
+        @_apiclassmethod
+        @wraps(func)
+        def action(cls, request, *args, **kwargs):
+            """
+            Gets and translates/validates the fields.
+            """
+            # TODO This is so terrible.  I really need to fix this.
+            from ripozo.resources.fields.base import translate_fields
+            translate_fields(request, self.fields(cls.manager),
+                             skip_required=self.skip_required, validate=self.validate)
+            return func(cls, request, *args, **kwargs)
+
+        action.__manager_field_validators__ = True
+        action.fields = self.fields
+        return action
+
+    def fields(self, manager):
+        """
+        Gets the fields from the manager
+
+        :param ripozo.manager_base.BaseManager manager:
+        """
+        manager_fields = []
+        for field in manager.field_validators:
+            if field.name in getattr(manager, self.fields_attr):
+                manager_fields.append(field)
+        return self.original_fields + manager_fields

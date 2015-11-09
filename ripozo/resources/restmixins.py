@@ -9,9 +9,8 @@ from __future__ import unicode_literals
 
 from ripozo.resources.relationships.relationship import Relationship
 from ripozo.resources.relationships.list_relationship import ListRelationship
-from ripozo.decorators import apimethod, classproperty, translate
+from ripozo.decorators import apimethod, classproperty, translate, manager_translate
 from ripozo.resources.resource_base import ResourceBase
-from ripozo.resources.fields.base import translate_fields
 
 import logging
 import six
@@ -83,7 +82,7 @@ class Create(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['POST'], no_pks=True)
-    @translate(manager_field_validators=True, validate=True)
+    @manager_translate(validate=True, fields_attr='create_fields')
     def create(cls, request):
         """
         Creates a new resource using the cls.manager.create
@@ -129,7 +128,7 @@ class Retrieve(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['GET'])
-    @translate(manager_field_validators=True)
+    @manager_translate()
     def retrieve(cls, request):
         """
         Retrieves an individual resource.
@@ -157,7 +156,7 @@ class RetrieveList(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['GET'], no_pks=True)
-    @translate(manager_field_validators=True)
+    @manager_translate(fields_attr='list_fields')
     def retrieve_list(cls, request):
         """
         A resource that contains the other resources as properties.
@@ -237,7 +236,7 @@ class Update(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['PATCH'])
-    @translate(manager_field_validators=True, validate=True, skip_required=True)
+    @manager_translate(fields_attr='update_fields', validate=True, skip_required=True)
     def update(cls, request):
         """
         Updates the resource using the manager
@@ -261,7 +260,7 @@ class Delete(ResourceBase):
     __abstract__ = True
 
     @apimethod(methods=['DELETE'])
-    @translate(manager_field_validators=True)
+    @manager_translate()
     def delete(cls, request):
         """
 

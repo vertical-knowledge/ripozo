@@ -68,6 +68,21 @@ class TestCreate(TestBase):
             self.assertIn(field.name, self.manager.fields)
         self.assertEqual(len(fields), len(self.manager.fields))
 
+    def test_create_translate_fields(self):
+        """Ensures that only the create_fields
+        are available"""
+        class CreateManager(InMemoryManager):
+            fields = 'id', 'first', 'second',
+            create_fields = 'first', 'second',
+
+        class CreateResource(self.resource_base):
+            manager = CreateManager()
+            pks = 'id',
+
+        names = [f.name for f in CreateResource.create.fields(CreateResource.manager)]
+        self.assertListEqual(['second', 'first'], names)
+
+
 
 class TestRetrieve(TestBase):
     resource_base = restmixins.Retrieve
@@ -153,6 +168,20 @@ class TestRetrieveList(TestBase):
             self.assertIn(field.name, self.manager.fields)
         self.assertEqual(len(fields), len(self.manager.fields))
 
+    def test_list_translate_fields(self):
+        """Ensures that only the create_fields
+        are available"""
+        class ListManager(InMemoryManager):
+            fields = 'id', 'first', 'second',
+            list_fields = 'first', 'second',
+
+        class ListResource(self.resource_base):
+            manager = ListManager()
+            pks = 'id',
+
+        names = [f.name for f in ListResource.retrieve_list.fields(ListResource.manager)]
+        self.assertListEqual(['second', 'first'], names)
+
 
 class TestRetrieveRetrieveList(TestRetrieve, TestRetrieveList):
     resource_base = restmixins.RetrieveRetrieveList
@@ -201,6 +230,20 @@ class TestUpdate(TestBase):
         for field in fields:
             self.assertIn(field.name, self.manager.fields)
         self.assertEqual(len(fields), len(self.manager.fields))
+
+    def test_update_translate_fields(self):
+        """Ensures that only the update_fields
+        are available"""
+        class UpdateManager(InMemoryManager):
+            fields = 'id', 'first', 'second',
+            update_fields = 'first', 'second',
+
+        class UpdateResource(self.resource_base):
+            manager = UpdateManager()
+            pks = 'id',
+
+        names = [f.name for f in UpdateResource.update.fields(UpdateResource.manager)]
+        self.assertListEqual(['second', 'first'], names)
 
 
 class TestDelete(TestBase):
