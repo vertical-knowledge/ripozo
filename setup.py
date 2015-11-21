@@ -48,7 +48,7 @@ setup(
     ],
     keywords='REST HATEOAS Hypermedia RESTful SIREN HAL API JSONAPI web framework',
     name='ripozo',
-    packages=find_packages(exclude=['tests', 'tests.*']),
+    packages=find_packages(include=['ripozo', 'ripozo.*']),
     tests_require=[
         'unittest2',
         'tox',
