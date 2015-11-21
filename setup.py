@@ -10,7 +10,7 @@ from setuptools import setup, find_packages
 
 import os
 
-version = '1.2.1'
+version = '1.2.2.dev0'
 
 base_dir = os.path.dirname(__file__)
 
