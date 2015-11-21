@@ -4,7 +4,7 @@ Changelog
 1.x Releases
 ~~~~~~~~~~~~
 
-1.2.1 (unreleased)
+1.2.1 (2015-11-20)
 ==================
 
 - Fixed setup.py to only include ripozo shit.
