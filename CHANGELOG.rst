@@ -4,7 +4,7 @@ Changelog
 1.x Releases
 ~~~~~~~~~~~~
 
-1.2.0 (unreleased)
+1.2.0 (2015-11-20)
 ==================
 
 - Added `remove_properties` attribute to `Relationship` instantiation.  This allows a user to keep properties in both the parent and the child such as passing a parent's id to the child while keeping it in its properties.
