@@ -42,7 +42,6 @@ setup(
             'sphinx'
         ]
     },
-    include_package_data=True,
     install_requires=[
         'six>=1.4.1,!=1.7.1'
     ],
