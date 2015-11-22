@@ -89,7 +89,10 @@ class HalAdapter(AdapterBase):
         if not relationship.has_all_pks:
             return
         if embedded:
-            return relationship.properties
+            relationship_url = self.combine_base_url_with_resource_url(relationship.url)
+            properties = relationship.properties.copy()
+            properties.update(dict(_links=dict(self=dict(href=relationship_url))))
+            return properties
         else:
             return dict(href=relationship.url)
 
