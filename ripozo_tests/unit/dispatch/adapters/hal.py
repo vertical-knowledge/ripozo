@@ -72,7 +72,10 @@ class TestHalAdapter(unittest2.TestCase):
     def test_embedded_relationships(self):
         class Fake(ResourceBase):
             pass
-        props = dict(val=1, val2=2)
+        props = dict(
+            _links=dict(self=dict(href='/fake')),
+            val=1, val2=2
+        )
         rel = Fake(properties=props)
         adapter = HalAdapter(None)
         resp = adapter._generate_relationship(rel, True)
@@ -81,8 +84,14 @@ class TestHalAdapter(unittest2.TestCase):
     def test_list_relationships(self):
         class Fake(ResourceBase):
             pass
-        props = dict(val=1, val2=2)
-        props2 = dict(val=3, val4=4)
+        props = dict(
+            _links=dict(self=dict(href='/fake')),
+            val=1, val2=2
+        )
+        props2 = dict(
+            _links=dict(self=dict(href='/fake')),
+            val=3, val4=4
+        )
         adapter = HalAdapter(None)
         rel1 = Fake(properties=props)
         rel2 = Fake(properties=props2)
@@ -108,15 +117,21 @@ class TestHalAdapter(unittest2.TestCase):
             pks = ['id']
 
         adapter = HalAdapter(None)
-        props1 = dict(id=1, val=2)
-        props2 = dict(val=1)
+        props1 = dict(
+            _links=dict(self=dict(href='/fake/1')),
+            id=1, val=2
+        )
+        props2 = dict(
+            _links=dict(self=dict(href='/fake')),
+            val=1
+        )
         rel1 = Fake(properties=props1)
         rel2 = Fake(properties=props2)
         resp = adapter._generate_relationship([rel1, rel2], True)
         self.assertEqual(len(resp), 1)
         self.assertEqual(resp[0], props1)
 
-    def test_generate_relationshi_embedded(self):
+    def test_generate_relationship_embedded(self):
         """
         Tests that embedded relationships are
         appropriately constructed.
@@ -125,10 +140,13 @@ class TestHalAdapter(unittest2.TestCase):
             pass
 
         res = Fake(properties=dict(x=1, y=2))
+
+        expected_res = res.properties.copy()
+        expected_res.update(dict(_links=dict(self=dict(href=res.url))))
         relation_list = [(res, 'res', True,)]
         adapter = HalAdapter(Fake())
         embedded, links = adapter.generate_relationship(relation_list)
-        self.assertDictEqual(embedded['res'], res.properties)
+        self.assertDictEqual(embedded['res'], expected_res)
 
     def test_missing_generate_relationship(self):
         """
