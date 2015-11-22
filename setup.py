@@ -3,16 +3,12 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from setuptools import setup, find_packages
+
 __author__ = 'Tim Martin'
 __pkg_name__ = 'ripozo'
 
-from setuptools import setup, find_packages
-
-import os
-
 version = '1.2.2.dev0'
-
-base_dir = os.path.dirname(__file__)
 
 setup(
     author=__author__,
