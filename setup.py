@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 __author__ = 'Tim Martin'
 __pkg_name__ = 'ripozo'
 
-version = '1.2.3'
+version = '1.2.4.dev0'
 
 setup(
     author=__author__,
