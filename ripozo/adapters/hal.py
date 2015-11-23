@@ -29,18 +29,32 @@ class HalAdapter(AdapterBase):
         :return: The response body for the resource.
         :rtype: unicode
         """
-        resource_url = self.combine_base_url_with_resource_url(self.resource.url)
-        parent_properties = self.resource.properties.copy()
+        response = self._construct_resource(self.resource)
+        return json.dumps(response)
 
-        embedded, links = self.generate_relationship(self.resource.related_resources)
-        embedded2, links2 = self.generate_relationship(self.resource.linked_resources)
+    def _construct_resource(self, resource):
+        """
+        Constructs a full resource.  This can be used
+        for either the primary resource or embedded resources
+
+        :param ripozo.resources.resource_base.ResourceBase resource: The resource
+            that will be constructed.
+        :return: The resource represented according to the
+            Hal specification
+        :rtype: dict
+        """
+        resource_url = self.combine_base_url_with_resource_url(resource.url)
+        parent_properties = resource.properties.copy()
+
+        embedded, links = self.generate_relationship(resource.related_resources)
+        embedded2, links2 = self.generate_relationship(resource.linked_resources)
         embedded.update(embedded2)
         links.update(links2)
         links.update(dict(self=dict(href=resource_url)))
 
         response = dict(_links=links, _embedded=embedded)
         response.update(parent_properties)
-        return json.dumps(response)
+        return response
 
     def generate_relationship(self, relationship_list):
         """
@@ -89,10 +103,7 @@ class HalAdapter(AdapterBase):
         if not relationship.has_all_pks:
             return
         if embedded:
-            relationship_url = self.combine_base_url_with_resource_url(relationship.url)
-            properties = relationship.properties.copy()
-            properties.update(dict(_links=dict(self=dict(href=relationship_url))))
-            return properties
+            return self._construct_resource(relationship)
         else:
             return dict(href=relationship.url)
 

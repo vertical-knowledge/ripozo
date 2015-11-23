@@ -73,6 +73,7 @@ class TestHalAdapter(unittest2.TestCase):
         class Fake(ResourceBase):
             pass
         props = dict(
+            _embedded={},
             _links=dict(self=dict(href='/fake')),
             val=1, val2=2
         )
@@ -85,10 +86,12 @@ class TestHalAdapter(unittest2.TestCase):
         class Fake(ResourceBase):
             pass
         props = dict(
+            _embedded={},
             _links=dict(self=dict(href='/fake')),
             val=1, val2=2
         )
         props2 = dict(
+            _embedded={},
             _links=dict(self=dict(href='/fake')),
             val=3, val4=4
         )
@@ -118,10 +121,12 @@ class TestHalAdapter(unittest2.TestCase):
 
         adapter = HalAdapter(None)
         props1 = dict(
+            _embedded={},
             _links=dict(self=dict(href='/fake/1')),
             id=1, val=2
         )
         props2 = dict(
+            _embedded={},
             _links=dict(self=dict(href='/fake')),
             val=1
         )
@@ -142,7 +147,7 @@ class TestHalAdapter(unittest2.TestCase):
         res = Fake(properties=dict(x=1, y=2))
 
         expected_res = res.properties.copy()
-        expected_res.update(dict(_links=dict(self=dict(href=res.url))))
+        expected_res.update(dict(_links=dict(self=dict(href=res.url)), _embedded={}))
         relation_list = [(res, 'res', True,)]
         adapter = HalAdapter(Fake())
         embedded, links = adapter.generate_relationship(relation_list)

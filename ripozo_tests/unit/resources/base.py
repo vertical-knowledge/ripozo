@@ -339,7 +339,7 @@ class TestResourceBase(unittest2.TestCase):
         when constructing a resource
         """
         class Resource(ResourceBase):
-            _pks = ['id']
+            pks = 'id',
             _relationships = [
                 Relationship('child', relation='Resource', embedded=True),
                 Relationship('parent', relation='Resource')
