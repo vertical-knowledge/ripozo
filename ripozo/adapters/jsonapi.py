@@ -87,12 +87,16 @@ class JSONAPIAdapter(AdapterBase):
         May not work particularly well for composite ids since
         apparently JSON API hates them.  It will simply
         join the pks with a `"/"` in the appropriate order.
+        Additionally, for resources with no_pks=True, it
+        will return an empty string.
 
         :param ResourceBase resource: The resource whose
             id needs to be constructed.
         :return: The id in a format `<pk1>/<pk2>`
         :rtype: unicode
         """
+        if resource.no_pks:
+            return ""
         pks = resource.pks
         id_parts = [resource.item_pks[pk] for pk in pks]
         id_ = join_url_parts(*id_parts)
