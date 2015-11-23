@@ -7,13 +7,13 @@ Changelog
 1.2.2 (unreleased)
 ==================
 
-- Nothing changed yet.
+- The HalAdapter now includes fully qualified resources in the _embedded property.  There is no difference in how top-level vs embedded resources are constructed at this point.
 
 
 1.2.1 (2015-11-20)
 ==================
 
-- Fixed setup.py to only include ripozo shit.
+- Fixed setup.py to only include ripozo packages.
 
 
 1.2.0 (2015-11-20)
