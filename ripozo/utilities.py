@@ -72,7 +72,7 @@ def join_url_parts(*parts):
     :rtype: unicode
     """
     url = None
-    if len(parts) == 0:
+    if not parts:
         return ''
     parts = [six.text_type(part) for part in parts]
     for part in parts:

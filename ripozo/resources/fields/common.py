@@ -302,7 +302,7 @@ class DictField(BaseField):
         translated_dict = obj.copy()
         for field in self.field_list:
             key = field.name
-            value = obj.get(key, None)
+            value = obj.get(key)
             translated_dict[key] = field.translate(value, **kwargs)
         return translated_dict
 

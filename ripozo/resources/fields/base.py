@@ -57,10 +57,7 @@ class BaseField(object):
         :raises: ripozo.exceptions.TranslationException
         """
         if isinstance(obj, (list, set)):
-            if len(obj) > 0:
-                return obj[0]
-            else:
-                return None
+            return obj[0] if obj else None
         return obj
 
     def _validate(self, obj, skip_required=False):

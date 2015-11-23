@@ -94,7 +94,7 @@ class RequestContainer(object):
             the headers property on this request object.
         :rtype: unicode
         """
-        return self._headers.get('Content-Type', None)
+        return self._headers.get('Content-Type')
 
     @content_type.setter
     def content_type(self, value):

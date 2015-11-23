@@ -265,7 +265,7 @@ class BaseManager(object):
             field_parts = field.split('.')
             current = field_dict
             part = field_parts.pop(0)
-            while len(field_parts) > 0:
+            while field_parts:
                 current[part] = current.get(part, dict())
                 current = current[part]
                 part = field_parts.pop(0)
