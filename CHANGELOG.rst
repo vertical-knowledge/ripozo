@@ -4,7 +4,7 @@ Changelog
 1.x Releases
 ~~~~~~~~~~~~
 
-1.2.2 (unreleased)
+1.2.2 (2015-11-22)
 ==================
 
 - The HalAdapter now includes fully qualified resources in the _embedded property.  There is no difference in how top-level vs embedded resources are constructed at this point.
