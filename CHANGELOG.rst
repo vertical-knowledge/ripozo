@@ -4,7 +4,7 @@ Changelog
 1.x Releases
 ~~~~~~~~~~~~
 
-1.2.3 (unreleased)
+1.2.3 (2015-11-22)
 ==================
 
 - Bug fix for JSONAPI adapter that occurred when a resource with no primary keys was passed to the adapter causing it to break
