@@ -1,3 +1,5 @@
 # An ignore file for quantified code
-tests/
-examples/
+ripozo_tests/*
+examples/*
+docs/*
+ripozo_profiling/*

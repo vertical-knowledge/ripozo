@@ -10,4 +10,4 @@ from __future__ import unicode_literals
 
 from ripozo.resources.fields.base import BaseField
 from ripozo.resources.fields.common import StringField, IntegerField, \
-    BooleanField, BaseField, DateTimeField, FloatField, ListField, DictField
+    BooleanField, DateTimeField, FloatField, ListField, DictField
