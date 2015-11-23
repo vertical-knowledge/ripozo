@@ -272,3 +272,32 @@ class TestJSONAPIAdapter(unittest2.TestCase):
         self.assertEqual(body['type'], 'my_resource')
         self.assertDictEqual(body['links'], dict(self='/my_resource/1'))
         self.assertDictEqual(body['attributes'], dict(id=1))
+
+    def test_no_pks_resource_construct_id(self):
+        """
+        Tests that a response is appropriately returned
+        if there are no pks
+        """
+        class MyResource(ResourceBase):
+            pks = 'id',
+
+        res = MyResource(properties=dict(value=1), no_pks=True)
+        id_ = JSONAPIAdapter._construct_id(res)
+        self.assertEqual(id_, "")
+
+    def test_no_pks_resource(self):
+        """
+        Tests that a resource with no pks is appropriately
+        constructed.
+        """
+        class MyResource(ResourceBase):
+            pks = 'id',
+
+        res = MyResource(properties=dict(value=1), no_pks=True)
+        adapter = JSONAPIAdapter(res)
+        resp = adapter.formatted_body
+        data = json.loads(resp)['data']
+        self.assertDictEqual(data['attributes'], dict(value=1))
+        self.assertEqual(data['links'], dict(self='/my_resource'))
+        self.assertEqual(data['id'], '')
+        self.assertEqual(data['type'], 'my_resource')
