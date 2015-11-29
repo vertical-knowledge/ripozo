@@ -6,7 +6,7 @@ ripozo
     :alt:
 
 .. image:: https://travis-ci.org/vertical-knowledge/ripozo.svg?branch=master&style=flat
-    :target: https://travis-ci.org/vertical-knowledge/ripozos
+    :target: https://travis-ci.org/vertical-knowledge/ripozo
     :alt: test status
 
 .. image:: https://coveralls.io/repos/vertical-knowledge/ripozo/badge.svg?branch=master&style=flat
