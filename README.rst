@@ -84,7 +84,7 @@ Full CRUD+L
 ^^^^^^^^^^^
 
 On the other hand, if you wanted a full CRUD+L (Create, Retrieve, Update, Delete, and List),
-you could use one of the manager extensions (django-ripozo, ripozo-sqlalchemy, and ripozo-cassandra all
+you could use one of the manager extensions (`django-ripozo`_, `ripozo-sqlalchemy`_, and `ripozo-cassandra`_ all
 include ready to use base managers). There are slight differences
 on creating Manager classes and instances in the different extensions but at a core they all follow this
 format.
@@ -147,8 +147,8 @@ below.
 ======================================================================= ================================================================================
                           Frameworks                                                                     Databases
 ======================================================================= ================================================================================
-`flask-ripozo <https://github.com/vertical-knowledge/flask-ripozo>`_     `ripozo-sqlalchemy <https://github.com/vertical-knowledge/ripozo-sqlalchemy>`_
-`django-ripozo <https://github.com/vertical-knowledge/django-ripozo>`_   `ripozo-cassandra <https://github.com/vertical-knowledge/ripozo-cassandra>`_
+`flask-ripozo`_     `ripozo-sqlalchemy`_
+`django-ripozo`_   `ripozo-cassandra`_
 ======================================================================= ================================================================================
 
 Built an extension for ripozo? Let us know and we'll add it in here!
@@ -190,10 +190,10 @@ documentation).  We do have just a few requests:
 * There should be at least one unit test for each function and method
 * Keep your pull requests to one issue. (Preferably open an issue on github first for record keeping)
 
-.. _ripozo-cassandra: <https://github.com/vertical-knowledge/ripozo-cassandra
+.. _ripozo-cassandra: https://github.com/vertical-knowledge/ripozo-cassandra
 
-.. _ripozo-sqlalchemy: <https://github.com/vertical-knowledge/ripozo-sqlalchemy>
+.. _ripozo-sqlalchemy: https://github.com/vertical-knowledge/ripozo-sqlalchemy
 
-.. _django-ripozo: <https://github.com/vertical-knowledge/django-ripozo>
+.. _django-ripozo: https://github.com/vertical-knowledge/django-ripozo
 
-.. _flask-ripozo: <https://github.com/vertical-knowledge/flask-ripozo>
+.. _flask-ripozo: https://github.com/vertical-knowledge/flask-ripozo
