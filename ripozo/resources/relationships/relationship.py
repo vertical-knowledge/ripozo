@@ -183,7 +183,7 @@ class FilteredRelationship(Relationship):
 
     For example, suppose we had the following resources
 
-    .. codeblock::
+    .. code-block:: python
 
         from ripozo import restmixins
 
@@ -201,7 +201,7 @@ class FilteredRelationship(Relationship):
     to all of the individual children.  We simply want a link with
     `'/child?parent_id=<id>'`.  This can be done by doing:
 
-    .. codeblock::
+    .. code-block:: python
 
         class Parent(ResourceBase):
             _relationships = Relationship('children', relation='Child',
@@ -212,7 +212,7 @@ class FilteredRelationship(Relationship):
     However, that is a lot of set up.  With this class you would simply
     do:
 
-    .. codeblock::
+    .. code-block:: python
 
         class Parent(ResourceBase):
             _relationships = FilteredRelationship('children', relation='Child',
