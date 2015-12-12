@@ -218,8 +218,8 @@ class translate(object):
             @apimethod(methods=['GET'])
             @translate(fields=[fields.IntegerField('id', required=True)], validate=True)
             def hello(cls, request):
-                name = request.query_args['id']
-                print(name)
+                id_ = request.query_args['id']
+                print(id_)
 
     .. doctest:: translateexample
 
@@ -244,9 +244,10 @@ class translate(object):
         Initializes the decorator with the necessary fields.
         the fields should be instances of FieldBase and should
         give descriptions of the parameter and how to input them
-        (i.e. query or body parameter)
+        (i.e. query or body parameter).  To perform validation
+        of the fields as well, set ``validate=True``
 
-        :param list fields: A list of FieldBase instances (or subclasses
+        :param list fields: A list of ``FieldBase`` instances (or subclasses
             of FieldBase).
         :param bool skip_required: If this flag is set to True,
             then required fields will be considered optional.  This
@@ -255,7 +256,8 @@ class translate(object):
             the primary keys which should not be required in the updated
             arguments.
         :param bool validate: Indicates whether the validations should
-            be run.  If it is False, it will only translate the fields.
+            be run.  If it is ``False``, it will only translate the fields
+            and no validation will occur.
         :param bool manager_field_validators: (Deprecated: will be removed
             in v2) A flag indicating that the fields from the Resource's
             manager should be used.
@@ -268,7 +270,7 @@ class translate(object):
             warnings.warn('The manager_field_validators attribute will be'
                           ' removed in version 2.0.0.  Please use the '
                           '"ripozo.decorators.manager_translate decorator"',
-                          PendingDeprecationWarning)
+                          DeprecationWarning)
         self.cls = None
 
     def __call__(self, func):
@@ -279,7 +281,7 @@ class translate(object):
         what is necessary to successfully make a request to the wrapped
         apimethod.
 
-        :param method f:
+        :param method func: The function to decorate
         :return: The wrapped function
         :rtype: function
         """
