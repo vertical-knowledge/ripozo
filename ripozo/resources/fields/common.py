@@ -292,7 +292,7 @@ class DictField(BaseField):
         individual key, value pairs.
 
         :param dict obj: The object to translate and validate (if
-            validate=True)
+            ``validate=True``)
         :return: The translated (and possibly validated) object.
         :rtype: dict
         """

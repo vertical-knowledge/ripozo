@@ -206,6 +206,36 @@ class translate(object):
     Decorator for validating the inputs to an apimethod
     and describing what is allowed for that apimethod to
     an adapter if necessary.
+
+    Example usage:
+
+    .. testcode:: translateexample
+
+        from ripozo import translate, fields, apimethod, ResourceBase, RequestContainer
+
+        class MyResource(ResourceBase):
+
+            @apimethod(methods=['GET'])
+            @translate(fields=[fields.IntegerField('id', required=True)], validate=True)
+            def hello(cls, request):
+                name = request.query_args['id']
+                print(name)
+
+    .. doctest:: translateexample
+
+        >>> req = RequestContainer(query_args=dict(id=3))
+        >>> res = MyResource.hello(req)
+        3
+        >>> req = RequestContainer()
+        >>> res = MyResource.hello(req)
+        Traceback (most recent call last):
+            ...
+        ValidationException: The field "id" is required and cannot be None
+        >>> req = RequestContainer(query_args=dict(id='not an integer'))
+        >>> res = MyResource.hello(req)
+        Traceback (most recent call last):
+            ...
+        TranslationException: Not a valid integer type: not an integer
     """
 
     def __init__(self, fields=None, skip_required=False,
