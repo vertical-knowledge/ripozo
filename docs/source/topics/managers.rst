@@ -63,3 +63,4 @@ Base Manager API
 
 .. autoclass:: ripozo.manager_base.BaseManager
     :members:
+    :special-members:

@@ -51,3 +51,4 @@ They can be mixed and matched as you please.
 
  .. automodule:: ripozo.resources.restmixins
     :members:
+    :special-members:

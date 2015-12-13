@@ -72,3 +72,4 @@ Dispatcher API
 
 .. autoclass:: ripozo.dispatch_base.DispatcherBase
     :members:
+    :special-members:

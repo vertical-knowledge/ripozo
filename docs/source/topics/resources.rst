@@ -205,10 +205,12 @@ ResourceBase API
 
 .. autoclass:: ripozo.decorators.apimethod
     :members:
+    :special-members:
 
 
 .. automodule:: ripozo.resources.resource_base
     :members:
+    :special-members:
 
 
 .. [#] In ripozo, whenever urls are constructed, they are joined with a '/'.
