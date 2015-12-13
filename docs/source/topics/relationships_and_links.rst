@@ -258,10 +258,12 @@ Relationships API
 
 .. autoclass:: ripozo.resources.relationships.relationship.Relationship
     :members:
-
+    :special-members:
 
 .. autoclass:: ripozo.resources.relationships.list_relationship.ListRelationship
     :members:
+    :special-members:
 
 .. autoclass:: ripozo.resources.relationships.relationship.FilteredRelationship
     :members:
+    :special-members:
