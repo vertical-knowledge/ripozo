@@ -171,7 +171,7 @@ Versioning
 ----------
 
 Prior to version 1.0.0 ripozo versioning follows `sentimental
-versioning <http://sentimentalversioning.org/>`_.   Releases after 1.0.0 ollow
+versioning <http://sentimentalversioning.org/>`_.   Releases after 1.0.0 follow
 a standard *major.minor.patch* style.
 
 - patch: forwards and backwards compatible
