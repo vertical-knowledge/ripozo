@@ -27,7 +27,7 @@ setup(
         'Programming Language :: Python :: Implementation :: PyPy',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
-    description='A tool for easily making RESTful interfaces',
+    description='ReSTful API framework with HATEOAS support and compatibility with Flask, Django, SQLAlchemy and more.',
     extras_require={
         'examples': [
             'flask',
