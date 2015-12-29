@@ -190,6 +190,14 @@ documentation).  We do have just a few requests:
 * There should be at least one unit test for each function and method
 * Keep your pull requests to one issue. (Preferably open an issue on github first for record keeping)
 
+Behind the name
+---------------
+
+Ripozo translates to  "rest" in Esperanto.  Esperanto was designed to be a universal language.  Anyone,
+no matter their native language, can learn and use it easily.  Similarly, ripozo is intended
+to be a universal ReST framework.  No matter your preference of database, web framework, or 
+protocol, ripozo makes it easy to build.  
+
 .. _ripozo-cassandra: https://github.com/vertical-knowledge/ripozo-cassandra
 
 .. _ripozo-sqlalchemy: https://github.com/vertical-knowledge/ripozo-sqlalchemy
