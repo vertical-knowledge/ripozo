@@ -105,7 +105,7 @@ format.
 
     # Create your dispatcher and register the resource...
 
-It is important to not that there are restmixins for each of
+It is important to note that there are restmixins for each of
 the individual CRUD+L (i.e. restmixins.Create, restmixins.Retrieve, etc.)
 actions that can be mixed and matched to your pleasure.
 
