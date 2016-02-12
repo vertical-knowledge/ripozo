@@ -1,17 +1,17 @@
 language: python
 python:
-- '3.5'
-- '3.4'
-- '3.3'
-- '2.7'
-- '2.6'
-- pypy
-- pypy3
+  - '3.5'
+  - '3.4'
+  - '3.3'
+  - '2.7'
+  - '2.6'
+  - pypy
+  - pypy3
 install:
-- pip install coveralls
-- python setup.py -q install
+  - pip install coveralls
+  - python setup.py -q install
 script:
-- coverage run --source=ripozo setup.py test
+  - coverage run --source=ripozo setup.py test
 after_success: coveralls
 deploy:
   - provider: pypi
