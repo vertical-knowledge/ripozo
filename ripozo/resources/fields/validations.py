@@ -134,5 +134,3 @@ def basic_validation(field, obj, skip_required=False):
         return obj
     obj = validate_type(field, field.field_type, obj)
     return obj
-
-
