@@ -22,6 +22,7 @@ deploy:
       secure: jjKObj8R3w8/qZmHmq8fLmdXgCK5TF8BDbrnVKxB/loArOcV+XdQAJNuyBg9A44vHGHa55IWz8ZdATM4NTimjGJIih53iC05GuDMWkeRH8PY//E+el1qCxAHfWJ++mP58GoGelrM5ERQZwW2Feo+e2b7zTLoK0erO5PPjr+kG7c=
   - provider: pypi
     user: timmartin19
+    server: https://testpypi.python.org
     on:
       branch: develop
     password:
