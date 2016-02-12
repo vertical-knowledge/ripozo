@@ -14,7 +14,6 @@ script:
 - coverage run --source=ripozo setup.py test
 after_success: coveralls
 deploy:
-  matrix:
   - provider: pypi
     user: timmartin19
     on:
