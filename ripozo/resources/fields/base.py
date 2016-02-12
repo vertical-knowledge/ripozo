@@ -7,7 +7,10 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import warnings
+
 from ripozo.exceptions import ValidationException
+from ripozo.resources.fields.fieldhelpers import validate_type, validate_size
 
 
 class BaseField(object):
@@ -20,6 +23,8 @@ class BaseField(object):
 
     def __init__(self, name, required=False, maximum=None,
                  minimum=None, arg_type=None, error_message=None):
+        warnings.warn('The BaseField class is deprecated. Please use'
+                      ' the ripozo.resources.fields.field.Field class.', DeprecationWarning)
         self.name = name
         self.required = required
         self.maximum = maximum
@@ -88,9 +93,10 @@ class BaseField(object):
         the input is None and the field is not required.
 
         :param object obj:
-        :return: A boolean indicating whether validation should
-            be skipped
-        :rtype: bool
+        :param bool skip_required: This validation
+            will be skipped if skip_required is ``True``
+        :return: The original object unmodified
+        :rtype: object
         """
         if self.required and obj is None and skip_required is False:
             raise ValidationException(self.error_message or 'The field "{0}" is required '
@@ -110,17 +116,10 @@ class BaseField(object):
         :rtype: object
         :raises: ValidationException
         """
-        if self.minimum and obj_size < self.minimum:
-            if not msg:
-                msg = ('The input was too small for the field {2}: '
-                       '{0} < {1}'.format(obj_size, self.minimum, self.name))
-            raise ValidationException(self.error_message or msg)
-        if self.maximum and obj_size > self.maximum:
-            if not msg:
-                msg = ('The input was too large for the field {2}: '
-                       '{0} > {1}'.format(obj_size, self.maximum, self.name))
-            raise ValidationException(self.error_message or msg)
-        return obj
+        return validate_size(self, obj, obj_size,
+                             minimum=self.minimum,
+                             maximum=self.maximum,
+                             msg=msg)
 
     def _validate_type(self, obj, msg=None):
         """
@@ -130,12 +129,7 @@ class BaseField(object):
         :return: The validated object
         :rtype: object
         """
-        if isinstance(obj, self.field_type):
-            return obj
-        if msg is None:
-            msg = ("obj is not a valid type for field {0}. A type of"
-                   " {1} is required.".format(self.name, self.field_type))
-        raise ValidationException(self.error_message or msg)
+        return validate_type(self, self.field_type, obj, msg=msg)
 
 
 def translate_fields(request, fields=None, skip_required=False, validate=False):
