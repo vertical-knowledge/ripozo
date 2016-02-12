@@ -9,8 +9,8 @@ from __future__ import unicode_literals
 
 import warnings
 
-from ripozo.exceptions import ValidationException
-from ripozo.resources.fields.fieldhelpers import validate_type, validate_size
+from ripozo.resources.fields.validations import validate_type, validate_size,\
+    translate_iterable_to_single, validate_required, basic_validation
 
 
 class BaseField(object):
@@ -23,7 +23,8 @@ class BaseField(object):
 
     def __init__(self, name, required=False, maximum=None,
                  minimum=None, arg_type=None, error_message=None):
-        warnings.warn('The BaseField class is deprecated. Please use'
+        warnings.warn('The BaseField class is deprecated and will'
+                      'be removed in v2.0.0. Please use'
                       ' the ripozo.resources.fields.field.Field class.', DeprecationWarning)
         self.name = name
         self.required = required
@@ -61,9 +62,7 @@ class BaseField(object):
         :rtype: object
         :raises: ripozo.exceptions.TranslationException
         """
-        if isinstance(obj, (list, set)):
-            return obj[0] if obj else None
-        return obj
+        return translate_iterable_to_single(obj)
 
     def _validate(self, obj, skip_required=False):
         """
@@ -81,11 +80,7 @@ class BaseField(object):
         :rtype: object
         :raises: ripozo.exceptions.ValidationException
         """
-        obj = self._validate_required(obj, skip_required=skip_required)
-        if obj is None:
-            return obj
-        obj = self._validate_type(obj)
-        return obj
+        return basic_validation(self, obj, skip_required=False)
 
     def _validate_required(self, obj, skip_required=False):
         """
@@ -98,10 +93,7 @@ class BaseField(object):
         :return: The original object unmodified
         :rtype: object
         """
-        if self.required and obj is None and skip_required is False:
-            raise ValidationException(self.error_message or 'The field "{0}" is required '
-                                                            'and cannot be None'.format(self.name))
-        return obj
+        return validate_required(self, obj, skip_required=skip_required)
 
     def _validate_size(self, obj, obj_size, msg=None):
         """
