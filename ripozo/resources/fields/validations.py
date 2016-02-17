@@ -105,7 +105,7 @@ def validate_regex(field, obj, regex=None):
         msg = field.error_message or ('The input string for the field '
                                       '{2} did not match the'
                                       ' required regex: {0} != {1}'
-                                      ''.format(obj, field.regex, field.name))
+                                      ''.format(obj, regex.pattern, field.name))
         raise ValidationException(msg)
     return obj
 
