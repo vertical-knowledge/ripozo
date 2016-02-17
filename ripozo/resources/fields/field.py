@@ -31,7 +31,13 @@ class IField(object):
         that is being passed in.  It returns this object
         or raises a ValueError.
 
-        :param object obj:
+        :param object obj: The object to translate and validate
+            if validate is ``True``
+        :param bool skip_required: A boolean indicating whether
+            the required validation should be skipped
+        :param bool validate: If ``True`` the validations
+             will be run.  Otherwise the field will not be
+             validated.
         :return: The translated and validated object
         :rtype: object
         :raises: ripozo.exceptions.ValidationsException

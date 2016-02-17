@@ -11,7 +11,7 @@ import unittest2
 
 from ripozo.exceptions import ValidationException, TranslationException
 from ripozo.resources.fields.common import StringField, BooleanField, FloatField,\
-    DateTimeField, IntegerField, ListField, DictField
+    DateTimeField, IntegerField, ListField, DictField, _INumberField
 from ripozo_tests.bases.field import FieldTestBase
 
 
@@ -232,3 +232,15 @@ class TestDictField(unittest2.TestCase):
         input_vals = dict(field1='hey', field2='5', field3='Who Cares?')
         resp = field.translate(input_vals, validate=True)
         self.assertIn('field3', resp)
+
+
+# TODO do a full test of this
+class TestIFieldNumber(unittest2.TestCase):
+    def test_abstract_property_raise_not_implemented(self):
+        """Ensure that the abstract property raises a not implemented error"""
+        class Temp(_INumberField):
+            @property
+            def field_type(self):
+                return super(Temp, self).field_type
+
+        self.assertRaises(NotImplementedError, getattr, Temp('f'), 'field_type')
