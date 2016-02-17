@@ -7,20 +7,25 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import abc
 from datetime import datetime
-from ripozo.exceptions import ValidationException, TranslationException
+
+from ripozo.exceptions import TranslationException
 from ripozo.resources.fields.base import BaseField
+from ripozo.resources.fields.field import IField, Field
+from ripozo.resources.fields.validations import validate_regex, validate_size, \
+    basic_validation, translate_iterable_to_single, validate_required
 
 import six
 
 
-class StringField(BaseField):
+class StringField(IField):
     """
     Used for casting and validating string fields.
     """
     field_type = six.text_type
 
-    def __init__(self, name, regex=None, **kwargs):
+    def __init__(self, name, regex=None, minimum=None, maximum=None, **kwargs):
         """
         A field class for validating string inputs.
 
@@ -31,6 +36,8 @@ class StringField(BaseField):
             to the super call.
         """
         super(StringField, self).__init__(name, **kwargs)
+        self.minimum = minimum
+        self.maximum = maximum
         self.regex = regex
 
     def _translate(self, obj, skip_required=False):
@@ -42,11 +49,7 @@ class StringField(BaseField):
         :rtype: unicode
         :raises: TranslationsException
         """
-        # A none input should be handled by the validator
-        if obj is None:
-            return obj
-
-        obj = super(StringField, self)._translate(obj, skip_required=skip_required)
+        obj = translate_iterable_to_single(obj)
         return six.text_type(obj)
 
     def _validate(self, obj, skip_required=False):
@@ -59,19 +62,49 @@ class StringField(BaseField):
         :rtype: unicode
         :raises: ValidationException
         """
-        obj = super(StringField, self)._validate(obj, skip_required=skip_required)
+        obj = basic_validation(self, obj, skip_required=skip_required)
         if obj is None:
             return obj
-        obj = self._validate_size(obj, len(obj))
-        if self.regex and not self.regex.match(obj):
-            raise ValidationException(self.error_message or 'The input string did not match the'
-                                      ' required regex: {0} != {1}'.format(obj, self.regex))
-
-        # passed validation
+        obj = validate_size(self, obj, len(obj),
+                            minimum=self.minimum,
+                            maximum=self.maximum,
+                            msg=self.error_message)
+        obj = validate_regex(self, obj, regex=self.regex)
         return obj
 
 
-class IntegerField(BaseField):
+@six.add_metaclass(abc.ABCMeta)
+class _INumberField(IField):
+    @abc.abstractproperty
+    def field_type(self):
+        raise NotImplementedError
+
+    def __init__(self, name, regex=None, minimum=None, maximum=None, **kwargs):
+        super(_INumberField, self).__init__(name, **kwargs)
+        self.minimum = minimum
+        self.maximum = maximum
+        self.regex = regex
+
+    def _translate(self, obj, skip_required=False):
+        obj = translate_iterable_to_single(obj)
+        try:
+            return self.field_type(obj)
+        except ValueError:
+            msg = self.error_message or 'Not a valid integer type: {0}'.format(obj)
+            raise TranslationException(msg)
+
+    def _validate(self, obj, skip_required=False):
+        obj = basic_validation(self, obj, skip_required=skip_required)
+        if obj is None:
+            return obj
+        obj = validate_size(self, obj, obj,
+                            minimum=self.minimum,
+                            maximum=self.maximum,
+                            msg=self.error_message)
+        return obj
+
+
+class IntegerField(_INumberField):
     """
     A field used for translating and validating an integer input.
     While translating it will attempt to cast the object provided
@@ -79,26 +112,8 @@ class IntegerField(BaseField):
     """
     field_type = int
 
-    def _translate(self, obj, skip_required=False):
-        # A none input should be handled by the validator
-        if obj is None:
-            return obj
 
-        obj = super(IntegerField, self)._translate(obj, skip_required=skip_required)
-        try:
-            return int(obj)
-        except ValueError:
-            raise TranslationException(self.error_message or
-                                       'Not a valid integer type: {0}'.format(obj))
-
-    def _validate(self, obj, skip_required=False):
-        obj = super(IntegerField, self)._validate(obj, skip_required=skip_required)
-        if obj is None:
-            return obj
-        return self._validate_size(obj, obj)
-
-
-class FloatField(BaseField):
+class FloatField(_INumberField):
     """
     A field used for translating and validating a float input.
     Pretty much the same as the IntegerField except that it
@@ -106,26 +121,8 @@ class FloatField(BaseField):
     """
     field_type = float
 
-    def _translate(self, obj, skip_required=False):
-        # A none input should be handled by the validator
-        if obj is None:
-            return obj
 
-        obj = super(FloatField, self)._translate(obj, skip_required=skip_required)
-        try:
-            return float(obj)
-        except (ValueError, TypeError):
-            raise TranslationException(self.error_message or
-                                       'obj is not castable to float: {0}'.format(obj))
-
-    def _validate(self, obj, skip_required=False):
-        obj = super(FloatField, self)._validate(obj, skip_required=skip_required)
-        if obj is None:
-            return obj
-        return self._validate_size(obj, obj)
-
-
-class BooleanField(BaseField):
+class BooleanField(IField):
     """
     A field used for translating and validating a boolean input
     It can take either a boolean or a string.
@@ -135,10 +132,7 @@ class BooleanField(BaseField):
     field_type = bool
 
     def _translate(self, obj, skip_required=False):
-        # A none input should be handled by the validator
-        obj = super(BooleanField, self)._translate(obj, skip_required=skip_required)
-        if obj is None:
-            return obj
+        obj = translate_iterable_to_single(obj)
 
         if isinstance(obj, bool):
             return obj
@@ -147,12 +141,16 @@ class BooleanField(BaseField):
                 return False
             elif obj.lower() == 'true':
                 return True
-        raise TranslationException(self.error_message or
-                                   '{0} is not a valid boolean.  Either'
-                                   ' "true" or "false" is required (case insensitive)'.format(obj))
+        msg = self.error_message or ('{0} is not a valid boolean.'
+                                     '  Either "true" or "false" is '
+                                     'required (case insensitive)'.format(obj))
+        raise TranslationException(msg)
+
+    def _validate(self, obj, skip_required=False):
+        return validate_required(self, obj, skip_required=skip_required)
 
 
-class DateTimeField(BaseField):
+class DateTimeField(IField):
     """
     A field for validating and translating a datetime input.
     By default it accepts the following formats:
@@ -165,7 +163,7 @@ class DateTimeField(BaseField):
     field_type = datetime
     valid_formats = ['%Y-%m-%dT%H:%M:%S.%fZ']
 
-    def __init__(self, name, valid_formats=None, **kwargs):
+    def __init__(self, name, valid_formats=None, minimum=None, maximum=None, **kwargs):
         """
         :param unicode name: The name of the field
         :param list valid_formats: A list of datetime formats that are valid
@@ -173,6 +171,8 @@ class DateTimeField(BaseField):
         """
         super(DateTimeField, self).__init__(name, **kwargs)
         self.valid_formats = valid_formats or self.valid_formats
+        self.minimum = minimum
+        self.maximum = maximum
 
     def _translate(self, obj, skip_required=False):
         """
@@ -188,7 +188,7 @@ class DateTimeField(BaseField):
         :return: The parse datetime object
         :rtype: datetime
         """
-        if obj is None or isinstance(obj, datetime):
+        if isinstance(obj, datetime):
             return obj
         obj = obj.strip()
         for date_format in self.valid_formats:
@@ -209,11 +209,14 @@ class DateTimeField(BaseField):
         :rtype: datetime
         :raises: ValidationException
         """
-        obj = super(DateTimeField, self)._validate(obj, skip_required=skip_required)
-        return self._validate_size(obj, obj)
+        obj = basic_validation(self, obj, skip_required=skip_required)
+        return validate_size(self, obj, obj,
+                             minimum=self.minimum,
+                             maximum=self.maximum,
+                             msg=self.error_message)
 
 
-class ListField(BaseField):
+class ListField(IField):
     """
     A field for a list of objects.  A field for the individual
     results can also be provided.  This would be run against
@@ -221,7 +224,7 @@ class ListField(BaseField):
     """
     field_type = list
 
-    def __init__(self, name, indv_field=BaseField('list'), **kwargs):
+    def __init__(self, name, indv_field=None, minimum=None, maximum=None, **kwargs):
         """
 
         :param unicode name: The name of the field.
@@ -229,8 +232,10 @@ class ListField(BaseField):
             translating and validating individual items
             in the list.
         """
-        self.indv_field = indv_field
+        self.indv_field = indv_field or Field('list')
         super(ListField, self).__init__(name, **kwargs)
+        self.minimum = minimum
+        self.maximum = maximum
 
     def translate(self, obj, **kwargs):
         """
@@ -250,21 +255,23 @@ class ListField(BaseField):
         return translated_list
 
     def _translate(self, obj, skip_required=False):
-        if obj is None:  # let the validation handle it.
-            return obj
-        if not isinstance(obj, (list, set, tuple,)):
+        try:
+            return list(obj)
+        except TypeError:
             raise TranslationException(self.error_message or
-                                       'A list field must be an instance of a list, '
-                                       'tuple, or set')
-        return obj
+                                       '{0} requires an iterable. The object'
+                                       ' {1} is not'.format(self.name, obj))
 
     def _validate(self, obj, skip_required=False):
-        obj = super(ListField, self)._validate(obj, skip_required=skip_required)
+        obj = basic_validation(self, obj, skip_required=skip_required)
         obj = obj or []
-        return self._validate_size(obj, len(obj), msg=self.error_message)
+        return validate_size(self, obj, len(obj),
+                             minimum=self.minimum,
+                             maximum=self.maximum,
+                             msg=self.error_message)
 
 
-class DictField(BaseField):
+class DictField(IField):
     """
     A field for a dictionary of objects.  Each named
     sub-field can be mapped to individual fields (Or even
@@ -272,7 +279,7 @@ class DictField(BaseField):
     """
     field_type = dict
 
-    def __init__(self, name, field_list=None, **kwargs):
+    def __init__(self, name, field_list=None, minimum=None, maximum=None, **kwargs):
         """
         Calls super and sets the field_dict on the object.
 
@@ -283,6 +290,8 @@ class DictField(BaseField):
         """
         self.field_list = field_list or []
         super(DictField, self).__init__(name, **kwargs)
+        self.minimum = minimum
+        self.maximum = maximum
 
     def translate(self, obj, **kwargs):
         """
@@ -307,8 +316,6 @@ class DictField(BaseField):
         return translated_dict
 
     def _translate(self, obj, skip_required=False):
-        if obj is None:  # let the validation handle it.
-            return obj
         if not hasattr(obj, 'get'):
             raise TranslationException(self.error_message or
                                        'A dictionary field must have a get method '
@@ -317,6 +324,9 @@ class DictField(BaseField):
         return obj
 
     def _validate(self, obj, skip_required=False):
-        obj = super(DictField, self)._validate(obj, skip_required=skip_required)
+        obj = basic_validation(self, obj, skip_required=skip_required)
         obj = obj or {}
-        return self._validate_size(obj, len(obj), msg=self.error_message)
+        return validate_size(self, obj, len(obj),
+                             minimum=self.minimum,
+                             maximum=self.maximum,
+                             msg=self.error_message)

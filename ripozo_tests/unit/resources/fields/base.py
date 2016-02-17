@@ -101,3 +101,16 @@ class TestTranslateFields(unittest2.TestCase):
         field = BaseField('field', required=True, arg_type='fake')
         req = RequestContainer(query_args=test_input, url_params=test_input, body_args=test_input)
         self.assertRaises(RestException, translate_fields, req, fields=[field], validate=True)
+
+    def test_validate_required(self):
+        f = BaseField('f', required=True)
+        self.assertRaises(ValidationException, f._validate_required, None)
+        resp = f._validate_required(None, skip_required=True)
+        self.assertIsNone(resp)
+
+    def test_validate_size(self):
+        f = BaseField('f', minimum=1, maximum=1)
+        self.assertRaises(ValidationException, f._validate_size, 0, 0)
+        self.assertRaises(ValidationException, f._validate_size, 2, 2)
+        resp = f._validate_size(1, 1)
+        self.assertEqual(resp, 1)
