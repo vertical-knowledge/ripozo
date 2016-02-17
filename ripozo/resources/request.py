@@ -6,7 +6,48 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import json
+
+import six
+from six.moves import urllib
+
 from ripozo.resources.constants import input_categories
+
+
+class _Headers(dict):
+    def __setitem__(self, key, value):
+        super(_Headers, self).__setitem__(key.lower(), value)
+
+    def __getitem__(self, key):
+        return super(_Headers, self).__getitem__(key.lower())
+
+    @classmethod
+    def from_wsgi_environ(cls, environ):
+        headers = cls()
+        for key, value in six.iteritems(environ):
+            if key.startswith('HTTP_'):
+                key = key[5:]
+                key = key.replace('_', '-')
+                headers[key] = value
+            if key in ['CONTENT_TYPE', 'CONTENT_LENGTH']:
+                key = key.replace('_', '-')
+                headers[key] = value
+        return headers
+
+
+def _parse_query_string(query_string):
+    return urllib.parse_qs(query_string)
+
+
+def _parse_body(environ):
+    raw_body = environ['wsgi.input'].read()
+    if not raw_body:
+        return {}
+
+    try:
+        return json.loads(raw_body)
+    except ValueError:
+        return urllib.parse_qs(raw_body)
 
 
 class RequestContainer(object):
@@ -18,7 +59,7 @@ class RequestContainer(object):
     and no property is guaranteed.
     """
 
-    def __init__(self, url_params=None, query_args=None, body_args=None, headers=None, method=None):
+    def __init__(self, url_params=None, query_args=None, body_args=None, headers=None, method=None, environ=None):
         """
         Create a new request container.  Typically this is constructed
         in the dispatcher.
@@ -37,7 +78,23 @@ class RequestContainer(object):
         self._query_args = query_args or {}
         self._body_args = body_args or {}
         self._headers = headers or {}
+        self.environ = environ or {}
         self.method = method
+
+    @classmethod
+    def from_wsgi_environ(cls, environ, url_params, **available_adapters):
+        headers = _Headers.from_wsgi_environ(environ)
+        query_args = _parse_query_string(environ.get('QUERY_STRING', ''))
+        content_type = headers.get('Content-Type', 'application/json')
+        body_args = _parse_body(environ, content_type, **available_adapters)
+        return cls(
+            headers=headers,
+            query_args=query_args,
+            body_args=body_args,
+            url_params=url_params,
+            method=environ['REQUEST_METHOD'],
+            environ=environ
+        )
 
     @property
     def url_params(self):
@@ -114,11 +171,11 @@ class RequestContainer(object):
         :rtype: object
         :raises: KeyError
         """
-        if not location and name in self._url_params or location == input_categories.URL_PARAMS:
+        if (not location and name in self._url_params) or location == input_categories.URL_PARAMS:
             return self.url_params.get(name)
-        elif not location and name in self._query_args or location == input_categories.QUERY_ARGS:
+        elif (not location and name in self._query_args) or location == input_categories.QUERY_ARGS:
             return self._query_args.get(name)
-        elif not location and name in self._body_args or location == input_categories.BODY_ARGS:
+        elif (not location and name in self._body_args) or location == input_categories.BODY_ARGS:
             return self._body_args.get(name, default)
         return default
 
