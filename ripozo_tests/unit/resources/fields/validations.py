@@ -144,6 +144,7 @@ class TestValidation(unittest2.TestCase):
         self.assertRaises(ValidationException, basic_validation, f, None)
 
     def test_basic_validation_type_mismatch(self):
+        """Ensure failure when object is the wrong type"""
         class Temp(Field):
             field_type = dict
 
