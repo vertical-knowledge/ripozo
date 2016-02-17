@@ -4,7 +4,7 @@ Changelog
 1.x Releases
 ~~~~~~~~~~~~
 
-1.2.4 (unreleased)
+1.3.0 (2016-02-16)
 ==================
 
 - New Field class.  The ``BaseField`` class is now deprecated.  The switch is largely backwards compatible if you are not using private functions.  If you are inheriting from the ``BaseField`` directly you will need to update to use the new ``ripozo.resources.fields.field.Field`` class.  The change should be transparent.
