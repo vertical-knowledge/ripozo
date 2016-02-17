@@ -7,7 +7,9 @@ Changelog
 1.2.4 (unreleased)
 ==================
 
-- Nothing changed yet.
+- New Field class.  The ``BaseField`` class is now deprecated.  The switch is largely backwards compatible if you are not using private functions.  If you are inheriting from the ``BaseField`` directly you will need to update to use the new ``ripozo.resources.fields.field.Field`` class.  The change should be transparent.
+- Validation helpers.  A new module that includes helper functions for common validation scenarios.  ``ripozo.resources.fields.validations``
+- The ``BaseField`` is deprecated and will be removed in v2.0.0
 
 
 1.2.3 (2015-11-22)
