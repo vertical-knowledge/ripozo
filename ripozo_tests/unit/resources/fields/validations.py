@@ -130,15 +130,16 @@ class TestValidation(unittest2.TestCase):
     @mock.patch('ripozo.resources.fields.validations.validate_type')
     def test_basic_validation_none_object(self, validate_type):
         """Check that validate_type is not called when object is None"""
-        f = Field('f', required=True)
-        basic_validation(f, None, skip_required=True)
+        f = Field('f')
+        basic_validation(f, None)
         self.assertFalse(validate_type.called)
 
         # Also ensure that it is called
-        basic_validation(f, object(), skip_required=True)
+        basic_validation(f, object())
         self.assertTrue(validate_type.called)
 
     def test_basic_validation_required_failure(self):
+        """Ensure failure when object is None and required"""
         f = Field('f', required=True)
         self.assertRaises(ValidationException, basic_validation, f, None)
 
