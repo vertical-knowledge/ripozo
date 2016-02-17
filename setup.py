@@ -27,7 +27,7 @@ setup(
         'Programming Language :: Python :: Implementation :: PyPy',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
-    description='A tool for easily making RESTful interfaces',
+    description='ReSTful API framework with HATEOAS support and compatibility with Flask, Django, SQLAlchemy and more.',
     extras_require={
         'examples': [
             'flask',
@@ -41,7 +41,7 @@ setup(
     install_requires=[
         'six>=1.4.1,!=1.7.1'
     ],
-    keywords='REST HATEOAS Hypermedia RESTful SIREN HAL API JSONAPI web framework',
+    keywords='REST HATEOAS Hypermedia RESTful SIREN HAL API JSONAPI web framework Django Flask SQLAlchemy Cassandra',
     name='ripozo',
     packages=find_packages(include=['ripozo', 'ripozo.*']),
     tests_require=[

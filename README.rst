@@ -105,7 +105,7 @@ format.
 
     # Create your dispatcher and register the resource...
 
-It is important to not that there are restmixins for each of
+It is important to note that there are restmixins for each of
 the individual CRUD+L (i.e. restmixins.Create, restmixins.Retrieve, etc.)
 actions that can be mixed and matched to your pleasure.
 
@@ -171,7 +171,7 @@ Versioning
 ----------
 
 Prior to version 1.0.0 ripozo versioning follows `sentimental
-versioning <http://sentimentalversioning.org/>`_.   Releases after 1.0.0 ollow
+versioning <http://sentimentalversioning.org/>`_.   Releases after 1.0.0 follow
 a standard *major.minor.patch* style.
 
 - patch: forwards and backwards compatible
@@ -189,6 +189,14 @@ documentation).  We do have just a few requests:
 * Every method, function, and class should have a thorough docstring
 * There should be at least one unit test for each function and method
 * Keep your pull requests to one issue. (Preferably open an issue on github first for record keeping)
+
+Behind the name
+---------------
+
+Ripozo translates to  "rest" in Esperanto.  Esperanto was designed to be a universal language.  Anyone,
+no matter their native language, can learn and use it easily.  Similarly, ripozo is intended
+to be a universal ReST framework.  No matter your preference of database, web framework, or 
+protocol, ripozo makes it easy to build.  
 
 .. _ripozo-cassandra: https://github.com/vertical-knowledge/ripozo-cassandra
 
