@@ -1,29 +1,16 @@
 language: python
 python:
-  - '3.5'
-  - '3.4'
-  - '3.3'
-  - '2.7'
-  - '2.6'
-  - pypy
-  - pypy3
+  - "3.5"
+  - "3.4"
+  - "3.3"
+  - "2.7"
+  - "2.6"
+  - "pypy"
+  - "pypy3"
 install:
   - pip install coveralls
   - python setup.py -q install
 script:
   - coverage run --source=ripozo setup.py test
-after_success: coveralls
-deploy:
-  - provider: pypi
-    user: timmartin19
-    on:
-      branch: master
-    password:
-      secure: jjKObj8R3w8/qZmHmq8fLmdXgCK5TF8BDbrnVKxB/loArOcV+XdQAJNuyBg9A44vHGHa55IWz8ZdATM4NTimjGJIih53iC05GuDMWkeRH8PY//E+el1qCxAHfWJ++mP58GoGelrM5ERQZwW2Feo+e2b7zTLoK0erO5PPjr+kG7c=
-  - provider: pypi
-    user: timmartin19
-    server: https://testpypi.python.org
-    on:
-      branch: develop
-    password:
-      secure: aHFIxxSb3YxIgkOcplcDdtgRpFSDb8xS5XHLgrlD3ipCjbs4ythpVklP5SwfBY+Glm+irvRotVhbf5QP6SpSiRSCd5BeSRiyGpzoiEKASjX7VEcIVkvvHXOSZLlEJ+Go2UJh6mrf7Vir/8vq7rgU9OOk7FZH7kZuuinO73q6G0I=
+after_success:
+  coveralls
