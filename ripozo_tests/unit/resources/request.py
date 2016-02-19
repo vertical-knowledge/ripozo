@@ -3,10 +3,16 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.resources.constants.input_categories import QUERY_ARGS, BODY_ARGS, URL_PARAMS
-from ripozo.resources.request import RequestContainer
+import json
+from StringIO import StringIO
+import warnings
 
 import unittest2
+from werkzeug.test import EnvironBuilder
+
+from ripozo.resources.constants.input_categories import QUERY_ARGS, BODY_ARGS, URL_PARAMS
+from ripozo.resources.request import RequestContainer, _parse_query_string, \
+    _parse_form_encoded, _parse_body, _Headers
 
 
 class TestRequestContainer(unittest2.TestCase):
@@ -148,3 +154,158 @@ class TestRequestContainer(unittest2.TestCase):
         req.set('x', 2, BODY_ARGS)
         self.assertDictEqual(dict(x=2), req.body_args)
         self.assertDictEqual(dict(x=1), req.url_params)
+
+    def test_parse_query_string(self):
+        """
+        Ensures that the query string is properly parsed
+        from the environ object
+        """
+        query_string = "some=thing&another=else"
+        environ = EnvironBuilder(query_string=query_string).get_environ()
+        resp = _parse_query_string(environ)
+        expected = {
+            'some': ['thing'],
+            'another': ['else']
+        }
+        self.assertDictEqual(resp, expected)
+
+    def test_parse_query_string_list(self):
+        """Ensure that query string lists are properly parsed"""
+        query_string = "field=blah&field=else"
+        environ = EnvironBuilder(query_string=query_string).get_environ()
+        resp = _parse_query_string(environ)
+        expected = {
+            'field': [
+                'blah',
+                'else'
+            ]
+        }
+        self.assertDictEqual(resp, expected)
+
+    def test_parse_form_encoded_bad_string(self):
+        """Ensure a warning is raised for a bad query string"""
+        query_string = "&&;;&"
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
+            resp = _parse_form_encoded(query_string)
+            self.assertEqual(len(w), 1)
+            self.assertIsInstance(w[0].message, DeprecationWarning)
+        self.assertDictEqual(resp, {})
+
+    def test_parse_body_json(self):
+        """Ensure JSON is appropriately loaded"""
+        body = {'some': 'thing', 'another': 'thing'}
+        body_string = StringIO(json.dumps(body))
+        environ = EnvironBuilder(input_stream=body_string).get_environ()
+        resp = _parse_body(environ)
+        self.assertDictEqual(resp, body)
+
+    def test_parse_body_formencoded(self):
+        """Ensure that formencoded data is properly loaded"""
+        body = "some=thing&another=else"
+        body_string = StringIO(body)
+        environ = EnvironBuilder(input_stream=body_string).get_environ()
+        resp = _parse_body(environ)
+
+        expected = {
+            'some': ['thing'],
+            'another': ['else']
+        }
+        self.assertDictEqual(resp, expected)
+
+    def test_empty_body(self):
+        """Ensures an empty body is interpreted as an empty dict"""
+        body = ''
+        body_string = StringIO(body)
+        environ = EnvironBuilder(input_stream=body_string).get_environ()
+        resp = _parse_body(environ)
+        self.assertDictEqual(resp, {})
+
+    def test_parse_body_none(self):
+        """Ensures no body set interpreted as an empty dict"""
+        resp = _parse_body({'wsgi.input': None})
+        self.assertDictEqual(resp, {})
+
+    def test_unparseable_body(self):
+        """Ensure deprecation warnings are raised"""
+        body = "&&;;&"
+        body_string = StringIO(body)
+        environ = EnvironBuilder(input_stream=body_string).get_environ()
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
+            resp = _parse_body(environ)
+            self.assertEqual(len(w), 1)
+            self.assertIsInstance(w[0].message, DeprecationWarning)
+        self.assertDictEqual(resp, {})
+
+    def test_headers_case_insensitive(self):
+        """Ensures the _Headers dict is case insensitive"""
+        headers = _Headers()
+        expected = 'something'
+        headers['first'] = expected
+        self.assertEqual(headers['first'], expected)
+        self.assertEqual(headers['FIRST'], expected)
+        self.assertEqual(headers['First'], expected)
+        self.assertEqual(headers['fIrSt'], expected)
+
+        headers['SECOND'] = expected
+        self.assertEqual(headers['second'], expected)
+        self.assertEqual(headers['SECOND'], expected)
+        self.assertEqual(headers['Second'], expected)
+        self.assertEqual(headers['sEcOnD'], expected)
+
+    def test_headers_from_wsgi_environ_not_headers(self):
+        """Ensure that wsgi environ keys are rejected appropriately"""
+        fake_headers = {
+            'notaheader': 'first',
+            'NOTAHEADER': 'blah',
+            'HTTPNOTAHEADER': 'blah',
+            'http_notaheader': 'blah'
+        }
+
+        headers_dict_fake = _Headers.from_wsgi_environ(fake_headers)
+        self.assertEqual(len(headers_dict_fake), 0)
+
+    def test_headers_from_wsgi_environ_real_headers(self):
+        """Ensure real headers are appropriately retrieved"""
+        real_headers = {
+            'HTTP_SOME_HEADER': 'blah',
+            'CONTENT_TYPE': 'blah',
+            'CONTENT_LENGTH': 'blah',
+            'HTTP_ANOTHER_HEADER': 'blah'
+        }
+
+        expected = {
+            'Some-Header': 'blah',
+            'Content-Type': 'blah',
+            'Content-Length': 'blah',
+            'Another-Header': 'blah'
+        }
+
+        headers_dict_real = _Headers.from_wsgi_environ(real_headers)
+        self.assertEqual(len(headers_dict_real), len(real_headers))
+        self.assertDictEqual(expected, headers_dict_real)
+
+    def test_from_wsgi_environ(self):
+        """Test creating a RequestContainer from a wsgi environ"""
+        expected_body = {'something': 'thing'}
+        body = StringIO(json.dumps(expected_body))
+        headers = {
+            'Content-Type': 'something',
+            'Some-Other-Header': 'blah'
+        }
+        environ_builder = EnvironBuilder(query_string='some=thing',
+                                         method='FAKE',
+                                         input_stream=body,
+                                         headers=headers)
+        environ = environ_builder.get_environ()
+
+        url_params = {'id': 1}
+        resp = RequestContainer.from_wsgi_environ(environ, url_params)
+
+        self.assertIsInstance(resp, RequestContainer)
+        self.assertDictContainsSubset(headers, resp.headers)
+        self.assertDictEqual(expected_body, resp.body_args)
+        self.assertEqual(resp.query_args, {'some': ['thing']})
+        self.assertEqual(resp.method, 'FAKE')
+        self.assertDictEqual(environ, resp.environ)

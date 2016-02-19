@@ -6,20 +6,25 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import logging
 import json
+import warnings
 
 import six
 from six.moves import urllib
+from wsgiref.headers import Headers
 
 from ripozo.resources.constants import input_categories
+
+_LOG = logging.getLogger(__name__)
 
 
 class _Headers(dict):
     def __setitem__(self, key, value):
-        super(_Headers, self).__setitem__(key.lower(), value)
+        super(_Headers, self).__setitem__(key.title(), value)
 
     def __getitem__(self, key):
-        return super(_Headers, self).__getitem__(key.lower())
+        return super(_Headers, self).__getitem__(key.title())
 
     @classmethod
     def from_wsgi_environ(cls, environ):
@@ -35,19 +40,36 @@ class _Headers(dict):
         return headers
 
 
-def _parse_query_string(query_string):
-    return urllib.parse_qs(query_string)
+def _parse_form_encoded(form_encoded_string):
+    try:
+        return urllib.parse.parse_qs(form_encoded_string,
+                                     keep_blank_values=True,
+                                     strict_parsing=True)
+    except ValueError as e:
+        warnings.warn('The query string "{0}" is invalid.  In '
+                      'ripozo v2.0.0 this will raise a ValidationException. '
+                      'Error Message: {1}'.format(form_encoded_string, e),
+                      DeprecationWarning)
+        return urllib.parse.parse_qs(form_encoded_string,
+                                     keep_blank_values=True,
+                                     strict_parsing=False)
+
+
+def _parse_query_string(environ):
+    query_string = environ.get('QUERY_STRING', '')
+    return _parse_form_encoded(query_string)
 
 
 def _parse_body(environ):
-    raw_body = environ['wsgi.input'].read()
+    raw_body_file = environ.get('wsgi.input')
+    raw_body = raw_body_file.read() if raw_body_file else None
     if not raw_body:
         return {}
 
     try:
         return json.loads(raw_body)
     except ValueError:
-        return urllib.parse_qs(raw_body)
+        return _parse_form_encoded(raw_body)
 
 
 class RequestContainer(object):
@@ -82,11 +104,10 @@ class RequestContainer(object):
         self.method = method
 
     @classmethod
-    def from_wsgi_environ(cls, environ, url_params, **available_adapters):
+    def from_wsgi_environ(cls, environ, url_params):
         headers = _Headers.from_wsgi_environ(environ)
-        query_args = _parse_query_string(environ.get('QUERY_STRING', ''))
-        content_type = headers.get('Content-Type', 'application/json')
-        body_args = _parse_body(environ, content_type, **available_adapters)
+        query_args = _parse_query_string(environ)
+        body_args = _parse_body(environ)
         return cls(
             headers=headers,
             query_args=query_args,
