@@ -6,13 +6,12 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import logging
 import json
+import logging
 import warnings
 
 import six
 from six.moves import urllib
-from wsgiref.headers import Headers
 
 from ripozo.resources.constants import input_categories
 
@@ -20,14 +19,40 @@ _LOG = logging.getLogger(__name__)
 
 
 class _Headers(dict):
+    """"
+    A case insensitive dictionary for headers.
+    Includes a helper factory method ``from_wsgi_environ``
+    for easy construction from a wsgi environ object
+    """
     def __setitem__(self, key, value):
+        """
+        Case insensitive set item method
+
+        :param unicode key:
+        :param unicode value:
+        """
         super(_Headers, self).__setitem__(key.title(), value)
 
     def __getitem__(self, key):
+        """
+        Case insensitive __getitem__ implementation
+
+        :param unicode key:
+        :rtype: unicode
+        """
         return super(_Headers, self).__getitem__(key.title())
 
     @classmethod
     def from_wsgi_environ(cls, environ):
+        """
+        Constructs a Headers dictionary from
+        a wsgi environ object
+
+        :param dict environ: The wsgi environ object
+        :type environ:
+        :return: A case insentive dictionary of valid headers
+        :rtype: _Headers
+        """
         headers = cls()
         for key, value in six.iteritems(environ):
             if key.startswith('HTTP_'):
@@ -41,6 +66,15 @@ class _Headers(dict):
 
 
 def _parse_form_encoded(form_encoded_string):
+    """
+    Safely parses a form encoded string.  Starting
+    in ripozo v2.0.0 bad query strings will raise an
+    Exception
+
+    :param unicode form_encoded_string:
+    :return: The parsed values from the string
+    :rtype: dict
+    """
     try:
         return urllib.parse.parse_qs(form_encoded_string,
                                      keep_blank_values=True,
@@ -56,11 +90,28 @@ def _parse_form_encoded(form_encoded_string):
 
 
 def _parse_query_string(environ):
+    """
+    Retrieves the query string from the wsgi
+    environ object and returns the parsed values
+
+    :param dict environ: The wsgi environ
+    :return: The parsed values from the query string
+    :rtype: dict
+    """
     query_string = environ.get('QUERY_STRING', '')
     return _parse_form_encoded(query_string)
 
 
 def _parse_body(environ):
+    """
+    Parse the request body by first attempting to load it
+    as JSON and then trying to parse it as a form encoded
+    string
+
+    :param dict environ: The wsgi environ dictionary
+    :return: The parsed body
+    :rtype: dict
+    """
     raw_body_file = environ.get('wsgi.input')
     raw_body = raw_body_file.read() if raw_body_file else None
     if not raw_body:

@@ -4,10 +4,10 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import json
-from StringIO import StringIO
 import warnings
 
 import unittest2
+from six import StringIO
 from werkzeug.test import EnvironBuilder
 
 from ripozo.resources.constants.input_categories import QUERY_ARGS, BODY_ARGS, URL_PARAMS
