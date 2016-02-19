@@ -226,6 +226,16 @@ class TestRequestContainer(unittest2.TestCase):
         resp = _parse_body({'wsgi.input': None})
         self.assertDictEqual(resp, {})
 
+    def test_parse_body_byte_string(self):
+        """Ensure that byte strings can be properly decoded"""
+        expected = {"some": "body"}
+        body_string = json.dumps(expected).encode('utf-8')
+        body = StringIO(body_string)
+        environ = EnvironBuilder(body).get_environ()
+
+        resp = _parse_body(environ)
+        self.assertEqual(resp, expected)
+
     def test_unparseable_body(self):
         """Ensure deprecation warnings are raised"""
         body = "&&;;&"
