@@ -40,7 +40,7 @@ setup(
     },
     install_requires=[
         'six>=1.4.1,!=1.7.1',
-        'werkzeug'
+        'werkzeug>=0.8.3'
     ],
     keywords='REST HATEOAS Hypermedia RESTful SIREN HAL API JSONAPI web framework Django Flask SQLAlchemy Cassandra',
     name='ripozo',
