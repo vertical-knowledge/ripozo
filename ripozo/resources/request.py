@@ -110,12 +110,11 @@ def _get_charset(environ):
     :rtype: unicode
     """
     content_type = environ.get('CONTENT_TYPE', '')
-    content_type, params = parse_header(content_type)
-    charset = params.get('charset', 'utf-8')
     # Decode according to RFC 5987 https://tools.ietf.org/html/rfc5987
-    if not isinstance(charset, six.text_type):
-        charset = charset.decode('ISO-8859-1')
-    return charset
+    if not isinstance(content_type, six.text_type):
+        content_type = content_type.decode('latin1')
+    content_type, params = parse_header(content_type)
+    return params.get('charset', 'utf-8')
 
 
 def _parse_body(environ):

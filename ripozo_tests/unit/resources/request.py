@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import json
 
 import unittest2
-from six import StringIO
+from six import StringIO, BytesIO
 from werkzeug.test import EnvironBuilder
 
 from ripozo.resources.constants.input_categories import QUERY_ARGS, BODY_ARGS, URL_PARAMS
@@ -220,7 +220,7 @@ class TestRequestContainer(unittest2.TestCase):
         """Ensure that byte strings can be properly decoded"""
         expected = {"some": ["body"]}
         body_string = b'some=body'
-        body = StringIO(body_string)
+        body = BytesIO(body_string)
         environ = EnvironBuilder(input_stream=body).get_environ()
 
         resp = _parse_body(environ)
@@ -307,6 +307,6 @@ class TestRequestContainer(unittest2.TestCase):
 
     def test_get_charset_byte_header(self):
         """Test getting the charset when the headers are bytes"""
-        environ = {b'CONTENT_TYPE': b'text/plain; charset=blah'}
+        environ = {'CONTENT_TYPE': b'text/plain; charset=blah'}
         charset = _get_charset(environ)
         self.assertEqual(charset, 'blah')
