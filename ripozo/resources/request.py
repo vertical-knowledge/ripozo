@@ -6,12 +6,12 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from cgi import parse_header
 import json
 import logging
-import warnings
 
 import six
-from six.moves import urllib
+from werkzeug.urls import url_decode
 
 from ripozo.resources.constants import input_categories
 
@@ -65,7 +65,7 @@ class _Headers(dict):
         return headers
 
 
-def _parse_form_encoded(form_encoded_string):
+def _parse_form_encoded(form_encoded_string, charset='utf-8'):
     """
     Safely parses a form encoded string.  Starting
     in ripozo v2.0.0 bad query strings will raise an
@@ -73,20 +73,17 @@ def _parse_form_encoded(form_encoded_string):
 
     :param unicode form_encoded_string:
     :return: The parsed values from the string
-    :rtype: dict
+    :rtype: dict{unicode: list[unicode]}
     """
-    try:
-        return urllib.parse.parse_qs(form_encoded_string,
-                                     keep_blank_values=True,
-                                     strict_parsing=True)
-    except ValueError as e:
-        warnings.warn('The query string "{0}" is invalid.  In '
-                      'ripozo v2.0.0 this will raise a ValidationException. '
-                      'Error Message: {1}'.format(form_encoded_string, e),
-                      DeprecationWarning)
-        return urllib.parse.parse_qs(form_encoded_string,
-                                     keep_blank_values=True,
-                                     strict_parsing=False)
+    data_tuple = url_decode(form_encoded_string,
+                            charset=charset, errors='strict',
+                            decode_keys=True, cls=tuple)
+    data = {}
+    for key, value in data_tuple:
+        if key not in data:
+            data[key] = []
+        data[key].append(value)
+    return data
 
 
 def _parse_query_string(environ):
@@ -100,6 +97,25 @@ def _parse_query_string(environ):
     """
     query_string = environ.get('QUERY_STRING', '')
     return _parse_form_encoded(query_string)
+
+
+def _get_charset(environ):
+    """
+    Gets the character set from the wsgi environ
+    via the Content-Type header.
+
+    :param dict environ: The WSGI environ object
+    :return: The string identifying the character
+        set of the request
+    :rtype: unicode
+    """
+    content_type = environ.get('CONTENT_TYPE', '')
+    content_type, params = parse_header(content_type)
+    charset = params.get('charset', 'utf-8')
+    # Decode according to RFC 5987 https://tools.ietf.org/html/rfc5987
+    if not isinstance(charset, six.text_type):
+        charset = charset.decode('ISO-8859-1')
+    return charset
 
 
 def _parse_body(environ):
@@ -117,10 +133,16 @@ def _parse_body(environ):
     if not raw_body:
         return {}
 
+    # Decode the body into unicode
+    if not isinstance(raw_body, six.text_type):
+        charset = _get_charset(environ)
+        raw_body = raw_body.decode(charset)
+
     try:
         return json.loads(raw_body)
     except ValueError:
-        return _parse_form_encoded(raw_body)
+        charset = _get_charset(environ)
+        return _parse_form_encoded(raw_body, charset=charset)
 
 
 class RequestContainer(object):

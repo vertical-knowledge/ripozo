@@ -4,7 +4,6 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import json
-import warnings
 
 import unittest2
 from six import StringIO
@@ -12,7 +11,8 @@ from werkzeug.test import EnvironBuilder
 
 from ripozo.resources.constants.input_categories import QUERY_ARGS, BODY_ARGS, URL_PARAMS
 from ripozo.resources.request import RequestContainer, _parse_query_string, \
-    _parse_form_encoded, _parse_body, _Headers
+    _get_charset, _parse_body, _Headers
+
 
 
 class TestRequestContainer(unittest2.TestCase):
@@ -182,16 +182,6 @@ class TestRequestContainer(unittest2.TestCase):
         }
         self.assertDictEqual(resp, expected)
 
-    def test_parse_form_encoded_bad_string(self):
-        """Ensure a warning is raised for a bad query string"""
-        query_string = "&&;;&"
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter('always')
-            resp = _parse_form_encoded(query_string)
-            self.assertEqual(len(w), 1)
-            self.assertIsInstance(w[0].message, DeprecationWarning)
-        self.assertDictEqual(resp, {})
-
     def test_parse_body_json(self):
         """Ensure JSON is appropriately loaded"""
         body = {'some': 'thing', 'another': 'thing'}
@@ -228,25 +218,13 @@ class TestRequestContainer(unittest2.TestCase):
 
     def test_parse_body_byte_string(self):
         """Ensure that byte strings can be properly decoded"""
-        expected = {"some": "body"}
-        body_string = json.dumps(expected).encode('utf-8')
+        expected = {"some": ["body"]}
+        body_string = b'some=body'
         body = StringIO(body_string)
-        environ = EnvironBuilder(body).get_environ()
+        environ = EnvironBuilder(input_stream=body).get_environ()
 
         resp = _parse_body(environ)
         self.assertEqual(resp, expected)
-
-    def test_unparseable_body(self):
-        """Ensure deprecation warnings are raised"""
-        body = "&&;;&"
-        body_string = StringIO(body)
-        environ = EnvironBuilder(input_stream=body_string).get_environ()
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter('always')
-            resp = _parse_body(environ)
-            self.assertEqual(len(w), 1)
-            self.assertIsInstance(w[0].message, DeprecationWarning)
-        self.assertDictEqual(resp, {})
 
     def test_headers_case_insensitive(self):
         """Ensures the _Headers dict is case insensitive"""
@@ -319,3 +297,16 @@ class TestRequestContainer(unittest2.TestCase):
         self.assertEqual(resp.query_args, {'some': ['thing']})
         self.assertEqual(resp.method, 'FAKE')
         self.assertDictEqual(environ, resp.environ)
+
+    def test_get_charset(self):
+        """Test getting the charset from the environ"""
+        headers = {'Content-Type': 'text/plain; charset=blah'}
+        environ = EnvironBuilder(headers=headers).get_environ()
+        charset = _get_charset(environ)
+        self.assertEqual(charset, 'blah')
+
+    def test_get_charset_byte_header(self):
+        """Test getting the charset when the headers are bytes"""
+        environ = {b'CONTENT_TYPE': b'text/plain; charset=blah'}
+        charset = _get_charset(environ)
+        self.assertEqual(charset, 'blah')
