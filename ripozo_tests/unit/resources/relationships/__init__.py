@@ -4,5 +4,3 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 __author__ = 'Tim Martin'
-
-from . import list_relationship, relationship
