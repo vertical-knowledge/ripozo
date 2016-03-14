@@ -9,9 +9,10 @@ from __future__ import unicode_literals
 from cgi import parse_header
 import json
 import logging
+import warnings
 
 import six
-from werkzeug.urls import url_decode
+from six.moves import urllib
 
 from ripozo.resources.constants import input_categories
 
@@ -65,7 +66,7 @@ class _Headers(dict):
         return headers
 
 
-def _parse_form_encoded(form_encoded_string, charset='utf-8'):
+def parse_form_encoded(form_encoded_string, charset='utf-8'):
     """
     Safely parses a form encoded string.  Starting
     in ripozo v2.0.0 bad query strings will raise an
@@ -75,15 +76,29 @@ def _parse_form_encoded(form_encoded_string, charset='utf-8'):
     :return: The parsed values from the string
     :rtype: dict{unicode: list[unicode]}
     """
-    data_tuple = url_decode(form_encoded_string,
-                            charset=charset, errors='strict',
-                            decode_keys=True, cls=tuple)
-    data = {}
-    for key, value in data_tuple:
-        if key not in data:
-            data[key] = []
-        data[key].append(value)
-    return data
+
+    try:
+        query_parts = urllib.parse.parse_qs(form_encoded_string,
+                                            keep_blank_values=True,
+                                            strict_parsing=True)
+    except ValueError as e:
+        warnings.warn('The query string "{0}" is invalid.  In '
+                      'ripozo v2.0.0 this will raise a ValidationException. '
+                      'Error Message: {1}'.format(form_encoded_string, e),
+                      DeprecationWarning)
+        query_parts = urllib.parse.parse_qs(form_encoded_string,
+                                            keep_blank_values=True,
+                                            strict_parsing=False)
+
+    # Already unicode return as is
+    if six.PY3:
+        return query_parts
+
+    # Convert to unicode
+    unicode_query_parts = {}
+    for key, value in six.iteritems(query_parts):
+        unicode_query_parts[key.decode(charset)] = [val.decode(charset) for val in value]
+    return unicode_query_parts
 
 
 def _parse_query_string(environ):
@@ -96,7 +111,7 @@ def _parse_query_string(environ):
     :rtype: dict
     """
     query_string = environ.get('QUERY_STRING', '')
-    return _parse_form_encoded(query_string)
+    return parse_form_encoded(query_string)
 
 
 def _get_charset(environ):
@@ -117,7 +132,7 @@ def _get_charset(environ):
     return params.get('charset', 'utf-8')
 
 
-def _parse_body(environ):
+def parse_body(environ):
     """
     Parse the request body by first attempting to load it
     as JSON and then trying to parse it as a form encoded
@@ -127,21 +142,42 @@ def _parse_body(environ):
     :return: The parsed body
     :rtype: dict
     """
+    unicode_body = coerce_body_to_unicode(environ)
+    return parse_raw_body(unicode_body)
+
+
+def coerce_body_to_unicode(environ):
     raw_body_file = environ.get('wsgi.input')
-    raw_body = raw_body_file.read() if raw_body_file else None
-    if not raw_body:
-        return {}
+    raw_body = raw_body_file.read() if raw_body_file else ''
 
     # Decode the body into unicode
     if not isinstance(raw_body, six.text_type):
         charset = _get_charset(environ)
-        raw_body = raw_body.decode(charset)
+        raw_body = raw_body.decode(charset)  # TODO this should appropriately raise an error
+    return raw_body
 
+
+def parse_raw_body(body):
+    # TODO docstring
+    if not body:
+        return {}
     try:
-        return json.loads(raw_body)
+        return json.loads(body)
     except ValueError:
-        charset = _get_charset(environ)
-        return _parse_form_encoded(raw_body, charset=charset)
+        return parse_form_encoded(body)
+
+
+def json_loads_backwards_compatible(body, content_type):
+    try:
+        return json.loads(body)
+    except ValueError:
+        warnings.warn('The content type "{}" only allows for '
+                      'json requests bodies.  The automatic handling '
+                      'of form encoded bodies will be deprecated in '
+                      'ripozo v2.0.0. In the future, an exception '
+                      'will be raised and the client will receive a '
+                      '4xx response '.format(content_type), DeprecationWarning)
+        return parse_form_encoded(body)
 
 
 class RequestContainer(object):
@@ -179,7 +215,7 @@ class RequestContainer(object):
     def from_wsgi_environ(cls, environ, url_params):
         headers = _Headers.from_wsgi_environ(environ)
         query_args = _parse_query_string(environ)
-        body_args = _parse_body(environ)
+        body_args = parse_body(environ)
         return cls(
             headers=headers,
             query_args=query_args,

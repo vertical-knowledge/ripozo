@@ -6,13 +6,14 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import json
 from abc import ABCMeta, abstractproperty
 from warnings import warn
 
-from ripozo.utilities import join_url_parts
-
-import json
 import six
+
+from ripozo.resources.request import parse_form_encoded, coerce_body_to_unicode
+from ripozo.utilities import join_url_parts
 
 
 @six.add_metaclass(ABCMeta)
@@ -113,7 +114,7 @@ class AdapterBase(object):
         specific request format that must be transformed
         to work with ripozo.  For this base implementation
         it simply returns the request without any additional
-        formating.
+        formatting.
 
         :param RequestContainer request: The request to reformat.
         :return: The formatted request.
@@ -123,6 +124,19 @@ class AdapterBase(object):
              'You will need to implement this method in your adapter',
              PendingDeprecationWarning)
         return request
+
+    @classmethod
+    def parse_request_body(cls, environ):
+        # TODO docstring
+        warn('parse_request_body will be an abstractmethod in release 2.0. '
+             'You will need to implement this method in your adapter',
+             DeprecationWarning)
+        body = coerce_body_to_unicode(environ)
+        try:
+            return json.loads(body)
+        except ValueError:
+            return parse_form_encoded(body)
+
 
     @property
     def status_code(self):

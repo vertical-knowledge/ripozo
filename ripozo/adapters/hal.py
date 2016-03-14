@@ -6,10 +6,13 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.adapters import AdapterBase
-
 import json
+
 import six
+
+from ripozo.adapters import AdapterBase
+from ripozo.resources.request import json_loads_backwards_compatible, \
+    coerce_body_to_unicode
 
 _CONTENT_TYPE = 'application/hal+json'
 
@@ -135,3 +138,9 @@ class HalAdapter(AdapterBase):
         :rtype: RequestContainer
         """
         return request
+
+    @classmethod
+    def parse_request_body(cls, environ):
+        body = coerce_body_to_unicode(environ)
+        return json_loads_backwards_compatible(body, cls.formats[0])
+

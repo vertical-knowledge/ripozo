@@ -6,14 +6,16 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.adapters import AdapterBase
-from ripozo.utilities import titlize_endpoint
-from ripozo.resources.resource_base import create_url
-from ripozo.resources.constants import input_categories
-
 import json
+
 import six
 
+from ripozo.adapters import AdapterBase
+from ripozo.resources.constants import input_categories
+from ripozo.resources.request import json_loads_backwards_compatible, \
+    coerce_body_to_unicode
+from ripozo.resources.resource_base import create_url
+from ripozo.utilities import titlize_endpoint
 
 _CONTENT_TYPE = 'application/vnd.siren+json'
 
@@ -170,3 +172,8 @@ class SirenAdapter(AdapterBase):
         :rtype: RequestContainer
         """
         return request
+
+    @classmethod
+    def parse_request_body(cls, environ):
+        body = coerce_body_to_unicode(environ)
+        return json_loads_backwards_compatible(body, cls.formats[0])

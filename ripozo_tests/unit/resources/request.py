@@ -1,18 +1,21 @@
+# coding=utf-8
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
 import json
+import warnings
 
+import six
 import unittest2
 from six import StringIO, BytesIO
+from six.moves import urllib
 from werkzeug.test import EnvironBuilder
 
 from ripozo.resources.constants.input_categories import QUERY_ARGS, BODY_ARGS, URL_PARAMS
 from ripozo.resources.request import RequestContainer, _parse_query_string, \
-    _get_charset, _parse_body, _Headers
-
+    _get_charset, parse_body, _Headers, parse_form_encoded
 
 
 class TestRequestContainer(unittest2.TestCase):
@@ -187,7 +190,7 @@ class TestRequestContainer(unittest2.TestCase):
         body = {'some': 'thing', 'another': 'thing'}
         body_string = StringIO(json.dumps(body))
         environ = EnvironBuilder(input_stream=body_string).get_environ()
-        resp = _parse_body(environ)
+        resp = parse_body(environ)
         self.assertDictEqual(resp, body)
 
     def test_parse_body_formencoded(self):
@@ -195,7 +198,7 @@ class TestRequestContainer(unittest2.TestCase):
         body = "some=thing&another=else"
         body_string = StringIO(body)
         environ = EnvironBuilder(input_stream=body_string).get_environ()
-        resp = _parse_body(environ)
+        resp = parse_body(environ)
 
         expected = {
             'some': ['thing'],
@@ -208,12 +211,24 @@ class TestRequestContainer(unittest2.TestCase):
         body = ''
         body_string = StringIO(body)
         environ = EnvironBuilder(input_stream=body_string).get_environ()
-        resp = _parse_body(environ)
+        resp = parse_body(environ)
+        self.assertDictEqual(resp, {})
+
+    def test_unparseable_body(self):
+        """Ensure deprecation warnings are raised"""
+        body = "&&;;&"
+        body_string = StringIO(body)
+        environ = EnvironBuilder(input_stream=body_string).get_environ()
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
+            resp = _parse_body(environ)
+            self.assertEqual(len(w), 1)
+            self.assertIsInstance(w[0].message, DeprecationWarning)
         self.assertDictEqual(resp, {})
 
     def test_parse_body_none(self):
         """Ensures no body set interpreted as an empty dict"""
-        resp = _parse_body({'wsgi.input': None})
+        resp = parse_body({'wsgi.input': None})
         self.assertDictEqual(resp, {})
 
     def test_parse_body_byte_string(self):
@@ -223,7 +238,7 @@ class TestRequestContainer(unittest2.TestCase):
         body = BytesIO(body_string)
         environ = EnvironBuilder(input_stream=body).get_environ()
 
-        resp = _parse_body(environ)
+        resp = parse_body(environ)
         self.assertEqual(resp, expected)
 
     def test_headers_case_insensitive(self):
@@ -310,3 +325,51 @@ class TestRequestContainer(unittest2.TestCase):
         environ = {'CONTENT_TYPE': b'text/plain; charset=blah'}
         charset = _get_charset(environ)
         self.assertEqual(charset, 'blah')
+
+    def test_parse_form_encoded_bytes_to_unicode(self):
+        """
+        Simple version starting bytes ending unicode
+        """
+        query_dict = {b'some': b'another', b'and': b'another'}
+        query_string = urllib.parse.urlencode(query_dict)
+
+        resp = parse_form_encoded(query_string)
+        expected = {u'some': [u'another'], u'and': [u'another']}
+        self.assertDictEqual(expected, resp)
+        self.assert_form_encoded_unicode(resp)
+
+    def test_parse_form_encoded_unicode_to_unicode(self):
+        """
+        Version where the query string is unicode
+        """
+        query_dict = {u'some': u'another', u'and': u'another'}
+        query_string = urllib.parse.urlencode(query_dict)
+
+        resp = parse_form_encoded(query_string)
+        expected = {u'some': [u'another'], u'and': [u'another']}
+        self.assertDictEqual(expected, resp)
+        self.assert_form_encoded_unicode(resp)
+
+    def test_parse_form_encoded_special_characters_bytes(self):
+        """
+        Tests passing in special character bytes
+        """
+        query_dict = {
+            u'søµ´'.encode('utf-8'): u'å˜†˙´'.encode('utf-8'),
+            u'å˜'.encode('utf-8'): 'å˜†˙´'.encode('utf-8')
+        }
+        query_string = urllib.parse.urlencode(query_dict)
+
+        resp = parse_form_encoded(query_string)
+        expected = {u'søµ´': [u'å˜†˙´'], u'å˜': [u'å˜†˙´']}
+        self.assertDictEqual(expected, resp)
+        self.assert_form_encoded_unicode(resp)
+
+    def assert_form_encoded_unicode(self, dictionary):
+        """
+        Ensure all keys and values are unicode
+        """
+        for key, value in dictionary.items():
+            self.assertIsInstance(key, six.text_type)
+            for val in value:
+                self.assertIsInstance(val, six.text_type)

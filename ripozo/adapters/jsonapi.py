@@ -15,6 +15,8 @@ from ripozo import ResourceBase
 from ripozo.adapters.base import AdapterBase
 from ripozo.exceptions import JSONAPIFormatException
 from ripozo.resources.constructor import ResourceMetaClass
+from ripozo.resources.request import json_loads_backwards_compatible, \
+    coerce_body_to_unicode
 from ripozo.utilities import join_url_parts
 
 _CONTENT_TYPE = 'application/vnd.api+json'
@@ -195,3 +197,8 @@ class JSONAPIAdapter(AdapterBase):
             raise JSONAPIFormatException("Unsatisfactory id.  There are an unequal number"
                                          "of pks among the ids {0}".format(ids))
         return dict(zip(resource_class.pks, ids))
+
+    @classmethod
+    def parse_request_body(cls, environ):
+        body = coerce_body_to_unicode(environ)
+        return json_loads_backwards_compatible(body, cls.formats[0])
