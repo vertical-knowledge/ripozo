@@ -144,12 +144,12 @@ Currently, ripozo has integrations with Django, Flask, SQLAlchemy,
 and Cassandra (via cqlengine).  The documentation links are provided
 below.
 
-======================================================================= ================================================================================
-                          Frameworks                                                                     Databases
-======================================================================= ================================================================================
-`flask-ripozo`_     `ripozo-sqlalchemy`_
-`django-ripozo`_   `ripozo-cassandra`_
-======================================================================= ================================================================================
+===================   ===========================
+   Frameworks             Databases
+===================   ===========================
+`flask-ripozo`_       `ripozo-sqlalchemy`_
+`django-ripozo`_      `ripozo-cassandra`_
+===================   ===========================
 
 Built an extension for ripozo? Let us know and we'll add it in here!
 
