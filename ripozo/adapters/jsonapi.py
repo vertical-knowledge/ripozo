@@ -7,7 +7,9 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from functools import partial
 import json
+import warnings
 
 import six
 
@@ -15,11 +17,11 @@ from ripozo import ResourceBase
 from ripozo.adapters.base import AdapterBase
 from ripozo.exceptions import JSONAPIFormatException
 from ripozo.resources.constructor import ResourceMetaClass
-from ripozo.resources.request import json_loads_backwards_compatible, \
-    coerce_body_to_unicode
 from ripozo.utilities import join_url_parts
+from ripozo.wsgi.parse import construct_request_from_wsgi_environ, json_loads_backwards_compatible
 
 _CONTENT_TYPE = 'application/vnd.api+json'
+_json_loads_backwards_compatible = partial(json_loads_backwards_compatible, content_type=_CONTENT_TYPE)
 
 
 class JSONAPIAdapter(AdapterBase):
@@ -158,6 +160,27 @@ class JSONAPIAdapter(AdapterBase):
         Basically, it reformats the attributes and relationships to
         be top level and dot formatted instead of an underlying dictionary.
 
+        .. deprecated:: 1.3.1
+            This was deprecated in favor of ``construct_request_from_wsgi_environ``
+
+        :param RequestContainer request: The request whose request
+            body should be updated
+        :return: The updated request ready for ripozo.
+        :rtype: RequestContainer
+        """
+        warnings.warn('`format_request` was deprecated in favor of '
+                      '`construct_request_from_wsgi_environ` and will'
+                      ' be removed in v2.0.0', DeprecationWarning)
+        return cls._format_request(request)
+
+    @classmethod
+    def _format_request(cls, request):
+        """
+        Unwraps a JSONAPI request according
+        to the `specification .<http://jsonapi.org/format/#crud>`_
+        Basically, it reformats the attributes and relationships to
+        be top level and dot formatted instead of an underlying dictionary.
+
         :param RequestContainer request: The request whose request
             body should be updated
         :return: The updated request ready for ripozo.
@@ -199,6 +222,33 @@ class JSONAPIAdapter(AdapterBase):
         return dict(zip(resource_class.pks, ids))
 
     @classmethod
-    def parse_request_body(cls, environ):
-        body = coerce_body_to_unicode(environ)
-        return json_loads_backwards_compatible(body, cls.formats[0])
+    def construct_request_from_wsgi_environ(cls, environ, url_params):
+        """
+        Constructs and formats a ripozo :class:`RequestContainer` from
+        the wsgi environ as specified by
+        `PEP 3333 <https://www.python.org/dev/peps/pep-3333/>`_
+
+        Additionally, it brings the parameters up to the high level
+        dictionary to make the JSONApi format conducive to the :module:`restmixins`
+        module.  If you wish to use the incoming request as is please inherit
+        and override the ``_parse_request`` function as follows
+
+        .. code-block:: python
+
+            from ripozo.adapters.jsonapi import JSONAPIAdapter
+
+            class MyJSONAPIAdapter(JSONAPIAdapter):
+                @classmethod
+                def _format_request(cls, request):
+                    return request
+
+        :param environ:
+        :param url_params:
+        :return:
+        """
+        request_container = construct_request_from_wsgi_environ(
+            environ,
+            url_params,
+            _json_loads_backwards_compatible
+        )
+        return cls._format_request(request_container)

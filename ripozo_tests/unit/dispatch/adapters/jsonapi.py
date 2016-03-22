@@ -5,7 +5,11 @@ from __future__ import unicode_literals
 
 import json
 
+import six
 import unittest2
+from six import StringIO
+from six.moves import urllib
+from werkzeug.test import EnvironBuilder
 
 from ripozo import ResourceBase, Relationship, RequestContainer, ListRelationship
 from ripozo.adapters.jsonapi import JSONAPIAdapter
@@ -301,3 +305,24 @@ class TestJSONAPIAdapter(unittest2.TestCase):
         self.assertEqual(data['links'], dict(self='/my_resource'))
         self.assertEqual(data['id'], '')
         self.assertEqual(data['type'], 'my_resource')
+
+    def test_construct_request_from_wsgi_environ(self):
+        expected_body = {'first': 'something'}
+        query_string = {'second': 'another'}
+        actual_body = dict(data=dict(attributes=expected_body))
+        body = StringIO(json.dumps(actual_body))
+        query_string = urllib.parse.urlencode(query_string)
+        expected_query_string = {'second': ['another']}
+        expected_method = 'BLAH'
+        headers = {'Some-Header': 'blah'}
+        environ = EnvironBuilder(headers=headers, input_stream=body,
+                                 query_string=query_string, method=expected_method).get_environ()
+        expected_url_params = {'blah': 'blah'}
+        request = JSONAPIAdapter.construct_request_from_wsgi_environ(environ, expected_url_params)
+
+        self.assertDictEqual(expected_body, request.body_args)
+        self.assertDictEqual(expected_query_string, request.query_args)
+        self.assertEqual(expected_method, request.method)
+        for key, value in six.iteritems(headers):
+            self.assertEqual(value, request.headers[key])
+        self.assertDictEqual(expected_url_params, request.url_params)

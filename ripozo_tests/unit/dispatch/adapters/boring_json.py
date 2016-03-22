@@ -13,9 +13,10 @@ from ripozo.adapters import BasicJSONAdapter
 from ripozo.exceptions import RestException
 from ripozo.resources.request import RequestContainer
 from ripozo_tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
+from ripozo_tests.unit.tests.constructrequesthelper import TestConstructRequestHelper
 
 
-class TestBoringJSONAdapter(unittest2.TestCase):
+class TestBoringJSONAdapter(unittest2.TestCase, TestConstructRequestHelper):
     """
     Tests whether the BasicJSONAdapter appropriately creates
     a response for a resource
@@ -86,3 +87,6 @@ class TestBoringJSONAdapter(unittest2.TestCase):
         rel_dict = {}
         BasicJSONAdapter._append_relationships_to_list(rel_dict, relationships)
         self.assertDictEqual(dict(name=[dict(id=1)]), rel_dict)
+
+    def test_construct_request_from_wsgi_environ(self):
+        self.construct_request_from_wsgi_environ(BasicJSONAdapter)

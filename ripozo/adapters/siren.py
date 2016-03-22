@@ -7,17 +7,19 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import json
+from functools import partial
+from warnings import warn
 
 import six
 
 from ripozo.adapters import AdapterBase
 from ripozo.resources.constants import input_categories
-from ripozo.resources.request import json_loads_backwards_compatible, \
-    coerce_body_to_unicode
 from ripozo.resources.resource_base import create_url
 from ripozo.utilities import titlize_endpoint
+from ripozo.wsgi.parse import construct_request_from_wsgi_environ, json_loads_backwards_compatible
 
 _CONTENT_TYPE = 'application/vnd.siren+json'
+_json_loads_backwards_compatible = partial(json_loads_backwards_compatible, content_type=_CONTENT_TYPE)
 
 
 class SirenAdapter(AdapterBase):
@@ -168,12 +170,35 @@ class SirenAdapter(AdapterBase):
         """
         Simply returns request
 
+        .. deprecated:: 1.3.1
+            format_request has been deprecated in favor of
+            `construct_request_from_wsgi_environ` it will be
+            removed in v2.0.0
+
         :param RequestContainer request: The request to handler
         :rtype: RequestContainer
         """
+        warn('`format_request` has been deprecated in favor of '
+             '`construct_request_from_wsgi_environ` it will be'
+             ' removed in v2.0.0',
+             PendingDeprecationWarning)
         return request
 
     @classmethod
-    def parse_request_body(cls, environ):
-        body = coerce_body_to_unicode(environ)
-        return json_loads_backwards_compatible(body, cls.formats[0])
+    def construct_request_from_wsgi_environ(cls, environ, url_params):
+        """
+        Parses a request and appropriately constructs a RequestContainer
+        representing it.
+
+        :param dict environ: The WSGI environ object.  A dictionary
+            like object that almost all python web frameworks use
+            based on `PEP 3333 <https://www.python.org/dev/peps/pep-3333/>`_
+        :return: A ripozo ready RequestContainer object representing
+            the request
+        :rtype: RequestContainer
+        """
+        return construct_request_from_wsgi_environ(
+            environ,
+            url_params,
+            _json_loads_backwards_compatible
+        )

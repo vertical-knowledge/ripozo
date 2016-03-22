@@ -13,9 +13,10 @@ from ripozo.resources.constructor import ResourceMetaClass
 from ripozo.resources.request import RequestContainer
 from ripozo_tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
 from ripozo.exceptions import RestException
+from ripozo_tests.unit.tests.constructrequesthelper import TestConstructRequestHelper
 
 
-class TestHalAdapter(unittest2.TestCase):
+class TestHalAdapter(unittest2.TestCase, TestConstructRequestHelper):
     """
     Tests whether the HalAdapter appropriately creates
     a response for a resource
@@ -183,3 +184,6 @@ class TestHalAdapter(unittest2.TestCase):
         request = RequestContainer()
         response = HalAdapter.format_request(request)
         self.assertIs(response, request)
+
+    def test_construct_request_from_wsgi_environ(self):
+        self.construct_request_from_wsgi_environ(HalAdapter)

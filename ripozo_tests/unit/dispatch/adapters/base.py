@@ -3,15 +3,16 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import unittest2
 import json
+
+import unittest2
 
 from ripozo import RequestContainer
 from ripozo.adapters.base import AdapterBase
+from ripozo.exceptions import RestException
 from ripozo.resources.relationships import Relationship, ListRelationship
 from ripozo.resources.resource_base import ResourceBase
-from ripozo.exceptions import RestException
-
+from ripozo_tests.unit.tests.constructrequesthelper import TestConstructRequestHelper
 
 class TestAdapter(AdapterBase):
     __abstract__ = True
@@ -26,7 +27,7 @@ class TestAdapter(AdapterBase):
         return super(TestAdapter, self).extra_headers
 
 
-class TestAdapterBase(unittest2.TestCase):
+class TestAdapterBase(unittest2.TestCase, TestConstructRequestHelper):
     def get_related_resource_class(self):
         class Related(ResourceBase):
             _resource_name = 'related'
@@ -99,3 +100,6 @@ class TestAdapterBase(unittest2.TestCase):
         request = RequestContainer()
         response = TestAdapter.format_request(request)
         self.assertIs(response, request)
+
+    def test_construct_request_from_wsgi_environ(self):
+        self.construct_request_from_wsgi_environ(AdapterBase)

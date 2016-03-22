@@ -16,9 +16,10 @@ from ripozo.resources.resource_base import ResourceBase
 from ripozo.resources.constants import input_categories
 from ripozo_tests.helpers.hello_world_viewset import get_refreshed_helloworld_viewset
 from ripozo_tests.unit.dispatch.adapters.base import TestAdapterBase
+from ripozo_tests.unit.tests.constructrequesthelper import TestConstructRequestHelper
 
 
-class TestSirenAdapter(TestAdapterBase):
+class TestSirenAdapter(TestAdapterBase, TestConstructRequestHelper):
     """
     Tests whether the SirenAdapter appropriately adds
     creates a resource
@@ -248,3 +249,6 @@ class TestSirenAdapter(TestAdapterBase):
         request = RequestContainer()
         response = SirenAdapter.format_request(request)
         self.assertIs(response, request)
+
+    def test_construct_request_from_wsgi_environ(self):
+        self.construct_request_from_wsgi_environ(SirenAdapter)

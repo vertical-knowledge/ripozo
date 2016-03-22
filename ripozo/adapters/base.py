@@ -6,14 +6,17 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from functools import partial
 import json
 from abc import ABCMeta, abstractproperty
 from warnings import warn
 
 import six
 
-from ripozo.resources.request import parse_form_encoded, coerce_body_to_unicode
+from ripozo.wsgi.parse import json_loads_backwards_compatible, construct_request_from_wsgi_environ
 from ripozo.utilities import join_url_parts
+
+_json_loads_backwards_compatible = partial(json_loads_backwards_compatible, content_type="UNKNOWN")
 
 
 @six.add_metaclass(ABCMeta)
@@ -94,6 +97,10 @@ class AdapterBase(object):
         Any exception that does not have a status_code attribute
         will have a status_code of 500.
 
+        .. deprecated:: 1.3.1
+            This will be an abstractmethod in v2.0.0. You will
+            need to implement this method in your adapter
+
         :param Exception exc: The exception to format.
         :return: A tuple containing: response body, format,
             http response code
@@ -116,27 +123,45 @@ class AdapterBase(object):
         it simply returns the request without any additional
         formatting.
 
+        .. deprecated:: 1.3.1
+            format_request has been deprecated in favor of
+            `construct_request_from_wsgi_environ` it will be
+            removed in v2.0.0
+
         :param RequestContainer request: The request to reformat.
         :return: The formatted request.
         :rtype: RequestContainer
         """
-        warn('format_request will be an abstractmethod in release 2.0. '
-             'You will need to implement this method in your adapter',
+        warn('`format_request` has been deprecated in favor of '
+             '`construct_request_from_wsgi_environ` it will be'
+             ' removed in v2.0.0',
              PendingDeprecationWarning)
         return request
 
     @classmethod
-    def parse_request_body(cls, environ):
-        # TODO docstring
-        warn('parse_request_body will be an abstractmethod in release 2.0. '
-             'You will need to implement this method in your adapter',
-             DeprecationWarning)
-        body = coerce_body_to_unicode(environ)
-        try:
-            return json.loads(body)
-        except ValueError:
-            return parse_form_encoded(body)
+    def construct_request_from_wsgi_environ(cls, environ, url_parameters):
+        """
+        Parses a request and appropriately constructs it.  This should
+        be overridden in all adapters as in v2.0.0 it will be required
+        for adapters to have this method.  The :module:`wsgi`
+        module has many tools to make this easy to do in most circumstances.
 
+        .. deprecated:: 1.3.1
+            This will be an abstractmethod in v2.0.0. You wil
+            need to implement this method in your adapter
+
+        :param dict environ: The WSGI environ object.  A dictionary
+            like object that almost all python web frameworks use
+            based on `PEP 3333 <https://www.python.org/dev/peps/pep-3333/>`_
+        :return: A ripozo ready RequestContainer object representing
+            the request
+        :rtype: RequestContainer
+        """
+        return construct_request_from_wsgi_environ(
+            environ,
+            url_parameters,
+            _json_loads_backwards_compatible
+        )
 
     @property
     def status_code(self):
