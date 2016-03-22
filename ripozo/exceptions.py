@@ -85,3 +85,14 @@ class JSONAPIFormatException(RestException):
     """
     def __init__(self, message, status_code=400, *args, **kwargs):
         super(JSONAPIFormatException, self).__init__(message, status_code=status_code, *args, **kwargs)
+
+
+class UnreadableBodyException(RestException):
+    """
+    Occurs when the request body cannot be parsed appropriately
+    either because the character set was not correct or the format
+    was incorrect (i.e. form-encoded when the content-type is
+    application/json)
+    """
+    def __init__(self, message, status_code=400, *args, **kwargs):
+        super(UnreadableBodyException, self).__init__(message, status_code=status_code, *args, **kwargs)
