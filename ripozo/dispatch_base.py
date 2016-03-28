@@ -238,7 +238,7 @@ class DispatcherBase(object):
         """
         Checks that all relationships are valid in that
         their relation string is a real class.
-        Raises a warngin if the relation is not
+        Raises a warning if the relation is not
         valid.
 
         :param type klass: The klass to check
