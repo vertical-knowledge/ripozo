@@ -7,7 +7,10 @@ Changelog
 1.3.1 (unreleased)
 ==================
 
-- Nothing changed yet.
+- WSGI integrations added to ``ripozo.wsgi`` including mechanisms for directly parsing the request body, query args, and headers
+- Deprecated ``format_request`` on adapters in favor of parsing directly from the wsgi environment.  This gives the end developer much more flexibility in choosing how to read in requests.  The wsgi package should make simple integrations simple.
+- ``construct_request_from_wsgi_environ`` now required for adapters or a warning will be raised.  In v2.0.0 this will raise an exception
+- Added ``construct_request`` method to ``DispatcherBase``.  This method takes a wsgi environ and constructs a RequestContainer from it using the appropriate adapter based on the Content-Type header
 
 
 1.3.0 (2016-02-16)

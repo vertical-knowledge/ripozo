@@ -1,3 +1,7 @@
+"""
+Utilities for parsing arguments from the query string and body
+of requests using the WSGI environ object
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -11,7 +15,7 @@ import six
 from six.moves import urllib
 
 from ripozo.exceptions import UnreadableBodyException
-from ripozo.wsgi.headers import Headers
+from ripozo.wsgi.headers import Headers, get_raw_content_type
 from ripozo.resources.request import RequestContainer
 
 
@@ -75,10 +79,7 @@ def _get_charset(environ):
         set of the request
     :rtype: unicode
     """
-    content_type = environ.get('CONTENT_TYPE', '')
-    # Decode according to RFC 5987 https://tools.ietf.org/html/rfc5987
-    if not isinstance(content_type, six.text_type):
-        content_type = content_type.decode('latin1')
+    content_type = get_raw_content_type(environ)
     content_type, params = parse_header(content_type)
     return params.get('charset', 'utf-8')
 

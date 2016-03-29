@@ -3,9 +3,10 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import six
 import unittest2
 
-from ripozo.wsgi.headers import Headers
+from ripozo.wsgi.headers import Headers, get_raw_content_type
 
 
 class TestHeaders(unittest2.TestCase):
@@ -56,3 +57,31 @@ class TestHeaders(unittest2.TestCase):
         headers_dict_real = Headers.from_wsgi_environ(real_headers)
         self.assertEqual(len(headers_dict_real), len(real_headers))
         self.assertDictEqual(expected, headers_dict_real)
+
+
+
+class TestGetRawContentType(unittest2.TestCase):
+    def test_get_content_type_unicode(self):
+        expected = 'application/json'
+        environ = {'CONTENT_TYPE': expected}
+        resp = get_raw_content_type(environ)
+        self.assertEqual(expected, resp)
+        self.assertIsInstance(resp, six.text_type)
+
+    def test_get_content_type_bytes(self):
+        expected = 'application/json'
+        environ = {'CONTENT_TYPE': expected.encode('latin1')}
+        resp = get_raw_content_type(environ)
+        self.assertEqual(expected, resp)
+        self.assertIsInstance(resp, six.text_type)
+
+    def test_get_content_type_no_content_type(self):
+        resp = get_raw_content_type({})
+        self.assertEqual('', resp)
+
+    def test_get_content_type_bytes_key(self):
+        expected = 'application/json'
+        environ = {b'CONTENT_TYPE': expected}
+        resp = get_raw_content_type(environ)
+        self.assertEqual(expected, resp)
+        self.assertIsInstance(resp, six.text_type)

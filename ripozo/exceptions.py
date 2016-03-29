@@ -96,3 +96,18 @@ class UnreadableBodyException(RestException):
     """
     def __init__(self, message, status_code=400, *args, **kwargs):
         super(UnreadableBodyException, self).__init__(message, status_code=status_code, *args, **kwargs)
+
+
+class UnsupportedMediaTypeException(RestException):
+    """
+    Raised when the server sends a request with a Content-Type
+    that the server cannot handle.  E.g. if the client sends a request
+    with ``"Content-Type: application/something-not-supported"`` and
+    the server does not have an adapter that supports
+    ``"application/something-not-supported"``
+
+    The status code is ``415`` if this is propagated to the client.
+    """
+
+    def __init__(self, message, status_code=415, *args, **kwargs):
+        super(UnsupportedMediaTypeException, self).__init__(message, status_code=status_code, *args, **kwargs)

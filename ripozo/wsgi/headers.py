@@ -1,3 +1,6 @@
+"""
+Utilities for parsing headers from a WSGI environ
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -53,3 +56,21 @@ class Headers(dict):
                 key = key.replace('_', '-')
                 headers[key] = value
         return headers
+
+
+def get_raw_content_type(environ):
+    """
+    Gets the raw content-type unicode string
+    from the environ object.  This will include additional
+    values like the ``charset`` attribute.
+
+    :param dict environ: The WSGI environ object.  A dictionary
+        like object that almost all python web frameworks use
+        based on `PEP 3333 <https://www.python.org/dev/peps/pep-3333/>`_
+    :return:
+    """
+    content_type = environ.get('CONTENT_TYPE', '')
+    # Decode according to RFC 5987 https://tools.ietf.org/html/rfc5987
+    if not isinstance(content_type, six.text_type):
+        content_type = content_type.decode('latin1')
+    return content_type

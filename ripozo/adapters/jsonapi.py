@@ -119,7 +119,6 @@ class JSONAPIAdapter(AdapterBase):
             in the appropriate format.
         :rtype: dict
         """
-        # TODO docs
         relationships = dict()
         for resource, name, embedded in resource.related_resources:
             if name not in relationships:

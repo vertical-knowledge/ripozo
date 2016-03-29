@@ -39,8 +39,7 @@ setup(
         ]
     },
     install_requires=[
-        'six>=1.4.1,!=1.7.1',
-        'werkzeug>=0.8.3'
+        'six>=1.4.1,!=1.7.1'
     ],
     keywords='REST HATEOAS Hypermedia RESTful SIREN HAL API JSONAPI web framework Django Flask SQLAlchemy Cassandra',
     name='ripozo',
@@ -48,7 +47,8 @@ setup(
     tests_require=[
         'unittest2',
         'tox',
-        'mock'
+        'mock',
+        'werkzeug>=0.8.3'
     ],
     test_suite="ripozo_tests",
     url='http://ripozo.readthedocs.org/',

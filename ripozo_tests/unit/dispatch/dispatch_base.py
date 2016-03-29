@@ -10,7 +10,7 @@ import unittest2
 from ripozo import ResourceBase
 from ripozo.adapters import BasicJSONAdapter, HalAdapter, SirenAdapter
 from ripozo.dispatch_base import DispatcherBase
-from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
+from ripozo.exceptions import AdapterFormatAlreadyRegisteredException, UnsupportedMediaTypeException
 from ripozo.resources.constructor import ResourceMetaClass
 from ripozo_tests.helpers.dispatcher import FakeDispatcher
 
@@ -181,3 +181,25 @@ class TestDispatchBase(unittest2.TestCase):
         cls = disp.auto_options_class
         self.assertIn(cls, ResourceMetaClass.registered_resource_classes)
         self.assertEqual(cls.__name__, name)
+
+    def test_construct_request_when_no_adapter_raise_exception(self):
+        dispatcher = FakeDispatcher()
+        environ = {'Content-Type': 'application/json'}
+        self.assertRaises(UnsupportedMediaTypeException, dispatcher.construct_request, environ)
+
+    def test_construct_request_valid_content_type(self):
+        dispatcher = FakeDispatcher()
+        adapter = mock.Mock(formats=['application/json'])
+        environ = {'CONTENT_TYPE': 'application/json'}
+        dispatcher.register_adapters(adapter)
+        resp = dispatcher.construct_request(environ)
+        self.assertTrue(adapter.construct_request_from_wsgi_environ.called_with(environ))
+
+    def test_construct_request_valid_content_type_and_charset(self):
+        dispatcher = FakeDispatcher()
+        adapter = mock.Mock(formats=['application/json'])
+        environ = {'CONTENT_TYPE': 'application/json; charset=utf8'}
+        dispatcher.register_adapters(adapter)
+        resp = dispatcher.construct_request(environ)
+        self.assertTrue(adapter.construct_request_from_wsgi_environ.called_with(environ))
+

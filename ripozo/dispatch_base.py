@@ -8,15 +8,17 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import logging
+import warnings
 from abc import ABCMeta, abstractmethod, abstractproperty
+from cgi import parse_header
 
-from ripozo.exceptions import AdapterFormatAlreadyRegisteredException
+import six
+
+from ripozo.exceptions import AdapterFormatAlreadyRegisteredException, UnsupportedMediaTypeException
 from ripozo.resources.constructor import ResourceMetaClass
 from ripozo.resources.restmixins import AllOptionsResource
-
-import logging
-import six
-import warnings
+from ripozo.wsgi.headers import get_raw_content_type
 
 _logger = logging.getLogger(__name__)
 
@@ -232,6 +234,32 @@ class DispatcherBase(object):
             if mimetype in self.adapter_formats:
                 return self.adapter_formats.get(mimetype)
         return self.default_adapter
+
+    def construct_request(self, environ):
+        """
+        Constructs a ``ripozo.request.RequestContainer`` object
+        using the appropriate adapter according to the Content-Type.
+
+        For example, if the Content-Type is ``"application/json"`` then the
+        the ``BasicJSONAdapter`` will be used or if the Content-Type
+        is ``"application/hal+json"`` then the ``HalAdapter`` class
+        will be used.  If no adapter can be found that matches the
+        Content-Type an UnsupportedMediaTypeException is raised.
+
+        :param dict environ: The WSGI environ object.  A dictionary
+            like object that almost all python web frameworks use
+            based on `PEP 3333 <https://www.python.org/dev/peps/pep-3333/>`_
+        :return: The ripozo ready RequestContainer object
+        :rtype: RequestContainer
+        :raises: UnsupportedMediaTypeException
+        """
+        raw_content_type = get_raw_content_type(environ)
+        content_type, params = parse_header(raw_content_type)
+        adapter_class = self.adapter_formats.get(content_type)
+        if not adapter_class:
+            raise UnsupportedMediaTypeException('This API cannot read the '
+                                                'Content-Type "{}"'.format(content_type))
+        return adapter_class.construct_request_from_wsgi_environ(environ)
 
     @staticmethod
     def _check_relationships(klass):
