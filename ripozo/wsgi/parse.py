@@ -106,12 +106,12 @@ def coerce_body_to_unicode(environ):
         try:
             raw_body = raw_body.decode(charset)
         except LookupError:
-            raise UnreadableBodyException("unknown charset: {} from"
-                                          " Content-Type header".format(charset))
+            raise UnreadableBodyException('unknown charset: "{0}" from'
+                                          ' Content-Type header'.format(charset))
         except UnicodeDecodeError:
-            raise UnreadableBodyException("The request body cannot be decoded "
-                                          "using the charset {} from the Content-Type"
-                                          " header (default=utf-8)".format(charset))
+            raise UnreadableBodyException('The request body cannot be decoded '
+                                          'using the charset "{0}" from the Content-Type'
+                                          ' header (default=utf-8)'.format(charset))
     return raw_body
 
 
