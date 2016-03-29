@@ -7,15 +7,17 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ripozo.resources.relationships.relationship import Relationship
-from ripozo.resources.relationships.list_relationship import ListRelationship
-from ripozo.decorators import apimethod, classproperty, translate, manager_translate
-from ripozo.resources.resource_base import ResourceBase
-
 import logging
+
 import six
 
+from ripozo.decorators import apimethod, classproperty, manager_translate
+from ripozo.resources.relationships.list_relationship import ListRelationship
+from ripozo.resources.relationships.relationship import Relationship
+from ripozo.resources.resource_base import ResourceBase
+
 _logger = logging.getLogger(__name__)
+# pylint: disable=too-many-ancestors
 
 
 class AllOptionsResource(ResourceBase):
@@ -30,7 +32,7 @@ class AllOptionsResource(ResourceBase):
     linked_resource_classes = tuple()
 
     @apimethod(methods=['OPTIONS'])
-    def all_options(cls, request):
+    def all_options(cls, request):  # pylint: disable=unused-argument
         """
         A resource pointing to all
         of the resources in the linked_resource_classes.
@@ -56,8 +58,10 @@ class AllOptionsResource(ResourceBase):
         for klass in cls.linked_resource_classes:
             has_no_pks = False
             has_pk_endpoint = False
+            # pylint: disable=unused-variable
             for name, all_endpoints in six.iteritems(klass.endpoint_dictionary()):
                 for endpoint in all_endpoints:
+                    # pylint: disable=simplifiable-if-statement
                     if endpoint['no_pks'] is True:
                         has_no_pks = True
                     else:
@@ -276,18 +280,51 @@ class Delete(ResourceBase):
 
 
 class RetrieveUpdate(Retrieve, Update):
+    """Shortcut for
+
+    .. code-block:: python
+
+        class RetrieveUpdate(Retrieve, Update):
+            __abstract__ = True
+
+    """
     __abstract__ = True
 
 
 class RetrieveUpdateDelete(Retrieve, Update, Delete):
+    """Shortcut for
+
+    .. code-block:: python
+
+        class RetrieveUpdateDelete(Retrieve, Update, Delete):
+            __abstract__ = True
+
+    """
     __abstract__ = True
 
 
 class CreateRetrieve(Create, Retrieve):
+    """Shortcut for
+
+    .. code-block:: python
+
+        class CreateRetrieve(Create, Retrieve):
+            __abstract__ = True
+
+    """
     __abstract__ = True
 
 
 class CreateRetrieveUpdate(Create, Retrieve, Update):
+    """
+    Shortcut for
+
+    .. code-block:: python
+
+        class CreateRetrieveUpdate(Create, Retrieve, Update):
+            __abstract__ = True
+
+    """
     __abstract__ = True
 
 

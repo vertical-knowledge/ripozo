@@ -16,7 +16,8 @@ from ripozo.adapters import AdapterBase
 from ripozo.wsgi.parse import json_loads_backwards_compatible, construct_request_from_wsgi_environ
 
 _CONTENT_TYPE = 'application/hal+json'
-_json_loads_backwards_compatible = partial(json_loads_backwards_compatible, content_type=_CONTENT_TYPE)
+_JSON_LOADS_BACKWARDS_COMPATIBLE = partial(json_loads_backwards_compatible,
+                                           content_type=_CONTENT_TYPE)
 
 
 class HalAdapter(AdapterBase):
@@ -66,7 +67,7 @@ class HalAdapter(AdapterBase):
         Generates an appropriately formatted embedded relationship
         in the HAL format.
 
-        :param list[ripozo.viewsets.relationships.relationship.BaseRelationship] relationship_list: The
+        :param list[BaseRelationship] relationship_list: The
             relationship that an embedded version is being created for.
         :return: If it is a ListRelationship it will return a list/collection of the
             embedded resources.  Otherwise it returns a dictionary as specified
@@ -166,7 +167,7 @@ class HalAdapter(AdapterBase):
         return construct_request_from_wsgi_environ(
             environ,
             url_params,
-            _json_loads_backwards_compatible
+            _JSON_LOADS_BACKWARDS_COMPATIBLE
         )
 
 

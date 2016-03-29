@@ -21,6 +21,7 @@ from ripozo.resources.restmixins import AllOptionsResource
 from ripozo.wsgi.headers import get_raw_content_type
 
 _logger = logging.getLogger(__name__)
+# pylint: disable=protected-access
 
 
 @six.add_metaclass(ABCMeta)
@@ -254,7 +255,7 @@ class DispatcherBase(object):
         :raises: UnsupportedMediaTypeException
         """
         raw_content_type = get_raw_content_type(environ)
-        content_type, params = parse_header(raw_content_type)
+        content_type, params = parse_header(raw_content_type)  # pylint: disable=unused-variable
         adapter_class = self.adapter_formats.get(content_type)
         if not adapter_class:
             raise UnsupportedMediaTypeException('This API cannot read the '

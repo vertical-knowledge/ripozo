@@ -50,7 +50,7 @@ class BaseField(object):
             obj = self._validate(obj, skip_required=skip_required)
         return obj
 
-    def _translate(self, obj, skip_required=False):
+    def _translate(self, obj, skip_required=False):  # pylint: disable=unused-argument,no-self-use
         """
         This method is responsible for translating an input
         string or object.
@@ -64,7 +64,7 @@ class BaseField(object):
         """
         return translate_iterable_to_single(obj)
 
-    def _validate(self, obj, skip_required=False):
+    def _validate(self, obj, skip_required=False):  # pylint: disable=unused-argument
         """
         An object to be validated
 

@@ -17,7 +17,8 @@ from ripozo.adapters import AdapterBase
 from ripozo.wsgi.parse import construct_request_from_wsgi_environ, json_loads_backwards_compatible
 
 _CONTENT_TYPE = 'application/json'
-_json_loads_backwards_compatible = partial(json_loads_backwards_compatible, content_type=_CONTENT_TYPE)
+_JSON_LOADS_BACKWARDS_COMPATIBLE = partial(json_loads_backwards_compatible,
+                                           content_type=_CONTENT_TYPE)
 
 
 class BasicJSONAdapter(AdapterBase):
@@ -75,7 +76,7 @@ class BasicJSONAdapter(AdapterBase):
         :return: A list of the resources in dictionary format.
         :rtype: list
         """
-        for resource, name, embedded in relationships:
+        for resource, name, embedded in relationships:  # pylint: disable=unused-variable
             if name not in rel_dict:
                 rel_dict[name] = []
             if isinstance(resource, (list, tuple)):
@@ -137,5 +138,5 @@ class BasicJSONAdapter(AdapterBase):
         return construct_request_from_wsgi_environ(
             environ,
             url_params,
-            _json_loads_backwards_compatible
+            _JSON_LOADS_BACKWARDS_COMPATIBLE
         )

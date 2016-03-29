@@ -5,21 +5,21 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-import re
 
+# pylint: disable=too-many-instance-attributes
+
+import inspect
+import logging
+import re
 from collections import namedtuple
+
+import six
 
 from ripozo.decorators import classproperty
 from ripozo.resources.constructor import ResourceMetaClass
 from ripozo.utilities import convert_to_underscore, join_url_parts
 
-import inspect
-import logging
-import six
-
 _logger = logging.getLogger(__name__)
-
-
 _URL_PART_FINDER = re.compile(r'<([^>]+)>')
 
 
@@ -89,6 +89,7 @@ class ResourceBase(object):
     postprocessors = tuple()
     _links = None
 
+    #  pylint: disable=too-many-arguments
     def __init__(self, properties=None, errors=None, meta=None, no_pks=False,
                  status_code=200, query_args=None, include_relationships=True,
                  route_extension=''):
@@ -336,7 +337,7 @@ def _generate_endpoint_dict(cls):
     for name, method in _get_apimethods(cls):
         _logger.debug('Found the apimethod %s on the class %s', name, cls.__name__)
         all_routes = []
-        for route, endpoint, options in method.routes:
+        for route, endpoint, options in method.routes:  # pylint: disable=unused-variable
             base_url = cls.base_url_sans_pks if options.get('no_pks', False) else cls.base_url
             route = join_url_parts(base_url, route)
             all_routes.append(dict(route=route, endpoint_func=method, **options))
@@ -357,6 +358,7 @@ def _get_apimethods(cls):
     :return: A generator for tuples of the name, method combo
     :rtype: type.GeneratorType
     """
+    # pylint: disable=unused-variable
     for name, obj in inspect.getmembers(cls, predicate=_apimethod_predicate):
         # getattr necessary for python3.3
         yield name, getattr(cls, name)

@@ -21,7 +21,8 @@ from ripozo.utilities import join_url_parts
 from ripozo.wsgi.parse import construct_request_from_wsgi_environ, json_loads_backwards_compatible
 
 _CONTENT_TYPE = 'application/vnd.api+json'
-_json_loads_backwards_compatible = partial(json_loads_backwards_compatible, content_type=_CONTENT_TYPE)
+_JSON_LOADS_BACKWARDS_COMPATIBLE = partial(json_loads_backwards_compatible,
+                                           content_type=_CONTENT_TYPE)
 
 
 class JSONAPIAdapter(AdapterBase):
@@ -80,7 +81,7 @@ class JSONAPIAdapter(AdapterBase):
         """
         self_url = self.combine_base_url_with_resource_url(resource.url)
         links = {'self': self_url}
-        for link, name, embedded in resource.linked_resources:
+        for link, name, embedded in resource.linked_resources:  # pylint: disable=unused-variable
             links[name] = self.combine_base_url_with_resource_url(link.url)
         return links
 
@@ -211,8 +212,28 @@ class JSONAPIAdapter(AdapterBase):
 
     @staticmethod
     def _parse_id(id_, resource_name):
+        """
+        Parses the id from a for a given relationship
+        into all parts and assigns them to the appropriate
+        multipart pk based on the ResourceName
+
+        EXAMPLE
+
+        .. doctest:: python
+
+            >>> class MyResource(ResourceBase):
+            ...      pks = 'id1', 'id2',
+            >>> json_api_id = 'first/second'
+            >>> JSONAPIAdapter._parse_id(json_api_id, 'MyResource')
+            {'id1': 'first', 'id2': 'second'}
+
+        :param unicode id_: The JSON API formatted id
+        :param unicode resource_name: The name of the resource
+        :return: dict
+        """
         if resource_name not in ResourceMetaClass.registered_resource_names_map:
-            raise JSONAPIFormatException('The resource "{0}" is not a valid type'.format(resource_name))
+            msg = 'The resource "{0}" is not a valid type'.format(resource_name)
+            raise JSONAPIFormatException(msg)
         resource_class = ResourceMetaClass.registered_resource_names_map[resource_name]
         ids = id_.split('/')
         if len(ids) != len(resource_class.pks):
@@ -248,6 +269,6 @@ class JSONAPIAdapter(AdapterBase):
         request_container = construct_request_from_wsgi_environ(
             environ,
             url_params,
-            _json_loads_backwards_compatible
+            _JSON_LOADS_BACKWARDS_COMPATIBLE
         )
         return cls._format_request(request_container)

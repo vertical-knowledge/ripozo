@@ -7,14 +7,16 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import logging
+
+import six
+
 from ripozo.exceptions import RestException
 from ripozo.resources.constructor import ResourceMetaClass
 from ripozo.utilities import get_or_pop
 
-import logging
-import six
-
 _logger = logging.getLogger(__name__)
+# pylint: disable=too-many-instance-attributes
 
 
 class Relationship(object):
@@ -27,6 +29,7 @@ class Relationship(object):
     """
     _resource_meta_class = ResourceMetaClass
 
+    # pylint: disable=too-many-arguments
     def __init__(self, name, property_map=None, relation=None, embedded=False,
                  required=False, no_pks=False, query_args=None, templated=False,
                  remove_properties=True):

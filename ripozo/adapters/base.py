@@ -16,7 +16,8 @@ import six
 from ripozo.wsgi.parse import json_loads_backwards_compatible, construct_request_from_wsgi_environ
 from ripozo.utilities import join_url_parts
 
-_json_loads_backwards_compatible = partial(json_loads_backwards_compatible, content_type="UNKNOWN")
+_JSON_LOADS_BACKWARDS_COMPATIBLE = partial(json_loads_backwards_compatible,
+                                           content_type="UNKNOWN")
 
 
 @six.add_metaclass(ABCMeta)
@@ -160,7 +161,7 @@ class AdapterBase(object):
         return construct_request_from_wsgi_environ(
             environ,
             url_parameters,
-            _json_loads_backwards_compatible
+            _JSON_LOADS_BACKWARDS_COMPATIBLE
         )
 
     @property

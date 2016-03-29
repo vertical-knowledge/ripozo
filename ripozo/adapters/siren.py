@@ -19,7 +19,8 @@ from ripozo.utilities import titlize_endpoint
 from ripozo.wsgi.parse import construct_request_from_wsgi_environ, json_loads_backwards_compatible
 
 _CONTENT_TYPE = 'application/vnd.siren+json'
-_json_loads_backwards_compatible = partial(json_loads_backwards_compatible, content_type=_CONTENT_TYPE)
+_JSON_LOADS_BACKWARDS_COMPATIBLE = partial(json_loads_backwards_compatible,
+                                           content_type=_CONTENT_TYPE)
 
 
 class SirenAdapter(AdapterBase):
@@ -109,7 +110,7 @@ class SirenAdapter(AdapterBase):
         """
         href = self.combine_base_url_with_resource_url(self.resource.url)
         links = [dict(rel=['self'], href=href)]
-        for link, link_name, embedded in self.resource.linked_resources:
+        for link, link_name, embedded in self.resource.linked_resources:  # pylint: disable=unused-variable
             links.append(dict(rel=[link_name],
                               href=self.combine_base_url_with_resource_url(link.url)))
         return links
@@ -200,5 +201,5 @@ class SirenAdapter(AdapterBase):
         return construct_request_from_wsgi_environ(
             environ,
             url_params,
-            _json_loads_backwards_compatible
+            _JSON_LOADS_BACKWARDS_COMPATIBLE
         )

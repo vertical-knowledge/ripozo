@@ -8,6 +8,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 __author__ = 'Tim Martin'
+# pylint: disable=too-many-ancestors
 
 
 class RestException(Exception):
@@ -34,7 +35,10 @@ class NotFoundException(ManagerException):
     find a model that was requested.
     """
     def __init__(self, message, status_code=404, *args, **kwargs):
-        super(NotFoundException, self).__init__(message, status_code=status_code, *args, **kwargs)
+        super(NotFoundException, self).__init__(message,
+                                                status_code=status_code,
+                                                *args,
+                                                **kwargs)
 
 
 class FieldException(RestException, ValueError):
@@ -43,7 +47,10 @@ class FieldException(RestException, ValueError):
     when validation or casting fail.
     """
     def __init__(self, message, status_code=400, *args, **kwargs):
-        super(FieldException, self).__init__(message, status_code=status_code, *args, **kwargs)
+        super(FieldException, self).__init__(message,
+                                             status_code=status_code,
+                                             *args,
+                                             **kwargs)
 
 
 class ValidationException(FieldException):
@@ -84,7 +91,10 @@ class JSONAPIFormatException(RestException):
     `JSON API specification <http://jsonapi.org/format/#crud>`_
     """
     def __init__(self, message, status_code=400, *args, **kwargs):
-        super(JSONAPIFormatException, self).__init__(message, status_code=status_code, *args, **kwargs)
+        super(JSONAPIFormatException, self).__init__(message,
+                                                     status_code=status_code,
+                                                     *args,
+                                                     **kwargs)
 
 
 class UnreadableBodyException(RestException):
@@ -95,7 +105,10 @@ class UnreadableBodyException(RestException):
     application/json)
     """
     def __init__(self, message, status_code=400, *args, **kwargs):
-        super(UnreadableBodyException, self).__init__(message, status_code=status_code, *args, **kwargs)
+        super(UnreadableBodyException, self).__init__(message,
+                                                      status_code=status_code,
+                                                      *args,
+                                                      **kwargs)
 
 
 class UnsupportedMediaTypeException(RestException):
@@ -110,4 +123,7 @@ class UnsupportedMediaTypeException(RestException):
     """
 
     def __init__(self, message, status_code=415, *args, **kwargs):
-        super(UnsupportedMediaTypeException, self).__init__(message, status_code=status_code, *args, **kwargs)
+        super(UnsupportedMediaTypeException, self).__init__(message,
+                                                            status_code=status_code,
+                                                            *args,
+                                                            **kwargs)

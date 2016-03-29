@@ -31,8 +31,8 @@ def parse_form_encoded(form_encoded_string, charset='utf-8'):
     :return: The parsed values from the string
     :rtype: dict{unicode: list[unicode]}
     """
-
     try:
+        # pylint: disable=redundant-keyword-arg
         query_parts = urllib.parse.parse_qs(form_encoded_string,
                                             keep_blank_values=True,
                                             strict_parsing=True)
@@ -41,6 +41,7 @@ def parse_form_encoded(form_encoded_string, charset='utf-8'):
                       'ripozo v2.0.0 this will raise a ValidationException. '
                       'Error Message: {1}'.format(form_encoded_string, e),
                       DeprecationWarning)
+        # pylint: disable=redundant-keyword-arg
         query_parts = urllib.parse.parse_qs(form_encoded_string,
                                             keep_blank_values=True,
                                             strict_parsing=False)
@@ -161,7 +162,7 @@ def get_http_verb(environ):
     return method
 
 
-def construct_request_from_wsgi_environ(environ, url_parameters, body_parser):
+def construct_request_from_wsgi_environ(environ, url_parameters, body_parser):  # pylint: disable=invalid-name
     """
     Constructs a complete request from a wsgi environ.
     It uses the body_parser to parse the unicode request

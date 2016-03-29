@@ -310,7 +310,7 @@ class translate(object):
         return self.original_fields
 
 
-class manager_translate(object):
+class manager_translate(object):  # pylint: disable=invalid-name
     """
     A special case translation and validation for using managers.
     Performs the same actions as ripozo.decorators.translate

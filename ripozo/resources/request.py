@@ -22,7 +22,8 @@ class RequestContainer(object):
     and no property is guaranteed.
     """
 
-    def __init__(self, url_params=None, query_args=None, body_args=None, headers=None, method=None, environ=None):
+    def __init__(self, url_params=None, query_args=None, body_args=None,
+                 headers=None, method=None, environ=None):
         """
         Create a new request container.  Typically this is constructed
         in the dispatcher.

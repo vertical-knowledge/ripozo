@@ -1,3 +1,8 @@
+"""
+Contains the base fields that will be
+the default in the future.  Including an interface
+for fields ``IField`` and a generic ``Field`` class
+"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function

@@ -10,13 +10,12 @@ from __future__ import unicode_literals
 import abc
 from datetime import datetime
 
+import six
+
 from ripozo.exceptions import TranslationException
-from ripozo.resources.fields.base import BaseField
 from ripozo.resources.fields.field import IField, Field
 from ripozo.resources.fields.validations import validate_regex, validate_size, \
     basic_validation, translate_iterable_to_single, validate_required
-
-import six
 
 
 class StringField(IField):
@@ -75,6 +74,9 @@ class StringField(IField):
 
 @six.add_metaclass(abc.ABCMeta)
 class _INumberField(IField):
+    """
+    Simple interface for number type objects (e.g. integers or floats)
+    """
     @abc.abstractproperty
     def field_type(self):
         raise NotImplementedError

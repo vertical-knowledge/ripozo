@@ -8,12 +8,12 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import logging
 from abc import ABCMeta, abstractmethod
 
-from ripozo.decorators import classproperty
-
-import logging
 import six
+
+from ripozo.decorators import classproperty
 
 _logger = logging.getLogger(__name__)
 
@@ -143,7 +143,7 @@ class BaseManager(object):
         pass
 
     @classproperty
-    def fields(cls):
+    def fields(cls): # pylint: disable=no-self-use
         """
         Simply makes sure that the _fields attribute is not
         None.  Returns [] if cls._fields evaluates to None
