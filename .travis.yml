@@ -7,14 +7,8 @@ python:
   - "2.6"
   - "pypy"
   - "pypy3"
-env:
-  - WERKZEUG="git+git://github.com/mitsuhiko/werkzeug.git@master"
-  - WERKZEUG="werkzeug<0.12.0"
-  - WERKZEUG="werkzeug<0.11.0"
-  - WERKZEUG="werkzeug<0.10.0"
 install:
   - pip install coveralls
-  - pip install -U $WERKZEUG
   - python setup.py -q install
 script:
   - coverage run --source=ripozo setup.py test
