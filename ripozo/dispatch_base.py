@@ -258,7 +258,7 @@ class DispatcherBase(object):
         adapter_class = self.adapter_formats.get(content_type)
         if not adapter_class:
             raise UnsupportedMediaTypeException('This API cannot read the '
-                                                'Content-Type "{}"'.format(content_type))
+                                                'Content-Type "{0}"'.format(content_type))
         return adapter_class.construct_request_from_wsgi_environ(environ)
 
     @staticmethod

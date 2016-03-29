@@ -78,10 +78,3 @@ class TestGetRawContentType(unittest2.TestCase):
     def test_get_content_type_no_content_type(self):
         resp = get_raw_content_type({})
         self.assertEqual('', resp)
-
-    def test_get_content_type_bytes_key(self):
-        expected = 'application/json'
-        environ = {b'CONTENT_TYPE': expected}
-        resp = get_raw_content_type(environ)
-        self.assertEqual(expected, resp)
-        self.assertIsInstance(resp, six.text_type)

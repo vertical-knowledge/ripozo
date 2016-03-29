@@ -108,7 +108,7 @@ class TestCoerceBodyToUnicode(unittest2.TestCase):
     def test_bytes_body_valid_charset(self):
         expected = 'blah blah'
         encoding_type = 'cp950'
-        content_type = 'text/plain; charset={}'.format(encoding_type)
+        content_type = 'text/plain; charset={0}'.format(encoding_type)
         raw_text = expected.encode(encoding_type)
         body = BytesIO(raw_text)
         environ = EnvironBuilder(input_stream=body, content_type=content_type).get_environ()
@@ -120,7 +120,7 @@ class TestCoerceBodyToUnicode(unittest2.TestCase):
         expected = '∫¬å˙∫…å˙'
         encoding_type = 'cp950'
 
-        content_type = 'text/plain; charset={}'.format('ascii')
+        content_type = 'text/plain; charset={0}'.format('ascii')
         raw_text = expected.encode('utf-8')
         body = BytesIO(raw_text)
         environ = EnvironBuilder(input_stream=body, content_type=content_type).get_environ()
@@ -131,7 +131,7 @@ class TestCoerceBodyToUnicode(unittest2.TestCase):
         expected = 'blah blah'
         raw_text = expected.encode('cp950')
         body = BytesIO(raw_text)
-        content_type = 'text/plain; charset={}'.format('notreal')
+        content_type = 'text/plain; charset={0}'.format('notreal')
         environ = EnvironBuilder(input_stream=body, content_type=content_type).get_environ()
 
         self.assertRaises(UnreadableBodyException, coerce_body_to_unicode, environ)

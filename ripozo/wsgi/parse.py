@@ -135,7 +135,7 @@ def json_loads_backwards_compatible(body, content_type='application/json'):
     try:
         return json.loads(body)
     except ValueError:
-        warnings.warn('The content type "{}" only allows for '
+        warnings.warn('The content type "{0}" only allows for '
                       'json requests bodies.  The automatic handling '
                       'of form encoded bodies will be deprecated in '
                       'ripozo v2.0.0. In the future, an exception '
