@@ -27,7 +27,7 @@ setup(
         'Programming Language :: Python :: Implementation :: PyPy',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
-    description='ReSTful API framework with HATEOAS support and compatibility with Flask, Django, SQLAlchemy and more.',
+    description='RESTful API framework with HATEOAS support and compatibility with Flask, Django, SQLAlchemy and more.',
     extras_require={
         'examples': [
             'flask',
